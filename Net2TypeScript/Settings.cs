@@ -16,7 +16,8 @@ namespace jasMIN.Net2TypeScript
         public string definitelyTypedRelPath { get; set; }
         public bool useKnockout { get; set; }
         public bool useBreeze { get; set; }
-        public string outputPath { get; set; }
         public dynamic globalExtensions { get; set; }
+        public string moduleName { get; set; }
+        public string outputPath { get; set; }
     }
 }

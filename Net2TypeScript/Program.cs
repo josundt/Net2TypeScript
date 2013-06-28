@@ -37,41 +37,14 @@ namespace jasMIN.Net2TypeScript
                 var settings = (Settings) serializer.Deserialize(jsonSettings, typeof (Settings));
 
                 MergeCmdArgsWithSettings(args, settings);
-
                 settings.Validate();
-
-                Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
-                assembly.GetReferencedAssemblies();
 
                 var sb = new StringBuilder();
 
-                sb.AddDefinitelyTypedReferences(settings);
+                sb.AddModule(settings);
 
                 sb.AppendLine();
 
-                List<Type> classTypes =
-                    assembly.GetTypes()
-                            .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace))
-                            .ToList();
-                classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
-
-                foreach (Type classType in classTypes)
-                {
-                    sb.AddClass(classType, settings);
-                }
-
-                //if (settings.enumType == "enum")
-                //{
-                //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
-                //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
-
-                //    foreach (Type enumType in enumTypes)
-                //    {
-                //        sb.AddEnum(enumType, settings);
-                //    }
-                //}
-
-                //Console.Write(sb);
 
                 File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
 
@@ -220,7 +193,7 @@ namespace jasMIN.Net2TypeScript
                     tsType = string.Format(
                         "KnockoutObservableArray<{0}>",
                         propertyType.IsGenericType
-                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings, true)
+                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings, false)
                             : "any");
                 }
                 else
@@ -248,7 +221,7 @@ namespace jasMIN.Net2TypeScript
 
         }
 
-        public static void AddDefinitelyTypedReferences(this StringBuilder sb, Settings settings)
+        private static void AddDefinitelyTypedReferences(this StringBuilder sb, Settings settings)
         {
             if (settings.useKnockout)
             {
@@ -260,6 +233,41 @@ namespace jasMIN.Net2TypeScript
             }
         }
 
+        public static void AddModule(this StringBuilder sb, Settings settings)
+        {
+            sb.AddDefinitelyTypedReferences(settings);
+
+            sb.AppendFormat("declare module {0} {{\r\n", settings.moduleName);
+
+            Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
+            assembly.GetReferencedAssemblies();
+
+            List<Type> classTypes = assembly.GetTypes()
+                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace))
+                .ToList();
+            classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+            foreach (Type classType in classTypes)
+            {
+                sb.AddClass(classType, settings);
+            }
+
+            //if (settings.enumType == "enum")
+            //{
+            //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
+            //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+            //    foreach (Type enumType in enumTypes)
+            //    {
+            //        sb.AddEnum(enumType, settings);
+            //    }
+            //}
+
+            //Console.Write(sb);
+
+            sb.AppendLine("}");
+        }
+
         public static void AddClass(this StringBuilder sb, Type classType, Settings settings)
         {
             if (!classType.IsClass || !classType.IsPublic)
@@ -267,8 +275,8 @@ namespace jasMIN.Net2TypeScript
                 throw new InvalidOperationException("Not a class type");
             }
 
-            sb.AppendFormat("/** {0} **/\r\n", classType.FullName);
-            sb.AppendFormat("interface {0} {{\r\n", classType.Name);
+            sb.AppendFormat("{0}/** {1} **/\r\n", settings.tab, classType.FullName);
+            sb.AppendFormat("{0}interface {1} {{\r\n", settings.tab, classType.Name);
 
             // TODO: Filter non-public props
             foreach (PropertyInfo propertyInfo in classType.GetProperties())
@@ -284,7 +292,7 @@ namespace jasMIN.Net2TypeScript
                     var tsTypeName = prop.ToString().Substring(1, prop.ToString().Length - 2).Split(',')[1].Trim();
 
                     sb.AppendFormat("{0}{1}: {2};\r\n",
-                                    settings.tab,
+                                    settings.tab + settings.tab,
                                     tsPropName,
                                     tsTypeName);
 
@@ -293,11 +301,11 @@ namespace jasMIN.Net2TypeScript
 
             if (settings.useBreeze)
             {
-                sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab);
-                sb.AppendFormat("{0}entityType: breeze.EntityType;\r\n", settings.tab);
+                sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab + settings.tab);
+                sb.AppendFormat("{0}entityType: breeze.EntityType;\r\n", settings.tab + settings.tab);
             }
 
-            sb.AppendLine("}");
+            sb.AppendFormat("{0}}}\r\n", settings.tab);
         }
 
         public static void AddEnum(this StringBuilder sb, Type enumType, Settings settings)
@@ -320,7 +328,8 @@ namespace jasMIN.Net2TypeScript
                 foreach (object enumValue in enumValues)
                 {
                     sb.AppendFormat(
-                        "    {0} = {1}{2}\r\n",
+                        "{0}{1} = {2}{3}\r\n",
+                        settings.tab,
                         enumKeys[valueIterator].ToCamelCase(),
                         Convert.ChangeType(enumValue, enumType.GetEnumUnderlyingType()),
                         valueIterator == enumKeys.Length - 1 ? null : ",");
@@ -352,7 +361,7 @@ namespace jasMIN.Net2TypeScript
             {
                 sb.AppendFormat(
                     "{0}{1}: {2};\r\n",
-                    settings.tab,
+                    settings.tab + settings.tab,
                     settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name,
                     propertyType.GetTypeScriptTypeName(settings));
             }

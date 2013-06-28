@@ -5,7 +5,7 @@
 ------------------------------------------------
 
 **Reads all public class types from an .NET CLR assembly**
-**from the specified root namespace, and generates**
+**from the configured root namespace, and generates**
 **corresponding TypeScript interface declarations into a single file.**
 
 *Options:*
@@ -59,6 +59,11 @@ Adds two additional meta properties used by breeze to all entities (*'entityAspe
 
 The full physical disk path to the TypeScript interface output file.
 
+* **globalExtensions** *(JSON object literal)*
+
+Defines fields that will extend the .NET entity in the resulting TypeScript interface.
+
+
 Options options:
 ----------------
 
@@ -69,14 +74,14 @@ Options options:
 
 The command line arguments take precedence over the settings in settings.json.
 
-**'settings.json' format**
+**'settings.json' format** *(JSON)*
 
 -see *'settings.sample.json'* file
 
 **command line arguments**
 
--same as in settings.json, except options use two preceding dashes ('--')
+-same settings as in settings.json can be used as command line arguments, except options use two preceding dashes ('--')
 
-Excample: 
+Example: 
 		
-	Net2TypeScript --assemblyPath "C:\MyFolder\MyAssembly.dll" "C:\MyOutputFolder\model.d.ts"
+	Net2TypeScript --assemblyPath "C:\MyFolder\MyAssembly.dll" --outputPath "C:\MyOutputFolder\model.d.ts"
