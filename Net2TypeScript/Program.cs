@@ -20,14 +20,15 @@ namespace jasMIN.Net2TypeScript
 
             try
             {
+                string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
 
-                if (!File.Exists("settings.json"))
+                if (!File.Exists(settingsPath))
                 {
                     throw new FileNotFoundException("Settings file ('settings.json') not found.");
                 }
 
                 string jsonSettings;
-                using (var streamReader = new StreamReader("settings.json", Encoding.UTF8))
+                using (var streamReader = new StreamReader(settingsPath, Encoding.UTF8))
                 {
                     jsonSettings = streamReader.ReadToEnd();
                     streamReader.Close();
@@ -77,7 +78,7 @@ namespace jasMIN.Net2TypeScript
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("ERROR: " + ex.Message);
 
                 result = -1;
             }
