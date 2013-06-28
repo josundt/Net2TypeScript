@@ -12,57 +12,75 @@ namespace jasMIN.Net2TypeScript
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
-            if (!File.Exists("settings.json"))
+            int result = 0;
+
+            Console.WriteLine("Converting .NET entities to TypeScript interfaces.");
+
+            try
             {
-                throw new FileNotFoundException("Settings file ('settings.json') not found.");
-            }
 
-            string jsonSettings;
-            using (var streamReader = new StreamReader("settings.json", Encoding.UTF8))
+                if (!File.Exists("settings.json"))
+                {
+                    throw new FileNotFoundException("Settings file ('settings.json') not found.");
+                }
+
+                string jsonSettings;
+                using (var streamReader = new StreamReader("settings.json", Encoding.UTF8))
+                {
+                    jsonSettings = streamReader.ReadToEnd();
+                    streamReader.Close();
+                }
+                var serializer = new JavaScriptSerializer();
+                var settings = (Settings) serializer.Deserialize(jsonSettings, typeof (Settings));
+
+                MergeCmdArgsWithSettings(args, settings);
+
+                settings.Validate();
+
+                Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
+                assembly.GetReferencedAssemblies();
+
+                var sb = new StringBuilder();
+
+                sb.AddDefinitelyTypedReferences(settings);
+
+                sb.AppendLine();
+
+                List<Type> classTypes =
+                    assembly.GetTypes()
+                            .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace))
+                            .ToList();
+                classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+                foreach (Type classType in classTypes)
+                {
+                    sb.AddClass(classType, settings);
+                }
+
+                //if (settings.enumType == "enum")
+                //{
+                //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
+                //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+                //    foreach (Type enumType in enumTypes)
+                //    {
+                //        sb.AddEnum(enumType, settings);
+                //    }
+                //}
+
+                //Console.Write(sb);
+
+                File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
+
+            }
+            catch (Exception ex)
             {
-                jsonSettings = streamReader.ReadToEnd();
-                streamReader.Close();
+                Console.WriteLine(ex.Message);
+
+                result = -1;
             }
-            var serializer = new JavaScriptSerializer();
-            var settings = (Settings)serializer.Deserialize(jsonSettings, typeof(Settings));
-
-            MergeCmdArgsWithSettings(args, settings);
-
-            settings.Validate();
-
-            Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
-            assembly.GetReferencedAssemblies();
-
-            var sb = new StringBuilder();
-
-            sb.AddDefinitelyTypedReferences(settings);
-
-            sb.AppendLine();
-
-            List<Type> classTypes = assembly.GetTypes().Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
-            classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
-
-            foreach (Type classType in classTypes)
-            {
-                sb.AddClass(classType, settings);
-            }
-
-            //if (settings.enumType == "enum")
-            //{
-            //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
-            //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
-
-            //    foreach (Type enumType in enumTypes)
-            //    {
-            //        sb.AddEnum(enumType, settings);
-            //    }
-            //}
-
-            Console.Write(sb);
-
-            File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
 
             if (Debugger.IsAttached)
             {
@@ -70,6 +88,8 @@ namespace jasMIN.Net2TypeScript
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
+
+            return result;
         }
 
         private static void MergeCmdArgsWithSettings(string[] args, Settings settings)
