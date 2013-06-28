@@ -1,0 +1,11 @@
+﻿{
+    "assemblyPath": "C:\\MyFolder\\AdraMatch.Amx.Model.dll",
+    "rootNamespace": "My.NameSpace",
+    "tab": "    ",
+    "enumType": "string",
+    "camelCase": true,
+    "definitelyTypedRelPath": "../Scripts/typings/",
+    "useKnockout": true,
+	"useBreeze": true,
+    "outputPath": "C:\\MyFolder\\model.d.ts"
+}

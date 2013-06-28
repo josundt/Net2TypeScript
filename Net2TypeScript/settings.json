@@ -1,11 +1,9 @@
 ﻿{
-    "assemblyPath": "E:\\_Jorns_Filer\\Git\\AMB\\Source\\Web\\bin\\AdraMatch.Amx.Model.dll",
     "rootNamespace": "AdraMatch.Amx.Model.Db",
     "tab": "    ",
     "enumType": "string",
     "camelCase": true,
     "definitelyTypedRelPath": "../../Scripts/typings/",
     "useKnockout": true,
-	"useBreeze": true,
-    "outputPath": "C:\\Users\\Jorn.JASMIN\\Desktop\\_model.d.ts"
+	"useBreeze": true
 }

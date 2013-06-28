@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -27,21 +28,37 @@ namespace jasMIN.Net2TypeScript
             var serializer = new JavaScriptSerializer();
             var settings = (Settings)serializer.Deserialize(jsonSettings, typeof(Settings));
 
-            ValidateSettings(settings);
+            MergeCmdArgsWithSettings(args, settings);
+
+            settings.Validate();
 
             Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
+            assembly.GetReferencedAssemblies();
 
             var sb = new StringBuilder();
 
-            AddDefinitelyTypedReferences(sb, settings);
+            sb.AddDefinitelyTypedReferences(settings);
 
             sb.AppendLine();
 
-            foreach (Type classType in assembly.GetTypes().Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)))
+            List<Type> classTypes = assembly.GetTypes().Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
+            classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+            foreach (Type classType in classTypes)
             {
-                AddClass(classType, sb, settings);
-                //sb.AppendLine();
+                sb.AddClass(classType, settings);
             }
+
+            //if (settings.enumType == "enum")
+            //{
+            //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
+            //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+            //    foreach (Type enumType in enumTypes)
+            //    {
+            //        sb.AddEnum(enumType, settings);
+            //    }
+            //}
 
             Console.Write(sb);
 
@@ -55,83 +72,55 @@ namespace jasMIN.Net2TypeScript
             }
         }
 
-        private static void AddDefinitelyTypedReferences(StringBuilder sb, Settings settings)
+        private static void MergeCmdArgsWithSettings(string[] args, Settings settings)
         {
-            if (settings.useKnockout)
+            if (args.Length % 2 != 0)
             {
-                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(settings.definitelyTypedRelPath, "knockout/knockout.d.ts"));
+                throw new ArgumentException("Wrong command line arguments.");
             }
-            if (settings.useBreeze)
+
+            for (int i = 0; i < args.Length; i = i + 2)
             {
-                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(settings.definitelyTypedRelPath, "breeze/breeze.d.ts"));
+                if (!args[i].StartsWith("--"))
+                {
+                    throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", args[i]));
+                }
+
+                string settingsProp = args[i].Substring(2);
+
+                PropertyInfo propInfo = typeof(Settings).GetProperties().SingleOrDefault(pi => pi.Name == settingsProp);
+
+                if (propInfo == null)
+                {
+                    throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", args[i]));
+                }
+                else
+                {
+                    if (propInfo.PropertyType == typeof(bool?) || propInfo.PropertyType == typeof(bool))
+                    {
+                        bool boolValue = false;
+                        if (!bool.TryParse(args[i + 1], out boolValue))
+                        {
+                            throw new ArgumentException(string.Format("Not a boolean value: '{0}'", args[i + 1]));
+                        }
+                        else
+                        {
+                            propInfo.SetValue(settings, boolValue);
+                        }
+                    }
+                    else if (propInfo.PropertyType == typeof(string))
+                    {
+                        propInfo.SetValue(settings, args[i + 1]);
+                    }
+                }
+
             }
         }
-        
-        private static void AddClass(Type classType, StringBuilder sb, Settings settings)
-        {
-            if (!classType.IsClass || !classType.IsPublic)
-            {
-                throw new InvalidOperationException("Not a class type");
-            }
+    }
 
-            sb.AppendFormat("interface {0} {{\r\n", classType.Name);
-
-            // TODO: Filter non-public props
-            foreach (PropertyInfo propertyInfo in classType.GetProperties())
-            {
-                AddProperty(propertyInfo, sb, settings);
-            }
-
-            if (settings.useBreeze)
-            {
-                sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab);
-                sb.AppendFormat("{0}entityType: breeze.EntityType;\r\n", settings.tab);
-            }
-
-            sb.AppendLine("}");
-        }
-        
-        private static void AddProperty(PropertyInfo propertyInfo, StringBuilder sb, Settings settings)
-        {
-            Type propertyType = propertyInfo.PropertyType;
-
-            var typeScriptTypeName = GetTypeScriptTypeName(propertyType, settings);
-
-            var faultyProperty = false;
-
-            if (typeScriptTypeName.Contains("UNKNOWN"))
-            {
-                faultyProperty = true;   
-                Console.WriteLine("WARNING: Unconvertable type: {0}", propertyType.FullName);
-            } 
-
-            if (!faultyProperty)
-            {
-                sb.AppendFormat(
-                    "{0}{1}: {2};\r\n",
-                    settings.tab,
-                    settings.camelCase ? ToCamelCase(propertyInfo.Name) : propertyInfo.Name,
-                    GetTypeScriptTypeName(propertyType, settings));
-            }
-
-        }
-       
-        private static void ValidateSettings(Settings settings)
-        {
-            // TODO: Validate that settings object has the expected properties
-
-            if (!File.Exists(settings.assemblyPath))
-            {
-                throw new FileNotFoundException(string.Format("Assembly '{0}' not found.", settings.assemblyPath));
-            }
-            var outputDir = Path.GetDirectoryName(settings.outputPath);
-            if(outputDir == null || !Directory.Exists(outputDir))
-            {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.outputPath));
-            }
-
-        }
-        private static string ToCamelCase(string str)
+    internal static class Extensions
+    {
+        public static string ToCamelCase(this string str)
         {
             if (!string.IsNullOrEmpty(str))
             {
@@ -139,8 +128,19 @@ namespace jasMIN.Net2TypeScript
             }
             return str;
         }
-        
-        private static string GetTypeScriptTypeName(Type propertyType, Settings settings, bool skipKnockoutObservableWrapper = false)
+
+        public static bool IsNumericType(this Type type)
+        {
+            return
+                type == typeof(short) || type == typeof(short?) ||
+                type == typeof(int) || type == typeof(int?) ||
+                type == typeof(long) || type == typeof(long?) ||
+                type == typeof(decimal) || type == typeof(decimal?) ||
+                type == typeof(float) || type == typeof(float?) ||
+                type == typeof(double) || type == typeof(double?);
+        }
+
+        public static string GetTypeScriptTypeName(this Type propertyType, Settings settings, bool skipKnockoutObservableWrapper = false)
         {
             string tsType = "UNKNOWN";
 
@@ -152,7 +152,7 @@ namespace jasMIN.Net2TypeScript
             {
                 tsType = "Date";
             }
-            else if (propertyType == typeof (bool) || propertyType == typeof (bool?))
+            else if (propertyType == typeof(bool) || propertyType == typeof(bool?))
             {
                 tsType = "boolean";
             }
@@ -162,14 +162,21 @@ namespace jasMIN.Net2TypeScript
             }
             else if (propertyType.IsEnum)
             {
-                tsType = settings.enumType;
+                if (settings.enumType != "enum")
+                {
+                    tsType = settings.enumType;
+                }
+                else 
+                {
+                    tsType = propertyType.Name;
+                }
             }
             else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
             {
                 tsType = string.Format(
-                    "{0}[]", 
-                    propertyType.IsGenericType 
-                        ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings) 
+                    "{0}[]",
+                    propertyType.IsGenericType
+                        ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings)
                         : "any");
             }
             else if (propertyType.IsClass || propertyType.IsInterface)
@@ -183,7 +190,7 @@ namespace jasMIN.Net2TypeScript
 
             if (settings.useKnockout && !skipKnockoutObservableWrapper)
             {
-                if (typeof (IEnumerable).IsAssignableFrom(propertyType))
+                if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
                 {
                     tsType = string.Format(
                         "KnockoutObservableArray<{0}>",
@@ -200,15 +207,116 @@ namespace jasMIN.Net2TypeScript
             return tsType;
         }
 
-        private static bool IsNumericType(Type type)
+        public static void Validate(this Settings settings)
         {
-            return
-                type == typeof (short) || type == typeof (short?) ||
-                type == typeof (int) || type == typeof (int?) ||
-                type == typeof (long) || type == typeof (long?) ||
-                type == typeof (decimal) || type == typeof (decimal?) ||
-                type == typeof (float) || type == typeof (float?) ||
-                type == typeof (double) || type == typeof (double?);
+            // TODO: Validate that settings object has the expected properties
+
+            if (!File.Exists(settings.assemblyPath))
+            {
+                throw new FileNotFoundException(string.Format("Assembly '{0}' not found.", settings.assemblyPath));
+            }
+            var outputDir = Path.GetDirectoryName(settings.outputPath);
+            if (outputDir == null || !Directory.Exists(outputDir))
+            {
+                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.outputPath));
+            }
+
+        }
+
+        public static void AddDefinitelyTypedReferences(this StringBuilder sb, Settings settings)
+        {
+            if (settings.useKnockout)
+            {
+                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(settings.definitelyTypedRelPath, "knockout/knockout.d.ts"));
+            }
+            if (settings.useBreeze)
+            {
+                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(settings.definitelyTypedRelPath, "breeze/breeze.d.ts"));
+            }
+        }
+
+        public static void AddClass(this StringBuilder sb, Type classType, Settings settings)
+        {
+            if (!classType.IsClass || !classType.IsPublic)
+            {
+                throw new InvalidOperationException("Not a class type");
+            }
+
+            sb.AppendFormat("/** {0} **/\r\n", classType.FullName);
+            sb.AppendFormat("interface {0} {{\r\n", classType.Name);
+
+            // TODO: Filter non-public props
+            foreach (PropertyInfo propertyInfo in classType.GetProperties())
+            {
+                sb.AddProperty(propertyInfo, settings);
+            }
+
+            if (settings.useBreeze)
+            {
+                sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab);
+                sb.AppendFormat("{0}entityType: breeze.EntityType;\r\n", settings.tab);
+            }
+
+            sb.AppendLine("}");
+        }
+
+        public static void AddEnum(this StringBuilder sb, Type enumType, Settings settings)
+        {
+            // PS ! Not used or working
+            if (settings.enumType == "enum")
+            {
+
+                sb.AppendFormat(
+                    "/** {0} **/\r\n",
+                    enumType.FullName);
+
+                sb.AppendFormat(
+                    "declare enum {0} {{\r\n",
+                    enumType.Name);
+
+                var valueIterator = 0;
+                var enumKeys = Enum.GetNames(enumType);
+                var enumValues = Enum.GetValues(enumType);
+                foreach (object enumValue in enumValues)
+                {
+                    sb.AppendFormat(
+                        "    {0} = {1}{2}\r\n",
+                        enumKeys[valueIterator].ToCamelCase(),
+                        Convert.ChangeType(enumValue, enumType.GetEnumUnderlyingType()),
+                        valueIterator == enumKeys.Length - 1 ? null : ",");
+
+                    valueIterator++;
+                }
+
+                sb.AppendLine("}\r\n");
+            }
+
+
+        }
+
+        private static void AddProperty(this StringBuilder sb, PropertyInfo propertyInfo, Settings settings)
+        {
+            Type propertyType = propertyInfo.PropertyType;
+
+            var typeScriptTypeName = propertyType.GetTypeScriptTypeName(settings);
+
+            var faultyProperty = false;
+
+            if (typeScriptTypeName.Contains("UNKNOWN"))
+            {
+                faultyProperty = true;
+                Console.WriteLine("WARNING: Unconvertable type: {0}", propertyType.FullName);
+            }
+
+            if (!faultyProperty)
+            {
+                sb.AppendFormat(
+                    "{0}{1}: {2};\r\n",
+                    settings.tab,
+                    settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name,
+                    propertyType.GetTypeScriptTypeName(settings));
+            }
+
         }
     }
 
