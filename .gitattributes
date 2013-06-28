@@ -1,0 +1,8 @@
+# Auto detect text files and perform LF normalization
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+# http://stackoverflow.com/questions/9933004/best-way-to-disable-git-end-of-line-normalization-crlf-to-lf-across-all-clones
+* -text
+
+
+# Custom for Visual Studio
+*.cs     diff=csharp
