@@ -9,6 +9,6 @@
 	"useBreeze": true,
     "outputPath": "C:\\MyFolder\\model.d.ts",
 	"globalExtensions": {
-		"isValid": "KnockoutObservable<bool>"
+		"isValid": "KnockoutObservable<boolean>"
 	}
 }
