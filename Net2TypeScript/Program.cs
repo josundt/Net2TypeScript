@@ -181,6 +181,10 @@ namespace jasMIN.Net2TypeScript
             {
                 tsType = "string";
             }
+            else if (propertyType == typeof(byte[]))
+            {
+                tsType = "string";
+            }
             else if (propertyType.IsEnum)
             {
                 if (settings.enumType != "enum")
