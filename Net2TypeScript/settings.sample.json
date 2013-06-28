@@ -7,5 +7,8 @@
     "definitelyTypedRelPath": "../Scripts/typings/",
     "useKnockout": true,
 	"useBreeze": true,
-    "outputPath": "C:\\MyFolder\\model.d.ts"
+    "outputPath": "C:\\MyFolder\\model.d.ts",
+	"globalExtensions": {
+		"isValid": "KnockoutObservable<bool>"
+	}
 }

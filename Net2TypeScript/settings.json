@@ -7,6 +7,6 @@
     "useKnockout": true,
 	"useBreeze": true,
 	"globalExtensions": {
-		isValid: "KnockoutObservable<bool>"
+		"isValid": "KnockoutObservable<bool>"
 	}
 }
