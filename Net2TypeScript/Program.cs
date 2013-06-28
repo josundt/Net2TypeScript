@@ -181,7 +181,7 @@ namespace jasMIN.Net2TypeScript
             {
                 tsType = "string";
             }
-            else if (propertyType == typeof(byte[]))
+            else if (propertyType == typeof(byte[]) || propertyType == typeof(byte))
             {
                 tsType = "string";
             }
