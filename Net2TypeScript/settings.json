@@ -5,5 +5,8 @@
     "camelCase": true,
     "definitelyTypedRelPath": "../../Scripts/typings/",
     "useKnockout": true,
-	"useBreeze": true
+	"useBreeze": true,
+	"globalExtensions": {
+		isValid: "KnockoutObservable<bool>"
+	}
 }

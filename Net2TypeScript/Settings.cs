@@ -17,5 +17,6 @@ namespace jasMIN.Net2TypeScript
         public bool useKnockout { get; set; }
         public bool useBreeze { get; set; }
         public string outputPath { get; set; }
+        public dynamic globalExtensions { get; set; }
     }
 }

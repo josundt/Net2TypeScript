@@ -276,6 +276,21 @@ namespace jasMIN.Net2TypeScript
                 sb.AddProperty(propertyInfo, settings);
             }
 
+            if (settings.globalExtensions != null)
+            {
+                foreach (var prop in settings.globalExtensions)
+                {
+                    var tsPropName = prop.ToString().Substring(1, prop.ToString().Length - 2).Split(',')[0].Trim();
+                    var tsTypeName = prop.ToString().Substring(1, prop.ToString().Length - 2).Split(',')[1].Trim();
+
+                    sb.AppendFormat("{0}{1}: {2};\r\n",
+                                    settings.tab,
+                                    tsPropName,
+                                    tsTypeName);
+
+                }
+            }
+
             if (settings.useBreeze)
             {
                 sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab);
