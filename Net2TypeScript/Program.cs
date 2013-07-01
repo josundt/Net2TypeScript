@@ -20,39 +20,18 @@ namespace jasMIN.Net2TypeScript
 
             try
             {
-                string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
-
-                if (!File.Exists(settingsPath))
-                {
-                    throw new FileNotFoundException("Settings file ('settings.json') not found.");
-                }
-
-                string jsonSettings;
-                using (var streamReader = new StreamReader(settingsPath, Encoding.UTF8))
-                {
-                    jsonSettings = streamReader.ReadToEnd();
-                    streamReader.Close();
-                }
-                var serializer = new JavaScriptSerializer();
-                var settings = (Settings) serializer.Deserialize(jsonSettings, typeof (Settings));
-
+                var settings = GetSettingsFromJson();
                 MergeCmdArgsWithSettings(args, settings);
                 settings.Validate();
-
+ 
                 var sb = new StringBuilder();
-
                 sb.AddModule(settings);
 
-                sb.AppendLine();
-
-
                 File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ERROR: " + ex.Message);
-
                 result = -1;
             }
 
@@ -64,6 +43,20 @@ namespace jasMIN.Net2TypeScript
             }
 
             return result;
+        }
+
+        private static Settings GetSettingsFromJson()
+        {
+            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+
+            if (!File.Exists(settingsPath)) { throw new FileNotFoundException("Settings file ('settings.json') not found."); }
+
+            string jsonSettings = File.ReadAllText(settingsPath, Encoding.UTF8);
+
+            var deserializer = new JavaScriptSerializer();
+            var settings = (Settings)deserializer.Deserialize(jsonSettings, typeof(Settings));
+
+            return settings;
         }
 
         private static void MergeCmdArgsWithSettings(string[] args, Settings settings)
@@ -136,7 +129,7 @@ namespace jasMIN.Net2TypeScript
 
         public static string GetTypeScriptTypeName(this Type propertyType, Settings settings, bool skipKnockoutObservableWrapper = false)
         {
-            string tsType = "UNKNOWN";
+            string tsType = "UNDEFINED";
 
             if (IsNumericType(propertyType))
             {
@@ -275,7 +268,7 @@ namespace jasMIN.Net2TypeScript
                 throw new InvalidOperationException("Not a class type");
             }
 
-            sb.AppendFormat("{0}/** {1} **/\r\n", settings.tab, classType.FullName);
+            sb.AppendFormat("{0}/** {1}.{2} ({3}) */\r\n", settings.tab, settings.moduleName, classType.Name, classType.FullName);
             sb.AppendFormat("{0}interface {1} {{\r\n", settings.tab, classType.Name);
 
             // TODO: Filter non-public props
@@ -313,7 +306,6 @@ namespace jasMIN.Net2TypeScript
             // PS ! Not used or working
             if (settings.enumType == "enum")
             {
-
                 sb.AppendFormat(
                     "/** {0} **/\r\n",
                     enumType.FullName);
@@ -351,7 +343,7 @@ namespace jasMIN.Net2TypeScript
 
             var faultyProperty = false;
 
-            if (typeScriptTypeName.Contains("UNKNOWN"))
+            if (typeScriptTypeName.Contains("UNDEFINED"))
             {
                 faultyProperty = true;
                 Console.WriteLine("WARNING: Unconvertable type: {0}", propertyType.FullName);
@@ -359,6 +351,11 @@ namespace jasMIN.Net2TypeScript
 
             if (!faultyProperty)
             {
+                if (propertyType.IsEnum)
+                {
+                    sb.AppendFormat("{0}/** {1}: {2} ({3}) */\r\n", settings.tab + settings.tab, "Enum", propertyType.Name.ToCamelCase(), propertyType.FullName);
+                }
+
                 sb.AppendFormat(
                     "{0}{1}: {2};\r\n",
                     settings.tab + settings.tab,
