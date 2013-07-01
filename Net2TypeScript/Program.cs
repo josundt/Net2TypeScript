@@ -268,7 +268,7 @@ namespace jasMIN.Net2TypeScript
                 throw new InvalidOperationException("Not a class type");
             }
 
-            sb.AppendFormat("{0}/** {1}.{2} ({3}) */\r\n", settings.tab, settings.moduleName, classType.Name, classType.FullName);
+            sb.AppendFormat("{0}/** Class: {1}.{2} ({3}) */\r\n", settings.tab, settings.moduleName, classType.Name, classType.FullName);
             sb.AppendFormat("{0}interface {1} {{\r\n", settings.tab, classType.Name);
 
             // TODO: Filter non-public props
@@ -353,7 +353,7 @@ namespace jasMIN.Net2TypeScript
             {
                 if (propertyType.IsEnum)
                 {
-                    sb.AppendFormat("{0}/** {1}: {2} ({3}) */\r\n", settings.tab + settings.tab, "Enum", propertyType.Name.ToCamelCase(), propertyType.FullName);
+                    sb.AppendFormat("{0}/** Enum: {1} ({2}) */\r\n", settings.tab + settings.tab, propertyType.Name.ToCamelCase(), propertyType.FullName);
                 }
 
                 sb.AppendFormat(
