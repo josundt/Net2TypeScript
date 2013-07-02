@@ -268,8 +268,16 @@ namespace jasMIN.Net2TypeScript
                 throw new InvalidOperationException("Not a class type");
             }
 
-            sb.AppendFormat("{0}/** Class: {1}.{2} ({3}) */\r\n", settings.tab, settings.moduleName, classType.Name, classType.FullName);
-            sb.AppendFormat("{0}interface {1} {{\r\n", settings.tab, classType.Name);
+            sb.AppendFormat("\r\n{0}/** Class: {1}.{2} ({3}) */\r\n", 
+                settings.tab, 
+                settings.moduleName, 
+                classType.Name, 
+                classType.FullName);
+            
+            sb.AppendFormat("{0}interface {1}{2} {{\r\n", 
+                settings.tab, 
+                classType.Name,
+                settings.useBreeze ? " extends breeze.Entity" : string.Empty);
 
             // TODO: Filter non-public props
             foreach (PropertyInfo propertyInfo in classType.GetProperties())
@@ -290,12 +298,6 @@ namespace jasMIN.Net2TypeScript
                                     tsTypeName);
 
                 }
-            }
-
-            if (settings.useBreeze)
-            {
-                sb.AppendFormat("{0}entityAspect: breeze.EntityAspect;\r\n", settings.tab + settings.tab);
-                sb.AppendFormat("{0}entityType: breeze.EntityType;\r\n", settings.tab + settings.tab);
             }
 
             sb.AppendFormat("{0}}}\r\n", settings.tab);
