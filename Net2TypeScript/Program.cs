@@ -186,7 +186,7 @@ namespace jasMIN.Net2TypeScript
                     tsType = string.Format(
                         "KnockoutObservableArray<{0}>",
                         propertyType.IsGenericType
-                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings, false)
+                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings, true)
                             : "any");
                 }
                 else
