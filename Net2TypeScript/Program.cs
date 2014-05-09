@@ -119,31 +119,42 @@ namespace jasMIN.Net2TypeScript
         public static bool IsNumericType(this Type type)
         {
             return
-                type == typeof(short) || type == typeof(short?) ||
-                type == typeof(int) || type == typeof(int?) ||
-                type == typeof(long) || type == typeof(long?) ||
-                type == typeof(decimal) || type == typeof(decimal?) ||
-                type == typeof(float) || type == typeof(float?) ||
-                type == typeof(double) || type == typeof(double?);
+                type == typeof(short) ||
+                type == typeof(int) ||
+                type == typeof(long) ||
+                type == typeof(decimal) ||
+                type == typeof(float) ||
+                type == typeof(double);
+        }
+
+        public static bool IsNullableType(this Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>);
         }
 
         public static string GetTypeScriptTypeName(this Type propertyType, Settings settings, bool skipKnockoutObservableWrapper = false)
         {
+            var isNullableType = propertyType.IsNullableType();
+            if (isNullableType)
+            {
+                propertyType = propertyType.GetGenericArguments()[0];
+            }
+
             string tsType = "UNDEFINED";
 
             if (IsNumericType(propertyType))
             {
                 tsType = "number";
             }
-            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?) || propertyType == typeof(DateTimeOffset) || propertyType == typeof(DateTimeOffset?))
+            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTimeOffset))
             {
                 tsType = "Date";
             }
-            else if (propertyType == typeof(bool) || propertyType == typeof(bool?))
+            else if (propertyType == typeof(bool))
             {
                 tsType = "boolean";
             }
-            else if (propertyType == typeof(Guid) || propertyType == typeof(Guid?) || propertyType == typeof(string))
+            else if (propertyType == typeof(Guid) || propertyType == typeof(string))
             {
                 tsType = "string";
             }
@@ -341,6 +352,12 @@ namespace jasMIN.Net2TypeScript
         {
             Type propertyType = propertyInfo.PropertyType;
 
+            var isNullableType = propertyType.IsNullableType();
+            if (isNullableType)
+            {
+                propertyType = propertyType.GetGenericArguments()[0];
+            }
+
             var typeScriptTypeName = propertyType.GetTypeScriptTypeName(settings);
 
             var faultyProperty = false;
@@ -355,7 +372,18 @@ namespace jasMIN.Net2TypeScript
             {
                 if (propertyType.IsEnum)
                 {
-                    sb.AppendFormat("{0}/** Enum: {1} ({2}) */\r\n", settings.tab + settings.tab, propertyType.Name.ToCamelCase(), propertyType.FullName);
+                    sb.AppendFormat(
+                        "{0}/** Enum{1}: {2} ({3}) */\r\n",
+                        settings.tab + settings.tab,
+                        isNullableType ? " (NULLABLE)" : null,
+                        propertyType.Name.ToCamelCase(),
+                        propertyType.FullName);
+                }
+                else if(isNullableType)
+                {
+                    sb.AppendFormat(
+                        "{0}/** NULLABLE */\r\n",
+                        settings.tab + settings.tab);
                 }
 
                 sb.AppendFormat(

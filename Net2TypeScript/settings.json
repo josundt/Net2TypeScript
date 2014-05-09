@@ -1,5 +1,5 @@
 ﻿{
-    "rootNamespace": "AdraMatch.Amx.Model.Db",
+    "rootNamespace": "AdraMatch.Balancer.Model.Db",
     "tab": "    ",
     "enumType": "string",
     "camelCase": true,
