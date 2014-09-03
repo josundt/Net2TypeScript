@@ -298,16 +298,24 @@ namespace jasMIN.Net2TypeScript
 
             if (settings.globalExtensions != null)
             {
-                foreach (var prop in settings.globalExtensions)
+                foreach (KeyValuePair<string, object> prop in settings.globalExtensions)
                 {
-                    var tsPropName = prop.ToString().Substring(1, prop.ToString().Length - 2).Split(',')[0].Trim();
-                    var tsTypeName = prop.ToString().Substring(1, prop.ToString().Length - 2).Split(',')[1].Trim();
+                    AddExtensionProperty(sb, prop, settings);
+                }
+            }
 
-                    sb.AppendFormat("{0}{1}: {2};\r\n",
-                                    settings.tab + settings.tab,
-                                    tsPropName,
-                                    tsTypeName);
-
+            if (settings.perTypeExtensions != null)
+            {
+                foreach (KeyValuePair<string, object> typeExtensionProp in settings.perTypeExtensions)
+                {
+                    var targetClassType = typeExtensionProp.ToString().Substring(1, typeExtensionProp.ToString().Length - 2).Split(',')[0].Trim();
+                    if (classType.Name.Equals(targetClassType))
+                    {
+                        foreach (var prop in (Dictionary<string, object>)typeExtensionProp.Value)
+                        {
+                            AddExtensionProperty(sb, prop, settings);
+                        }
+                    }
                 }
             }
 
@@ -392,6 +400,19 @@ namespace jasMIN.Net2TypeScript
                     settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name,
                     propertyType.GetTypeScriptTypeName(settings));
             }
+
+        }
+
+        private static void AddExtensionProperty(this StringBuilder sb, KeyValuePair<string, object> prop, Settings settings)
+        {
+            var tsPropName = prop.Key;
+            var tsTypeName = prop.Value.ToString();
+
+            sb.AppendFormat("{0}{1}: {2};\r\n",
+                            settings.tab + settings.tab,
+                            tsPropName,
+                            tsTypeName);
+
 
         }
     }

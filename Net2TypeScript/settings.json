@@ -9,5 +9,12 @@
     "globalExtensions": {
         "isValid": "KnockoutObservable<boolean>"
     },
+    "perTypeExtensions": {
+        "AccountsAndStatus": { 
+            "preparerIds":  "number[]",
+            "approverIds":  "number[]",
+            "reviewerIds":  "number[]"
+        }
+    },
     "moduleName": "Model"
 }
