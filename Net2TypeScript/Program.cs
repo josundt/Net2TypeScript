@@ -25,7 +25,7 @@ namespace jasMIN.Net2TypeScript
                 settings.Validate();
  
                 var sb = new StringBuilder();
-                sb.AddModule(settings);
+                sb.AddRootNamespace(settings);
 
                 File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
             }
@@ -68,7 +68,7 @@ namespace jasMIN.Net2TypeScript
 
             for (int i = 0; i < args.Length; i = i + 2)
             {
-                if (!args[i].StartsWith("--"))
+                if (!args[i].StartsWith("--", StringComparison.Ordinal))
                 {
                     throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", args[i]));
                 }
@@ -164,13 +164,13 @@ namespace jasMIN.Net2TypeScript
             }
             else if (propertyType.IsEnum)
             {
-                if (settings.enumType != "enum")
+                if (settings.enumType == "enum" || settings.enumType == "stringliteral")
                 {
-                    tsType = settings.enumType;
+                    tsType = $"Enums.{propertyType.Name}";
                 }
                 else 
                 {
-                    tsType = propertyType.Name;
+                    tsType = settings.enumType;
                 }
             }
             else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
@@ -184,10 +184,6 @@ namespace jasMIN.Net2TypeScript
             else if (propertyType.IsClass || propertyType.IsInterface)
             {
                 tsType = propertyType.Name;
-            }
-            else
-            {
-                var test = "hei";
             }
 
             if (settings.useKnockout && !skipKnockoutObservableWrapper)
@@ -237,38 +233,45 @@ namespace jasMIN.Net2TypeScript
             }
         }
 
-        public static void AddModule(this StringBuilder sb, Settings settings)
+        public static void AddRootNamespace(this StringBuilder sb, Settings settings)
         {
             sb.AddDefinitelyTypedReferences(settings);
 
-            sb.AppendFormat("declare module {0} {{\r\n", settings.moduleName);
+            sb.AppendLine($"declare namespace {settings.moduleName} {{");
 
             Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
             assembly.GetReferencedAssemblies();
 
             List<Type> classTypes = assembly.GetTypes()
-                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace))
+                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace, StringComparison.Ordinal))
                 .ToList();
-            classTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+
+            classTypes.Sort(delegate(Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
             foreach (Type classType in classTypes)
             {
                 sb.AddClass(classType, settings);
             }
 
-            //if (settings.enumType == "enum")
-            //{
-            //    List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace)).ToList();
-            //    enumTypes.Sort(delegate(Type type1, Type type2) { return type1.Name.CompareTo(type2.Name); });
+            // Adding enum types
+            if(settings.enumType == "enum" || settings.enumType == "stringliteral")
+            {
+                sb.AppendLine();
+                sb.AppendLine($"{settings.tab}namespace Enums {{");
 
-            //    foreach (Type enumType in enumTypes)
-            //    {
-            //        sb.AddEnum(enumType, settings);
-            //    }
-            //}
+                List<Type> enumTypes = assembly.GetTypes().Where(t => t.IsEnum && t.IsPublic /* && t.Namespace.StartsWith(settings.rootNamespace, StringComparison.Ordinal)*/).ToList();
+                enumTypes.Sort(delegate (Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
-            //Console.Write(sb);
+                foreach (Type enumType in enumTypes)
+                {
+                    sb.AddEnum(enumType, settings);
+                }
 
+                sb.AppendLine();
+                sb.AppendLine($"{settings.tab}}}");
+            }
+
+            sb.AppendLine();
             sb.AppendLine("}");
         }
 
@@ -319,39 +322,54 @@ namespace jasMIN.Net2TypeScript
                 }
             }
 
-            sb.AppendFormat("{0}}}\r\n", settings.tab);
+            sb.AppendLine($"{settings.tab}}}");
         }
 
         public static void AddEnum(this StringBuilder sb, Type enumType, Settings settings)
         {
-            // PS ! Not used or working
-            if (settings.enumType == "enum")
+            if (settings.enumType == "stringliteral")
             {
-                sb.AppendFormat(
-                    "/** {0} **/\r\n",
-                    enumType.FullName);
+                sb.AppendLine();
 
-                sb.AppendFormat(
-                    "declare enum {0} {{\r\n",
-                    enumType.Name);
+                sb.AppendLine($"{settings.tab}{settings.tab}/** {enumType.FullName} **/");
 
-                var valueIterator = 0;
-                var enumKeys = Enum.GetNames(enumType);
-                var enumValues = Enum.GetValues(enumType);
-                foreach (object enumValue in enumValues)
-                {
-                    sb.AppendFormat(
-                        "{0}{1} = {2}{3}\r\n",
-                        settings.tab,
-                        enumKeys[valueIterator].ToCamelCase(),
-                        Convert.ChangeType(enumValue, enumType.GetEnumUnderlyingType()),
-                        valueIterator == enumKeys.Length - 1 ? null : ",");
+                var legalValues = string.Join("|",
+                        enumType
+                            .GetMembers(BindingFlags.Public | BindingFlags.Static)
+                            .Select(m => $@"""{m.Name}"""));
 
-                    valueIterator++;
-                }
+                sb.AppendLine($"{settings.tab}{settings.tab}type {enumType.Name} = {legalValues};");
 
-                sb.AppendLine("}\r\n");
             }
+
+            // PS ! Not used or working
+            //if (settings.enumType == "enum")
+            //{
+            //    sb.AppendFormat(
+            //        "/** {0} **/\r\n",
+            //        enumType.FullName);
+
+            //    sb.AppendFormat(
+            //        "declare enum {0} {{\r\n",
+            //        enumType.Name);
+
+            //    var valueIterator = 0;
+            //    var enumKeys = Enum.GetNames(enumType);
+            //    var enumValues = Enum.GetValues(enumType);
+            //    foreach (object enumValue in enumValues)
+            //    {
+            //        sb.AppendFormat(
+            //            "{0}{1} = {2}{3}\r\n",
+            //            settings.tab,
+            //            enumKeys[valueIterator].ToCamelCase(),
+            //            Convert.ChangeType(enumValue, enumType.GetEnumUnderlyingType()),
+            //            valueIterator == enumKeys.Length - 1 ? null : ",");
+
+            //        valueIterator++;
+            //    }
+
+            //    sb.AppendLine("}\r\n");
+            //}
 
 
         }
@@ -389,9 +407,7 @@ namespace jasMIN.Net2TypeScript
                 }
                 else if(isNullableType)
                 {
-                    sb.AppendFormat(
-                        "{0}/** NULLABLE */\r\n",
-                        settings.tab + settings.tab);
+                    sb.AppendLine($"{settings.tab}{settings.tab}/** NULLABLE */");
                 }
 
                 sb.AppendFormat(

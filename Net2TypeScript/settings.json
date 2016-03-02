@@ -1,20 +1,22 @@
 ﻿{
-    "rootNamespace": "AdraMatch.Balancer.Model.Db",
-    "tab": "    ",
-    "enumType": "string",
-    "camelCase": true,
-    "definitelyTypedRelPath": "../../Scripts/typings/",
-    "useKnockout": true,
-    "useBreeze": true,
-    "globalExtensions": {
-        "isValid": "KnockoutObservable<boolean>"
-    },
-    "perTypeExtensions": {
-        "AccountsAndStatus": { 
-            "preparerIds":  "number[]",
-            "approverIds":  "number[]",
-            "reviewerIds":  "number[]"
-        }
-    },
-    "moduleName": "Model"
+  "assemblyPath": "C:\\_Git\\AdraMatch.Balancer\\Source\\AdraMatch.Balancer.Model\\bin\\Debug\\AdraMatch.Balancer.Model.dll",
+  "outputPath": "C:\\Users\\Jorn\\Desktop\\typings.d.ts",
+  "rootNamespace": "AdraMatch.Balancer.Model.Db",
+  "tab": "    ",
+  "enumType": "stringliteral",
+  "camelCase": true,
+  "definitelyTypedRelPath": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/App/typings/tsd",
+  "useKnockout": true,
+  "useBreeze": true,
+  "globalExtensions": {
+    "isValid": "KnockoutObservable<boolean>"
+  },
+  "perTypeExtensions": {
+    "AccountsAndStatus": {
+      "preparerIds": "number[]",
+      "approverIds": "number[]",
+      "reviewerIds": "number[]"
+    }
+  },
+  "moduleName": "Model"
 }
