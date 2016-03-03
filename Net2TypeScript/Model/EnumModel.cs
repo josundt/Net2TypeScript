@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -19,15 +20,11 @@ namespace jasMIN.Net2TypeScript.Model
 
         protected override int ExtraIndents => 1;
 
+        List<string> StringValues
+            => Type.GetMembers(BindingFlags.Public | BindingFlags.Static).Select(t => t.Name).ToList();
+
         string TsStringLiteralType
-        {
-            get
-            {
-                return string.Join("|", Type
-                                            .GetMembers(BindingFlags.Public | BindingFlags.Static)
-                                            .Select(m => $@"""{m.Name}"""));
-            }
-        }
+            => string.Join("|", StringValues.Select(s => $@"""{s}"""));
 
         public override void AppendTs(StringBuilder sb) {
 
@@ -74,6 +71,28 @@ namespace jasMIN.Net2TypeScript.Model
             //    sb.AppendLine("}\r\n");
             //}
 
+        }
+
+        public void AppendEnums(StringBuilder sb)
+        {
+            if (Settings.enumType == "stringliteral")
+            {
+                sb.AppendLine();
+
+                sb.AppendFormat(
+                    "{0}/** Enum: {1} ({2}) */\r\n",
+                    Indent,
+                    TsFullName,
+                    ClrTypeName);
+
+                sb.AppendLine($"{Indent}namespace {TsTypeName}Values {{");
+                foreach (var stringValue in StringValues)
+                {
+                    sb.AppendLine($@"{Indent}{Settings.tab}export const {stringValue}: {TsFullName} = ""{stringValue}"";");
+                }
+                sb.AppendLine($"{Indent}}}");
+
+            }
         }
     }
 }

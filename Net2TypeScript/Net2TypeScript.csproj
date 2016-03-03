@@ -76,6 +76,7 @@
     <Compile Include="Model\ClrTypeModelBase.cs" />
     <Compile Include="Model\ClassModel.cs" />
     <Compile Include="Model\EnumModel.cs" />
+    <Compile Include="Model\GeneratorResult.cs" />
     <Compile Include="Model\NameSpaceModel.cs" />
     <Compile Include="Model\PropertyModel.cs" />
     <Compile Include="Model\ExtensionMethods.cs" />

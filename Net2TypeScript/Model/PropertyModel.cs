@@ -44,12 +44,12 @@ namespace jasMIN.Net2TypeScript.Model
                         "{0}/** Enum{1}: {2} ({3}) */\r\n",
                         Indent,
                         IsNullableType ? " (NULLABLE)" : null,
-                        TsName,
+                        TsFullName,
                         ClrTypeName);
                 }
                 else if (IsNullableType)
                 {
-                    sb.AppendLine($"{Indent}/** NULLABLE */");
+                    sb.AppendLine($"{Indent}/** Nullable */");
                 }
 
                 sb.AppendLine(

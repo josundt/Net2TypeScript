@@ -21,9 +21,19 @@ namespace jasMIN.Net2TypeScript.Model
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        public static string GetTypeScriptNamespaceName(this Type type, Settings settings)
+        public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
         {
-            return (settings.tsRootNamespace + type.Namespace.Remove(0, settings.clrRootNamespace.Length));
+            var result = true;
+            try
+            {
+                outputString = (settings.tsRootNamespace + type.Namespace.Remove(0, settings.clrRootNamespace.Length));
+            }
+            catch(Exception ex)
+            {
+                result = false;
+                outputString = null;
+            }
+            return result;
         }
 
         //public static string GetRelativeNamespaceName(this Type propertyType, Type ownerType, Settings settings)
@@ -65,8 +75,13 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 if (settings.enumType == "enum" || settings.enumType == "stringliteral")
                 {
-                    var propertyTypeTsNs = propertyType.GetTypeScriptNamespaceName(settings);
-                    tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
+                    string propertyTypeTsNs;
+                    if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs)) {
+                        tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
+                    } else
+                    {
+                        tsType = "Object";
+                    }
                 }
                 else
                 {
@@ -83,14 +98,13 @@ namespace jasMIN.Net2TypeScript.Model
             }
             else if (propertyType.IsClass || propertyType.IsInterface)
             {
-                if (propertyType == typeof(Object))
-                {
-                    tsType = "Object";
+                string propertyTypeTsNs;
+                if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs)) {
+                    tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
                 }
                 else
                 {
-                    var propertyTypeTsNs = propertyType.GetTypeScriptNamespaceName(settings);
-                    tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
+                    tsType = "Object";
                 }
             }
 
