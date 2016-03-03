@@ -7,33 +7,39 @@ using System.Reflection;
 using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
+using jasMIN.Net2TypeScript.Model;
 
 namespace jasMIN.Net2TypeScript
 {
     internal class Program
     {
-        private static int Main(string[] args)
+        static int Main(string[] args)
         {
             int result = 0;
 
             Console.WriteLine("Converting .NET entities to TypeScript interfaces.");
 
-            try
-            {
+            //try
+            //{
                 var settings = GetSettingsFromJson();
                 MergeCmdArgsWithSettings(args, settings);
                 settings.Validate();
- 
-                var sb = new StringBuilder();
-                sb.AddRootNamespace(settings);
 
-                File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR: " + ex.Message);
-                result = -1;
-            }
+                var ts = TypeScriptGenerator.GenerateTypeScript(settings);
+
+                File.WriteAllText(settings.outputPath, ts, Encoding.UTF8);
+                
+                //var sb = new StringBuilder();
+                //sb.AddRootNamespace(settings);
+
+                //File.WriteAllText(settings.outputPath, sb.ToString(), Encoding.UTF8);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("ERROR: " + ex.Message);
+            //    result = -1;
+            //}
 
             if (Debugger.IsAttached)
             {
@@ -45,7 +51,7 @@ namespace jasMIN.Net2TypeScript
             return result;
         }
 
-        private static Settings GetSettingsFromJson()
+        static Settings GetSettingsFromJson()
         {
             string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
 
@@ -59,7 +65,7 @@ namespace jasMIN.Net2TypeScript
             return settings;
         }
 
-        private static void MergeCmdArgsWithSettings(string[] args, Settings settings)
+        static void MergeCmdArgsWithSettings(string[] args, Settings settings)
         {
             if (args.Length % 2 != 0)
             {
@@ -105,123 +111,9 @@ namespace jasMIN.Net2TypeScript
         }
     }
 
-    internal static class Extensions
+    static class StringBuilderExtension
     {
-        public static string ToCamelCase(this string str)
-        {
-            if (!string.IsNullOrEmpty(str))
-            {
-                str = str.Substring(0, 1).ToLowerInvariant() + str.Substring(1);
-            }
-            return str;
-        }
-
-        public static bool IsNumericType(this Type type)
-        {
-            return
-                type == typeof(short) ||
-                type == typeof(int) ||
-                type == typeof(long) ||
-                type == typeof(decimal) ||
-                type == typeof(float) ||
-                type == typeof(double);
-        }
-
-        public static bool IsNullableType(this Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>);
-        }
-
-        public static string GetTypeScriptTypeName(this Type propertyType, Settings settings, bool skipKnockoutObservableWrapper = false)
-        {
-            var isNullableType = propertyType.IsNullableType();
-            if (isNullableType)
-            {
-                propertyType = propertyType.GetGenericArguments()[0];
-            }
-
-            string tsType = "UNDEFINED";
-
-            if (IsNumericType(propertyType))
-            {
-                tsType = "number";
-            }
-            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTimeOffset))
-            {
-                tsType = "Date";
-            }
-            else if (propertyType == typeof(bool))
-            {
-                tsType = "boolean";
-            }
-            else if (propertyType == typeof(Guid) || propertyType == typeof(string))
-            {
-                tsType = "string";
-            }
-            else if (propertyType == typeof(byte[]) || propertyType == typeof(byte))
-            {
-                tsType = "string";
-            }
-            else if (propertyType.IsEnum)
-            {
-                if (settings.enumType == "enum" || settings.enumType == "stringliteral")
-                {
-                    tsType = $"Enums.{propertyType.Name}";
-                }
-                else 
-                {
-                    tsType = settings.enumType;
-                }
-            }
-            else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
-            {
-                tsType = string.Format(
-                    "{0}[]",
-                    propertyType.IsGenericType
-                        ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings)
-                        : "any");
-            }
-            else if (propertyType.IsClass || propertyType.IsInterface)
-            {
-                tsType = propertyType.Name;
-            }
-
-            if (settings.useKnockout && !skipKnockoutObservableWrapper)
-            {
-                if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
-                {
-                    tsType = string.Format(
-                        "KnockoutObservableArray<{0}>",
-                        propertyType.IsGenericType
-                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], settings, true)
-                            : "any");
-                }
-                else
-                {
-                    tsType = string.Format("KnockoutObservable<{0}>", tsType);
-                }
-            }
-
-            return tsType;
-        }
-
-        public static void Validate(this Settings settings)
-        {
-            // TODO: Validate that settings object has the expected properties
-
-            if (!File.Exists(settings.assemblyPath))
-            {
-                throw new FileNotFoundException(string.Format("Assembly '{0}' not found.", settings.assemblyPath));
-            }
-            var outputDir = Path.GetDirectoryName(settings.outputPath);
-            if (outputDir == null || !Directory.Exists(outputDir))
-            {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.outputPath));
-            }
-
-        }
-
-        private static void AddDefinitelyTypedReferences(this StringBuilder sb, Settings settings)
+        static void AddDefinitelyTypedReferences(this StringBuilder sb, Settings settings)
         {
             if (settings.useKnockout)
             {
@@ -237,13 +129,13 @@ namespace jasMIN.Net2TypeScript
         {
             sb.AddDefinitelyTypedReferences(settings);
 
-            sb.AppendLine($"declare namespace {settings.moduleName} {{");
+            sb.AppendLine($"declare namespace {settings.tsRootNamespace} {{");
 
             Assembly assembly = Assembly.LoadFrom(settings.assemblyPath);
             assembly.GetReferencedAssemblies();
 
             List<Type> classTypes = assembly.GetTypes()
-                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.rootNamespace, StringComparison.Ordinal))
+                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(settings.clrRootNamespace, StringComparison.Ordinal))
                 .ToList();
 
             classTypes.Sort(delegate(Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
@@ -284,7 +176,7 @@ namespace jasMIN.Net2TypeScript
 
             sb.AppendFormat("\r\n{0}/** Class: {1}.{2} ({3}) */\r\n", 
                 settings.tab, 
-                settings.moduleName, 
+                settings.tsRootNamespace, 
                 classType.Name, 
                 classType.FullName);
             
@@ -296,7 +188,7 @@ namespace jasMIN.Net2TypeScript
             // TODO: Filter non-public props
             foreach (PropertyInfo propertyInfo in classType.GetProperties())
             {
-                sb.AddProperty(propertyInfo, settings);
+                sb.AddProperty(propertyInfo, classType, settings);
             }
 
             if (settings.globalExtensions != null)
@@ -374,7 +266,7 @@ namespace jasMIN.Net2TypeScript
 
         }
 
-        private static void AddProperty(this StringBuilder sb, PropertyInfo propertyInfo, Settings settings)
+        static void AddProperty(this StringBuilder sb, PropertyInfo propertyInfo, Type ownerType, Settings settings)
         {
             Type propertyType = propertyInfo.PropertyType;
 
@@ -384,7 +276,7 @@ namespace jasMIN.Net2TypeScript
                 propertyType = propertyType.GetGenericArguments()[0];
             }
 
-            var typeScriptTypeName = propertyType.GetTypeScriptTypeName(settings);
+            var typeScriptTypeName = propertyType.GetTypeScriptTypeName(ownerType, settings);
 
             var faultyProperty = false;
 
@@ -405,7 +297,7 @@ namespace jasMIN.Net2TypeScript
                         propertyType.Name.ToCamelCase(),
                         propertyType.FullName);
                 }
-                else if(isNullableType)
+                else if (isNullableType)
                 {
                     sb.AppendLine($"{settings.tab}{settings.tab}/** NULLABLE */");
                 }
@@ -414,12 +306,12 @@ namespace jasMIN.Net2TypeScript
                     "{0}{1}: {2};\r\n",
                     settings.tab + settings.tab,
                     settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name,
-                    propertyType.GetTypeScriptTypeName(settings));
+                    propertyType.GetTypeScriptTypeName(ownerType, settings));
             }
 
         }
 
-        private static void AddExtensionProperty(this StringBuilder sb, KeyValuePair<string, object> prop, Settings settings)
+        static void AddExtensionProperty(this StringBuilder sb, KeyValuePair<string, object> prop, Settings settings)
         {
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();

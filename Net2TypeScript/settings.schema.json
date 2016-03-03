@@ -1,0 +1,98 @@
+﻿
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "JSON Schema for Net2TypeScript settings",
+  "type": "object",
+  "properties": {
+    "assemblyPath": {
+      "id": "assemblyPath",
+      "type": "string",
+      "description": "The physical path to the assembly (dll) containing the POCO objects."
+    },
+    "outputPath": {
+      "id": "outputPath",
+      "type": "string",
+      "description": "The physical path to the generated typings file."
+    },
+    "clrRootNamespace": {
+      "id": "clrRootNamespace",
+      "type": "string",
+      "default": null,
+      "description": "The root namespace in the CLR assembly. (CLR Types outside this namespace will be ignored)."
+    },
+    "tsRootNamespace": {
+      "id": "tsRootNamespace",
+      "type": "string",
+      "default": "Model"
+    },
+    "tab": {
+      "id": "tab",
+      "type": "string",
+      "default": "    ",
+      "description": ""
+    },
+    "enumType": {
+      "id": "enumType",
+      "type": "string",
+      "default": null
+    },
+    "camelCase": {
+      "id": "camelCase",
+      "type": "boolean",
+      "default": false
+    },
+    "definitelyTypedRelPath": {
+      "id": "definitelyTypedRelPath",
+      "type": "string",
+      "default": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/App/typings/tsd"
+    },
+    "useKnockout": {
+      "id": "useKnockout",
+      "type": "boolean",
+      "default": false
+    },
+    "useBreeze": {
+      "id": "useBreeze",
+      "type": "boolean",
+      "default": false
+    },
+    "globalExtensions": {
+      "id": "globalExtensions",
+      "type": "object",
+      "properties": {
+        "isValid": {
+          "id": "isValid",
+          "type": "string",
+          "default": "KnockoutObservable<boolean>"
+        }
+      }
+    },
+    "perTypeExtensions": {
+      "id": "perTypeExtensions",
+      "type": "object",
+      "properties": {
+        "AccountsAndStatus": {
+          "id": "AccountsAndStatus",
+          "type": "object",
+          "properties": {
+            "preparerIds": {
+              "id": "preparerIds",
+              "type": "string",
+              "default": "number[]"
+            },
+            "approverIds": {
+              "id": "approverIds",
+              "type": "string",
+              "default": "number[]"
+            },
+            "reviewerIds": {
+              "id": "reviewerIds",
+              "type": "string",
+              "default": "number[]"
+            }
+          }
+        }
+      }
+    }
+  }
+}

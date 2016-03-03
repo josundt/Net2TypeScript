@@ -1,7 +1,8 @@
 ﻿{
   "assemblyPath": "C:\\_Git\\AdraMatch.Balancer\\Source\\AdraMatch.Balancer.Model\\bin\\Debug\\AdraMatch.Balancer.Model.dll",
-  "outputPath": "C:\\Users\\Jorn\\Desktop\\typings.d.ts",
-  "rootNamespace": "AdraMatch.Balancer.Model.Db",
+  "outputPath": "C:\\Users\\JornAdra\\Desktop\\typings.d.ts",
+  "clrRootNamespace": "AdraMatch.Balancer.Model.Db",
+  "tsRootNamespace":  "Model",
   "tab": "    ",
   "enumType": "stringliteral",
   "camelCase": true,
@@ -17,6 +18,5 @@
       "approverIds": "number[]",
       "reviewerIds": "number[]"
     }
-  },
-  "moduleName": "Model"
+  }
 }
