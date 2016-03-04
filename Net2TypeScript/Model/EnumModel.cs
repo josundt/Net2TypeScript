@@ -34,11 +34,11 @@ namespace jasMIN.Net2TypeScript.Model
 
                 sb.AppendFormat(
                     "{0}/** Enum: {1} ({2}) */\r\n",
-                    Indent,
+                    IndentationContext,
                     TsFullName,
-                    ClrTypeName);
+                    ClrFullName);
 
-                sb.AppendLine($"{Indent}type {TsTypeName} = {TsStringLiteralType};");
+                sb.AppendLine($"{IndentationContext}type {TsTypeName} = {TsStringLiteralType};");
 
             }
 
@@ -81,16 +81,18 @@ namespace jasMIN.Net2TypeScript.Model
 
                 sb.AppendFormat(
                     "{0}/** Enum: {1} ({2}) */\r\n",
-                    Indent,
+                    IndentationContext,
                     TsFullName,
-                    ClrTypeName);
+                    ClrFullName);
 
-                sb.AppendLine($"{Indent}namespace {TsTypeName}Values {{");
+                sb.AppendLine($"{IndentationContext}export namespace {TsTypeName} {{");
+                sb.AppendLine($@"{IndentationContext}{Settings.indent}export namespace Values {{");
                 foreach (var stringValue in StringValues)
                 {
-                    sb.AppendLine($@"{Indent}{Settings.tab}export const {stringValue}: {TsFullName} = ""{stringValue}"";");
+                    sb.AppendLine($@"{IndentationContext}{Settings.indent}{Settings.indent}export const {stringValue}: {TsFullName} = ""{stringValue}"";");
                 }
-                sb.AppendLine($"{Indent}}}");
+                sb.AppendLine($@"{IndentationContext}{Settings.indent}}}");
+                sb.AppendLine($"{IndentationContext}}}");
 
             }
         }

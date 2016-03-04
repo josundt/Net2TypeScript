@@ -1,22 +1,33 @@
 ﻿{
-  "assemblyPath": "C:\\MyFolder\\AdraMatch.Amx.Model.dll",
-  "clrRootNamespace": "My.NameSpace",
+  "$schema": "settings.schema.json",
+  "assemblyPath": "C:\\_Git\\MySolution\\MyProject\\bin\\MyProject.dll",
+  "declarationsOutputPath": "C:\\_Git\\MySolution\\MyProject\\customtypings\\model.d.ts",
+  "modelModuleOutputPath": "C:\\_Git\\MySolution\\MyProject\\wwwroot\\model\\model.ts",
+  "clrRootNamespace": "MySolution.MyProject",
   "tsRootNamespace": "Model",
-  "tab": "    ",
-  "enumType": "string",
+  "classNamespaceFilter": [
+    "MySolution.MyProject.Namespace1",
+    "MySolution.MyProject.Namespace1.SubNamespace1",
+    "MySolution.MyProject.Namespace2"
+  ],
+  "indent": "    ",
+  "enumType": "stringliteral",
   "camelCase": true,
-  "definitelyTypedRelPath": "../Scripts/typings/",
+  "definitelyTypedRelPath": "C:\\_Git\\MySolution\\MyProject\\typings",
   "useKnockout": true,
   "useBreeze": true,
-  "outputPath": "C:\\MyFolder\\model.d.ts",
   "globalExtensions": {
     "isValid": "KnockoutObservable<boolean>"
   },
   "perTypeExtensions": {
-    "AccountsAndStatus": {
-      "preparerIds": "number[]",
-      "approverIds": "number[]",
-      "reviewerIds": "number[]"
+    "MyProjectMySolution.MyProject.Model.MyClass1": {
+      "fullName": "KnockoutComputed<string>"
+    },
+    "MyProjectMySolution.MyProject.Model.MyClass2": {
+      "price": "KnockoutComputed<number>"
+    },
+    "MyProjectMySolution.MyProject.Model.MyClass3": {
+      "prica": "KnockoutComputed<number>"
     }
   }
 }

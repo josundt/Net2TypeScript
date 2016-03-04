@@ -9,8 +9,8 @@ namespace jasMIN.Net2TypeScript.Model
             this.Settings = settings;
         }
         protected Settings Settings { get; set; }
-        protected abstract string Indent { get; }
-        protected string ClrTypeName { get; set; }
+        protected abstract string IndentationContext { get; }
+        protected string ClrFullName { get; set; }
         public abstract void AppendTs(StringBuilder sb);
     }
 }

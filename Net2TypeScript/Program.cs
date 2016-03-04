@@ -19,16 +19,21 @@ namespace jasMIN.Net2TypeScript
 
             Console.WriteLine("Converting .NET entities to TypeScript interfaces.");
 
-            //try
-            //{
+            try
+            {
                 var settings = TypeScriptGenerator.GetSettingsFromJson();
 
                 MergeCmdArgsWithSettings(args, settings);
                 var generatorResult = TypeScriptGenerator.GenerateTypeScript(settings);
 
                 File.WriteAllText(settings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
-                File.WriteAllText(settings.enumModelOutputPath, generatorResult.EnumModel, Encoding.UTF8);
-
+                File.WriteAllText(settings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+                result = -1;
+            }
 
             if (Debugger.IsAttached)
             {

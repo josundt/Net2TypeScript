@@ -1,16 +1,16 @@
 ﻿{
+  "$schema": "settings.schema.json",
   "assemblyPath": "C:\\_Git\\AdraMatch.Balancer\\Source\\AdraMatch.Balancer.Model\\bin\\Debug\\AdraMatch.Balancer.Model.dll",
-  "declarationsOutputPath": "C:\\Users\\Jorn\\Desktop\\model.d.ts",
-  "enumModelOutputPath": "C:\\Users\\Jorn\\Desktop\\model.ts",
+  "declarationsOutputPath": "C:\\Users\\JornAdra\\Desktop\\model.d.ts",
+  "modelModuleOutputPath": "C:\\Users\\JornAdra\\Desktop\\model.ts",
   "clrRootNamespace": "AdraMatch.Balancer.Model",
+  "tsRootNamespace": "Model",
   "classNamespaceFilter": [
     "AdraMatch.Balancer.Model.Db",
     "AdraMatch.Balancer.Model.Db.TempStorage",
     "AdraMatch.Balancer.Model.Db.Procedure"
   ],
-  "enumNamespaceFilter": null,
-  "tsRootNamespace": "Model",
-  "tab": "    ",
+  "indent": "    ",
   "enumType": "stringliteral",
   "camelCase": true,
   "definitelyTypedRelPath": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/App/typings/tsd",
@@ -20,10 +20,17 @@
     "isValid": "KnockoutObservable<boolean>"
   },
   "perTypeExtensions": {
-    "AccountsAndStatus": {
-      "preparerIds": "number[]",
-      "approverIds": "number[]",
-      "reviewerIds": "number[]"
+    "AdraMatch.Balancer.Model.Db.Operator": {
+      "fullName": "KnockoutComputed<string>"
+    },
+    "AdraMatch.Balancer.Model.Db.FiscalYearPeriod": {
+      "offsetDaysFromNow": "KnockoutComputed<number>"
+    },
+    "AdraMatch.Balancer.Model.Db.FiscalYear": {
+      "offsetYearsFromNow": "KnockoutComputed<number>"
+    },
+    "AdraMatch.Balancer.Model.Db.ClientSetting": {
+      "thresholdSettingObj": "KnockoutObservable<IThresholdSetting>"
     }
   }
 }

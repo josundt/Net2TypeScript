@@ -3,94 +3,107 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "JSON Schema for Net2TypeScript settings",
   "type": "object",
+  "required": [
+    "assemblyPath",
+    "declarationsOutputPath",
+    "modelModuleOutputPath",
+    "clrRootNamespace"
+  ],
   "properties": {
     "assemblyPath": {
-      "id": "assemblyPath",
       "type": "string",
       "description": "The physical path to the assembly (dll) containing the POCO objects."
     },
-    "outputPath": {
-      "id": "outputPath",
+    "declarationsOutputPath": {
       "type": "string",
-      "description": "The physical path to the generated typings file."
+      "description": "The physical path to the generated declarations/typings file."
+    },
+    "modelModuleOutputPath": {
+      "type": "string",
+      "description": "The physical path to the generated model module file."
     },
     "clrRootNamespace": {
-      "id": "clrRootNamespace",
       "type": "string",
-      "default": null,
       "description": "The root namespace in the CLR assembly. (CLR Types outside this namespace will be ignored)."
     },
     "tsRootNamespace": {
-      "id": "tsRootNamespace",
       "type": "string",
-      "default": "Model"
-    },
-    "tab": {
-      "id": "tab",
-      "type": "string",
-      "default": "    ",
-      "description": ""
+      "default": null,
+      "description": "(Optional). The namespace name for the output that replaces the clrRootNamespace. (F.ex. to have a shorter namespace in the TypeScript files)."
     },
     "enumType": {
       "id": "enumType",
       "type": "string",
-      "default": null
+      "default": "stringliteral",
+      "enum": [
+        "stringliteral",
+        "tsenum"
+      ],
+      "description": "(Optional, default \"stringliteral\". Specifies how .NET Enum types should be translated to TypeScript. \"stringliteral\" will translate into a string literal enumeration; \"tsenum\" will translate it into a typescript enum."
+    },
+    "classNamespaceFilter": {
+      "type": "array",
+      "default": null,
+      "description": "(Optional). If specified; only classes in the listed subnamespaces will be included in the output; otherwise all classes under clrRootNamespace will be included.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "enumNamespaceFilter": {
+      "type": "array",
+      "default": null,
+      "description": "(Optional). If specified; only Enums in the listed subnamespaces will be included in the output; otherwise all classes under clrRootNamespace will be included.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "indent": {
+      "type": "string",
+      "default": "    ",
+      "description": "(Optional). The string to use for indentation in the generated output (default; 4 space characters)."
     },
     "camelCase": {
       "id": "camelCase",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "(Optional). Whether or not to convert all property names to camelCase in the generated output."
     },
     "definitelyTypedRelPath": {
       "id": "definitelyTypedRelPath",
       "type": "string",
-      "default": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/App/typings/tsd"
+      "default": null,
+      "description": "Path to the definitely typed typings folder. If either \"useKnockout\" or \"useBreeze\" is true; types from the knockout/breeze typings will be referenced. This means a triple-slash reference will be required to reference these files."
     },
     "useKnockout": {
       "id": "useKnockout",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "(Optional). When true, all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T>. Typically used with knockout.mapping plugin or breeze.js"
     },
     "useBreeze": {
       "id": "useBreeze",
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "(Optional). When true, all class types X will be written as TS interfaces inheriting from breeze.Entity \"interface X extends breeze.entity { [...] }"
     },
     "globalExtensions": {
       "id": "globalExtensions",
       "type": "object",
-      "properties": {
-        "isValid": {
-          "id": "isValid",
-          "type": "string",
-          "default": "KnockoutObservable<boolean>"
-        }
+      "default": null,
+      "description": "(Optional). Enables adding extra properties to ALL generated TS entity interfaces that did not exist in the CLR class. key=propName; value=typeName",
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "perTypeExtensions": {
       "id": "perTypeExtensions",
       "type": "object",
-      "properties": {
-        "AccountsAndStatus": {
-          "id": "AccountsAndStatus",
-          "type": "object",
-          "properties": {
-            "preparerIds": {
-              "id": "preparerIds",
-              "type": "string",
-              "default": "number[]"
-            },
-            "approverIds": {
-              "id": "approverIds",
-              "type": "string",
-              "default": "number[]"
-            },
-            "reviewerIds": {
-              "id": "reviewerIds",
-              "type": "string",
-              "default": "number[]"
-            }
-          }
+      "default": "null",
+      "description": "(Optional). Enables adding extra properties to SPECIFICE generated TS entity interfaces that did not exist in the CLR class. key=FullClrClassName; value={ key=propName; value=typeName }",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
         }
       }
     }

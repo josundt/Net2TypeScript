@@ -15,23 +15,24 @@ namespace jasMIN.Net2TypeScript.Model
             this.PropInfo = propertyInfo;
             this.OwnerType = ownerType;
             this.IsNullableType = propertyInfo.PropertyType.IsNullableType();
-
-            if (TsTypeName == null)
-            {
-                Console.WriteLine("WARNING: Unconvertable type: {0}", Type.FullName);
-            }
         }
 
-        protected override string TsTypeName => Type.GetTypeScriptTypeName(this.OwnerType, Settings);
-                        
-        string TsName => Settings.camelCase ? PropInfo.Name.ToCamelCase() : PropInfo.Name;
+        protected override string TsTypeName => 
+            Type.GetTypeScriptTypeName(this.OwnerType, Settings);
 
-        protected override string Indent =>
-            string.Concat(Enumerable.Repeat(Settings.tab, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+        protected override string IndentationContext =>
+            string.Concat(Enumerable.Repeat(Settings.indent, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+
+        protected override int ExtraIndents => 
+            2;
+
+        string TsName =>
+            Settings.camelCase ? PropInfo.Name.ToCamelCase() : PropInfo.Name;
 
         PropertyInfo PropInfo { get; set; }
+
         Type OwnerType { get; set; }
-        protected override int ExtraIndents => 2;
+
         bool IsNullableType { get; set; }
 
         public override void AppendTs(StringBuilder sb)
@@ -42,18 +43,18 @@ namespace jasMIN.Net2TypeScript.Model
                 {
                     sb.AppendFormat(
                         "{0}/** Enum{1}: {2} ({3}) */\r\n",
-                        Indent,
+                        IndentationContext,
                         IsNullableType ? " (NULLABLE)" : null,
                         TsFullName,
-                        ClrTypeName);
+                        ClrFullName);
                 }
                 else if (IsNullableType)
                 {
-                    sb.AppendLine($"{Indent}/** Nullable */");
+                    sb.AppendLine($"{IndentationContext}/** Nullable */");
                 }
 
                 sb.AppendLine(
-                    $"{Indent}{TsName}: {TsTypeName};");
+                    $"{IndentationContext}{TsName}: {TsTypeName};");
             }
         }
     }

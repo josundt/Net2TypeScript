@@ -35,12 +35,12 @@ namespace jasMIN.Net2TypeScript.Model
         {
 
             sb.AppendFormat("\r\n{0}/** Class: {1} ({2}) */\r\n",
-                Indent,
+                IndentationContext,
                 TsFullName,
-                ClrTypeName);
+                ClrFullName);
 
             sb.AppendFormat("{0}interface {1}{2} {{\r\n",
-                Indent,
+                IndentationContext,
                 TsTypeName,
                 Settings.useBreeze ? " extends breeze.Entity" : string.Empty);
 
@@ -65,7 +65,7 @@ namespace jasMIN.Net2TypeScript.Model
                 foreach (KeyValuePair<string, object> typeExtensionProp in Settings.perTypeExtensions)
                 {
                     var targetClassType = typeExtensionProp.ToString().Substring(1, typeExtensionProp.ToString().Length - 2).Split(',')[0].Trim();
-                    if (Type.Name.Equals(targetClassType))
+                    if (Type.FullName.Equals(targetClassType))
                     {
                         foreach (var prop in (Dictionary<string, object>)typeExtensionProp.Value)
                         {
@@ -75,7 +75,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
             }
 
-            sb.AppendLine($"{Indent}}}");
+            sb.AppendLine($"{IndentationContext}}}");
         }
 
         void AppendExtensionProperty(StringBuilder sb, KeyValuePair<string, object> prop, Settings settings)
@@ -84,7 +84,7 @@ namespace jasMIN.Net2TypeScript.Model
             var tsTypeName = prop.Value.ToString();
 
             sb.AppendFormat("{0}{1}: {2};\r\n",
-                            Indent + settings.tab,
+                            IndentationContext + settings.indent,
                             tsPropName,
                             tsTypeName);
         }

@@ -57,10 +57,10 @@ namespace jasMIN.Net2TypeScript
                 throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.declarationsOutputPath));
             }
 
-            var enumModelOutputDir = Path.GetDirectoryName(settings.enumModelOutputPath);
+            var enumModelOutputDir = Path.GetDirectoryName(settings.modelModuleOutputPath);
             if (enumModelOutputDir == null || !Directory.Exists(enumModelOutputDir))
             {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.enumModelOutputPath));
+                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.modelModuleOutputPath));
             }
 
         }

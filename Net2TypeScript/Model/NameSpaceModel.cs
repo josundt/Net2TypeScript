@@ -12,7 +12,7 @@ namespace jasMIN.Net2TypeScript.Model
         public NameSpaceModel(Settings settings, string name)
             : base(settings)
         {
-            this.ClrTypeName = name;
+            this.ClrFullName = name;
             this.Entities = new List<ClassModel>();
             this.Enums = new List<EnumModel>();
             this.ChildNamespaces = new List<NameSpaceModel>();
@@ -20,23 +20,23 @@ namespace jasMIN.Net2TypeScript.Model
             Initialize();
         }
 
-        protected override string Indent =>
-                string.Concat(Enumerable.Repeat(Settings.tab, ClrTypeName.Split('.').Length - Settings.clrRootNamespace.Split('.').Length));
+        protected override string IndentationContext =>
+                string.Concat(Enumerable.Repeat(Settings.indent, ClrFullName.Split('.').Length - Settings.clrRootNamespace.Split('.').Length));
 
         bool IsRoot => 
-            Settings.clrRootNamespace == this.ClrTypeName;
+            Settings.clrRootNamespace == this.ClrFullName;
 
         string TsName => 
-            (Settings.tsRootNamespace + ClrTypeName.Remove(0, Settings.clrRootNamespace.Length)).Split('.').Last();
+            (Settings.tsRootNamespace + ClrFullName.Remove(0, Settings.clrRootNamespace.Length)).Split('.').Last();
 
         string TsFullName => 
-            (Settings.tsRootNamespace + ClrTypeName.Remove(0, Settings.clrRootNamespace.Length));
+            (Settings.tsRootNamespace + ClrFullName.Remove(0, Settings.clrRootNamespace.Length));
 
         bool IncludeClasses => 
-            Settings.classNamespaceFilter == null || Settings.classNamespaceFilter.Contains(ClrTypeName);
+            Settings.classNamespaceFilter == null || Settings.classNamespaceFilter.Contains(ClrFullName);
 
         bool IncludeEnums => 
-            Settings.enumNamespaceFilter == null || Settings.enumNamespaceFilter.Contains(ClrTypeName);
+            Settings.enumNamespaceFilter == null || Settings.enumNamespaceFilter.Contains(ClrFullName);
 
         bool IsEmpty =>
             Entities.Count + Enums.Count == 0 && ChildNamespaces.All(ns => ns.IsEmpty);
@@ -44,9 +44,10 @@ namespace jasMIN.Net2TypeScript.Model
         bool ContainsEnums =>
             Enums.Count > 0 || ChildNamespaces.Any(ns => ns.ContainsEnums);
 
-
         List<ClassModel> Entities { get; set; }
+
         List<EnumModel> Enums { get; set; }
+
         List<NameSpaceModel> ChildNamespaces { get; set; }
 
         void Initialize()
@@ -56,17 +57,17 @@ namespace jasMIN.Net2TypeScript.Model
 
             // Processing entities (class types)
             var allClassTypes = assembly.GetTypes()
-                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(ClrTypeName, StringComparison.Ordinal))
+                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
             // Processing enums
             var allEnumTypes = assembly.GetTypes()
-                .Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(ClrTypeName, StringComparison.Ordinal))
+                .Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
             if(IncludeClasses)
             {
-                var nsClassTypes = allClassTypes.Where(t => t.Namespace == ClrTypeName).ToList();
+                var nsClassTypes = allClassTypes.Where(t => t.Namespace == ClrFullName).ToList();
                 nsClassTypes.Sort(delegate (Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
                 foreach (var classType in nsClassTypes)
@@ -78,7 +79,7 @@ namespace jasMIN.Net2TypeScript.Model
 
             if (IncludeEnums)
             {
-                var nsEnumTypes = allEnumTypes.Where(t => t.Namespace == ClrTypeName).ToList();
+                var nsEnumTypes = allEnumTypes.Where(t => t.Namespace == ClrFullName).ToList();
                 nsEnumTypes.Sort(delegate (Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
                 foreach (var enumType in nsEnumTypes)
@@ -89,7 +90,7 @@ namespace jasMIN.Net2TypeScript.Model
 
             // Processing direct child namespaces
             var allNamespaces = allClassTypes.Select(t => t.Namespace).Concat(allEnumTypes.Select(t => t.Namespace)).Distinct();
-            var childNamespaces = allNamespaces.Where(ns => ns.Remove(0, ClrTypeName.Length).Split('.').Length == 2).ToList();
+            var childNamespaces = allNamespaces.Where(ns => ns.Remove(0, ClrFullName.Length).Split('.').Length == 2).ToList();
 
             foreach (var childNamespace in childNamespaces)
             {
@@ -117,7 +118,7 @@ namespace jasMIN.Net2TypeScript.Model
                 sb.AppendLine();
 
                 var possiblyDeclare = IsRoot ? "declare " : "";
-                sb.AppendLine($"{Indent}{possiblyDeclare}namespace {TsName} {{");
+                sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
 
                 foreach (var entity in this.Entities)
                 {
@@ -135,7 +136,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
 
                 sb.AppendLine();
-                sb.AppendLine($"{Indent}}}");
+                sb.AppendLine($"{IndentationContext}}}");
 
             }
 
@@ -146,9 +147,18 @@ namespace jasMIN.Net2TypeScript.Model
 
             if (ContainsEnums)
             {
+
+
                 sb.AppendLine();
 
-                sb.AppendLine($"{Indent}namespace {TsName} {{");
+                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
+
+                sb.AppendLine();
+
+                var possiblyExport = IsRoot ? string.Empty : "export";
+                var namespaceName = IsRoot ? $"{TsName}Enums" : TsName;
+
+                sb.AppendLine($"{IndentationContext}{possiblyExport} namespace {namespaceName} {{");
 
                 foreach (var enumModel in this.Enums)
                 {
@@ -161,7 +171,13 @@ namespace jasMIN.Net2TypeScript.Model
                 }
 
                 sb.AppendLine();
-                sb.AppendLine($"{Indent}}}");
+                sb.AppendLine($"{IndentationContext}}}");
+
+                if (IsRoot)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine($"{IndentationContext}export let {TsName} = {namespaceName};");
+                }
 
             }
         }
