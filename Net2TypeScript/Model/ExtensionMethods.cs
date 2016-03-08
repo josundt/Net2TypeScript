@@ -141,7 +141,7 @@ namespace jasMIN.Net2TypeScript.Model
             return str;
         }
    
-        public static string GetRelativePathTo(this string absPath, string relTo)
+        public static string GetRelativePathTo(this string absPath, string relTo, bool backSlash = false)
         {
             absPath = Path.GetDirectoryName(absPath);
 
@@ -164,7 +164,7 @@ namespace jasMIN.Net2TypeScript.Model
                 throw new ArgumentException("Paths do not have a common base");
             }
             // Build up the relative path 
-            StringBuilder relativePath = new StringBuilder();
+            var relativePath = new StringBuilder();
             // Add on the .. 
             for (index = lastCommonRoot + 1; index < absDirs.Length; index++)
             {
@@ -176,7 +176,14 @@ namespace jasMIN.Net2TypeScript.Model
                 relativePath.Append(relDirs[index] + "\\");
             }
             relativePath.Append(relDirs[relDirs.Length - 1]);
-            return relativePath.ToString();
+
+            var result = relativePath.ToString();
+            if(!backSlash)
+            {
+                result = result.Replace("\\", "/");
+            }
+
+            return result;
         }
     }
 }
