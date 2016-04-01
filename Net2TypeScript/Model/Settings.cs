@@ -3,6 +3,12 @@ using System.IO;
 
 namespace jasMIN.Net2TypeScript.Model
 {
+    public class TypingsPaths
+    {
+        public string knockout { get; set; }
+        public string breeze { get; set; } 
+    }
+
     public class Settings
     {
         public Settings()
@@ -10,7 +16,6 @@ namespace jasMIN.Net2TypeScript.Model
             // Initializing default values
             this.indent = "    ";
             this.enumType = "stringliteral";
-            this.definitelyTypedRelPath = @"..\typings\";
             this.tsRootNamespace = this.clrRootNamespace;
         }
         public string assemblyPath { get; set; }
@@ -23,7 +28,7 @@ namespace jasMIN.Net2TypeScript.Model
         public List<string> enumNamespaceFilter { get; set; }
         public string indent { get; set; }
         public bool camelCase { get; set; }
-        public string definitelyTypedRelPath { get; set; }
+        public TypingsPaths typingsPaths { get; set; }
         public bool useKnockout { get; set; }
         public bool useBreeze { get; set; }
         public dynamic globalExtensions { get; set; }

@@ -104,11 +104,19 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 if (Settings.useKnockout)
                 {
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(Settings.definitelyTypedRelPath, "knockout/knockout.d.ts").Replace("\\", "/"));
+                    if(Settings.typingsPaths == null || Settings.typingsPaths.knockout == null)
+                    {
+                        throw new ConfigurationErrorsException("When useKnockout is set to true, typingsPaths.knockout must be specified.");
+                    }
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.knockout);
                 }
                 if (Settings.useBreeze)
                 {
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(Settings.definitelyTypedRelPath, "breeze/breeze.d.ts").Replace("\\", "/"));
+                    if (Settings.typingsPaths == null || Settings.typingsPaths.breeze == null)
+                    {
+                        throw new ConfigurationErrorsException("When useBreeze is set to true, typingsPaths.breeze must be specified.");
+                    }
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.breeze);
                 }
             }
 
