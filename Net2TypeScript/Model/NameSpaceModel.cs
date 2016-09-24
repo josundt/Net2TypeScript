@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -104,11 +105,19 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 if (Settings.useKnockout)
                 {
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(Settings.definitelyTypedRelPath, "knockout/knockout.d.ts"));
+                    if (Settings.typingsPaths == null || Settings.typingsPaths.knockout == null)
+                    {
+                        throw new ConfigurationErrorsException("When useKnockout is set to true, typingsPaths.knockout must be specified.");
+                    }
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.knockout);
                 }
                 if (Settings.useBreeze)
                 {
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Path.Combine(Settings.definitelyTypedRelPath, "breeze/breeze.d.ts"));
+                    if (Settings.typingsPaths == null || Settings.typingsPaths.breeze == null)
+                    {
+                        throw new ConfigurationErrorsException("When useBreeze is set to true, typingsPaths.breeze must be specified.");
+                    }
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.breeze);
                 }
             }
 
@@ -151,9 +160,13 @@ namespace jasMIN.Net2TypeScript.Model
 
                 sb.AppendLine();
 
-                sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
-
-                sb.AppendLine();
+                if (IsRoot)
+                {
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
+                    sb.AppendLine();
+                    sb.AppendLine("/* tslint:disable:variable-name */");
+                    sb.AppendLine();
+                }
 
                 var possiblyExport = IsRoot ? string.Empty : "export";
                 var namespaceName = IsRoot ? $"{TsName}Enums" : TsName;
@@ -177,6 +190,9 @@ namespace jasMIN.Net2TypeScript.Model
                 {
                     sb.AppendLine();
                     sb.AppendLine($"{IndentationContext}export let {TsName} = {namespaceName};");
+
+                    sb.AppendLine();
+                    sb.AppendLine("/* tslint:enable:variable-name */");
                 }
 
             }

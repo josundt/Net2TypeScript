@@ -74,11 +74,23 @@
       "default": "false",
       "description": "(Optional). Requires TypeScript 2.0. Generates reference types and nullable types like \"number | null\""
     },
-    "definitelyTypedRelPath": {
-      "id": "definitelyTypedRelPath",
-      "type": "string",
+    "typingsPaths": {
+      "id": "typingsPaths",
+      "type": "object",
       "default": null,
-      "description": "Path to the definitely typed typings folder. If either \"useKnockout\" or \"useBreeze\" is true; types from the knockout/breeze typings will be referenced. This means a triple-slash reference will be required to reference these files."
+      "description": "Path to the definitely typed typings files; required when useKnockout or useBreeze is true.",
+      "properties": {
+        "knockout": {
+          "id": "knocout",
+          "type": "string",
+          "description": "Path to the definitely typed typings file for knockout."
+        },
+        "breeze": {
+          "id": "breeze",
+          "type": "string",
+          "description": "Path to the definitely typed typings file for breeze."
+        }
+      }
     },
     "useKnockout": {
       "id": "useKnockout",
