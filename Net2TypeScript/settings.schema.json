@@ -68,6 +68,12 @@
       "default": false,
       "description": "(Optional). Whether or not to convert all property names to camelCase in the generated output."
     },
+    "strictNullChecks": {
+      "id": "strictNullChecks",
+      "type": "boolean",
+      "default": "false",
+      "description": "(Optional). Requires TypeScript 2.0. Generates reference types and nullable types like \"number | null\""
+    },
     "definitelyTypedRelPath": {
       "id": "definitelyTypedRelPath",
       "type": "string",

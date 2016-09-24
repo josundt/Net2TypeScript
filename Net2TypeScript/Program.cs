@@ -24,6 +24,9 @@ namespace jasMIN.Net2TypeScript
                 var settings = TypeScriptGenerator.GetSettingsFromJson();
 
                 MergeCmdArgsWithSettings(args, settings);
+
+                TypeScriptGenerator.ValidateSettings(settings);
+
                 var generatorResult = TypeScriptGenerator.GenerateTypeScript(settings);
 
                 File.WriteAllText(settings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);

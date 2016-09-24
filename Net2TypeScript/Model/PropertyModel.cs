@@ -18,7 +18,7 @@ namespace jasMIN.Net2TypeScript.Model
         }
 
         protected override string TsTypeName => 
-            Type.GetTypeScriptTypeName(this.OwnerType, Settings);
+            Type.GetTypeScriptTypeName(this.IsNullableType, this.OwnerType, Settings);
 
         protected override string IndentationContext =>
             string.Concat(Enumerable.Repeat(Settings.indent, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));

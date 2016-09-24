@@ -16,6 +16,7 @@
   "definitelyTypedRelPath": "C:\\_Git\\MySolution\\MyProject\\typings",
   "useKnockout": true,
   "useBreeze": true,
+  "strictNullChecks": true,
   "globalExtensions": {
     "isValid": "KnockoutObservable<boolean>"
   },

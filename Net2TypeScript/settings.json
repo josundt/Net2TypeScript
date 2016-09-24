@@ -13,6 +13,7 @@
   "indent": "    ",
   "enumType": "stringliteral",
   "camelCase": true,
+  "strictNullChecks": true,
   "definitelyTypedRelPath": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/App/typings/tsd",
   "useKnockout": true,
   "useBreeze": true,

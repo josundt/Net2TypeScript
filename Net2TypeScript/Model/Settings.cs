@@ -23,6 +23,7 @@ namespace jasMIN.Net2TypeScript.Model
         public List<string> enumNamespaceFilter { get; set; }
         public string indent { get; set; }
         public bool camelCase { get; set; }
+        public bool strictNullChecks { get; set; }
         public string definitelyTypedRelPath { get; set; }
         public bool useKnockout { get; set; }
         public bool useBreeze { get; set; }

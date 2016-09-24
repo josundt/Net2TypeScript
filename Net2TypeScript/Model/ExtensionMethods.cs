@@ -43,44 +43,69 @@ namespace jasMIN.Net2TypeScript.Model
         //    return propertyType.GetTypeScriptNamespaceName(settings);
         //}
 
-        public static string GetTypeScriptTypeName(this Type propertyType, Type ownerType, Settings settings, bool skipKnockoutObservableWrapper = false)
+        public static string GetTypeScriptTypeName(this Type propertyType, bool isNullableType, Type ownerType, Settings settings, bool skipKnockoutObservableWrapper = false)
         {
-            var isNullableType = propertyType.IsNullableType();
-            if (isNullableType)
+            if (propertyType.IsNullableType())
             {
-                propertyType = propertyType.GetGenericArguments()[0];
+                throw new Exception("Nullable types should be unwrapped before this point");
             }
+            //if (isNullableType)
+            //{
+            //    propertyType = propertyType.GetGenericArguments()[0];
+            //}
 
             string tsType = null;
 
             if (IsNumericType(propertyType))
             {
                 tsType = "number";
+                if (settings.strictNullChecks && isNullableType)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTimeOffset))
             {
                 tsType = "Date";
+                if (settings.strictNullChecks && isNullableType)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType == typeof(bool))
             {
                 tsType = "boolean";
+                if (settings.strictNullChecks && isNullableType)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType == typeof(Guid) || propertyType == typeof(string))
             {
                 tsType = "string";
+                if (settings.strictNullChecks)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType == typeof(byte[]) || propertyType == typeof(byte))
             {
                 tsType = "string";
+                if (settings.strictNullChecks && isNullableType)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType.IsEnum)
             {
                 if (settings.enumType == "enum" || settings.enumType == "stringliteral")
                 {
                     string propertyTypeTsNs;
-                    if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs)) {
+                    if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
+                    {
                         tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
-                    } else
+                    }
+                    else
                     {
                         tsType = "Object";
                     }
@@ -89,24 +114,47 @@ namespace jasMIN.Net2TypeScript.Model
                 {
                     tsType = settings.enumType;
                 }
+
+                if (settings.strictNullChecks && isNullableType)
+                {
+                    tsType += " | null";
+
+                }
+
             }
             else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
             {
+                var itemType = propertyType.GenericTypeArguments[0];
+                var itemTypeIsNullable = itemType.IsNullableType();
+                if (itemTypeIsNullable)
+                {
+                    itemType = itemType.GetGenericArguments()[0];
+                }
+
                 tsType = string.Format(
                     "{0}[]",
                     propertyType.IsGenericType
-                        ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], ownerType, settings)
+                        ? GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings)
                         : "any");
+                if (settings.strictNullChecks)
+                {
+                    tsType += " | null";
+                }
             }
             else if (propertyType.IsClass || propertyType.IsInterface)
             {
                 string propertyTypeTsNs;
-                if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs)) {
+                if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
+                {
                     tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
                 }
                 else
                 {
                     tsType = "Object";
+                }
+                if (settings.strictNullChecks)
+                {
+                    tsType += " | null";
                 }
             }
 
@@ -114,10 +162,11 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
                 {
+                    var itemType = propertyType.GenericTypeArguments[0];
                     tsType = string.Format(
                         "KnockoutObservableArray<{0}>",
                         propertyType.IsGenericType
-                            ? GetTypeScriptTypeName(propertyType.GenericTypeArguments[0], ownerType, settings, true)
+                            ? GetTypeScriptTypeName(itemType, false, ownerType, settings, true)
                             : "any");
                 }
                 else

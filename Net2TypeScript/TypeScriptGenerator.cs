@@ -37,8 +37,6 @@ namespace jasMIN.Net2TypeScript
             var deserializer = new JavaScriptSerializer();
             var settings = (Settings)deserializer.Deserialize(jsonSettings, typeof(Settings));
 
-            ValidateSettings(settings);
-
             return settings;
         }
 
