@@ -124,7 +124,7 @@ namespace jasMIN.Net2TypeScript.Model
             }
             else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
             {
-                var itemType = propertyType.GenericTypeArguments[0];
+                var itemType = propertyType.HasElementType ? propertyType.GetElementType() : propertyType.GenericTypeArguments[0];
                 var itemTypeIsNullable = itemType.IsNullableType();
                 if (itemTypeIsNullable)
                 {
@@ -162,7 +162,7 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
                 {
-                    var itemType = propertyType.GenericTypeArguments[0];
+                    var itemType = propertyType.HasElementType ? propertyType.GetElementType() : propertyType.GenericTypeArguments[0];
                     tsType = string.Format(
                         "KnockoutObservableArray<{0}>",
                         propertyType.IsGenericType

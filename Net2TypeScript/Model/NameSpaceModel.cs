@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -53,16 +54,18 @@ namespace jasMIN.Net2TypeScript.Model
 
         void Initialize()
         {
+
             Assembly assembly = Assembly.LoadFrom(Settings.assemblyPath);
-            assembly.GetReferencedAssemblies();
+            var refs = assembly.GetReferencedAssemblies();
+
 
             // Processing entities (class types)
-            var allClassTypes = assembly.GetTypes()
+            var allClassTypes = GetTypes(assembly)
                 .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
             // Processing enums
-            var allEnumTypes = assembly.GetTypes()
+            var allEnumTypes = GetTypes(assembly)
                 .Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
@@ -97,6 +100,21 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 this.ChildNamespaces.Add(new NameSpaceModel(Settings, childNamespace));
             }
+        }
+
+        Type[] GetTypes(Assembly assembly)
+        {
+            Type[] types;
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch(ReflectionTypeLoadException e)
+            {
+                types = e.Types;
+            }
+            return types.Where(t => t != null).ToArray();
+
         }
 
         public override void AppendTs(StringBuilder sb)

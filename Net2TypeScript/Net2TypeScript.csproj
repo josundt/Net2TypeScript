@@ -48,22 +48,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>7A24613C0F7550F7D98459325BDD3BA0D64311BE</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>Net2TypeScript_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -93,6 +77,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="settings.api.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="settings.schema.json">

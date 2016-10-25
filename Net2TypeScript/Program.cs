@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Text;
-using System.Web.Script.Serialization;
 using jasMIN.Net2TypeScript.Model;
+using System.Collections.Generic;
 
 namespace jasMIN.Net2TypeScript
 {
@@ -21,16 +19,29 @@ namespace jasMIN.Net2TypeScript
 
             try
             {
-                var settings = TypeScriptGenerator.GetSettingsFromJson();
+                var settingsMap = ArgsToDictionary(args);
 
-                MergeCmdArgsWithSettings(args, settings);
+                string settingsFile = null;
+                if (settingsMap.ContainsKey("settings")) {
+                    settingsFile = settingsMap["settings"];
+                    settingsMap.Remove("settings");
+                }
+                var settings = TypeScriptGenerator.GetSettingsFromJson(settingsFile);
+
+                MergeCmdArgsWithSettings(settingsMap, settings);
 
                 TypeScriptGenerator.ValidateSettings(settings);
 
                 var generatorResult = TypeScriptGenerator.GenerateTypeScript(settings);
 
-                File.WriteAllText(settings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
-                File.WriteAllText(settings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
+                if (!string.IsNullOrEmpty(generatorResult.Declarations))
+                {
+                    File.WriteAllText(settings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
+                }
+                if (!string.IsNullOrEmpty(generatorResult.EnumModel))
+                {
+                    File.WriteAllText(settings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
+                }
             }
             catch (Exception ex)
             {
@@ -48,8 +59,10 @@ namespace jasMIN.Net2TypeScript
             return result;
         }
 
-        static void MergeCmdArgsWithSettings(string[] args, Settings settings)
+        static Dictionary<string, string> ArgsToDictionary(string[] args)
         {
+            var dict = new Dictionary<string, string>();
+
             if (args.Length % 2 != 0)
             {
                 throw new ArgumentException("Wrong command line arguments.");
@@ -62,22 +75,30 @@ namespace jasMIN.Net2TypeScript
                     throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", args[i]));
                 }
 
-                string settingsProp = args[i].Substring(2);
+                dict.Add(args[i].Substring(2), args[i + 1]);
+            }
 
-                PropertyInfo propInfo = typeof(Settings).GetProperties().SingleOrDefault(pi => pi.Name == settingsProp);
+            return dict;
+        }
+
+        static void MergeCmdArgsWithSettings(Dictionary<string, string> settingsMap, Settings settings)
+        {
+            foreach (var kvp in settingsMap)
+            {
+                PropertyInfo propInfo = typeof(Settings).GetProperties().SingleOrDefault(pi => pi.Name == kvp.Key);
 
                 if (propInfo == null)
                 {
-                    throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", args[i]));
+                    throw new ArgumentException(string.Format("Unknown command line argument: '{0}'", kvp.Key));
                 }
                 else
                 {
                     if (propInfo.PropertyType == typeof(bool?) || propInfo.PropertyType == typeof(bool))
                     {
                         bool boolValue = false;
-                        if (!bool.TryParse(args[i + 1], out boolValue))
+                        if (!bool.TryParse(kvp.Value, out boolValue))
                         {
-                            throw new ArgumentException(string.Format("Not a boolean value: '{0}'", args[i + 1]));
+                            throw new ArgumentException(string.Format("Not a boolean value: '{0}'", kvp.Value));
                         }
                         else
                         {
@@ -86,7 +107,7 @@ namespace jasMIN.Net2TypeScript
                     }
                     else if (propInfo.PropertyType == typeof(string))
                     {
-                        propInfo.SetValue(settings, args[i + 1]);
+                        propInfo.SetValue(settings, kvp.Value);
                     }
                 }
 

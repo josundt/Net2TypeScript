@@ -1,8 +1,8 @@
 ﻿{
   "$schema": "settings.schema.json",
   "assemblyPath": "C:\\_Git\\AdraMatch.Balancer\\Source\\AdraMatch.Balancer.Model\\bin\\Debug\\AdraMatch.Balancer.Model.dll",
-  "declarationsOutputPath": "C:\\Users\\JornAdra\\Desktop\\model.d.ts",
-  "modelModuleOutputPath": "C:\\Users\\JornAdra\\Desktop\\model.ts",
+  "declarationsOutputPath": "C:\\Users\\Jorn.Andre.Sundt\\Desktop\\model.d.ts",
+  "modelModuleOutputPath": "C:\\Users\\Jorn.Andre.Sundt\\Desktop\\model.ts",
   "clrRootNamespace": "AdraMatch.Balancer.Model",
   "tsRootNamespace": "Model",
   "classNamespaceFilter": [

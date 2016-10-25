@@ -24,9 +24,17 @@ namespace jasMIN.Net2TypeScript
 
         public static Settings GetSettingsFromJson(string settingsPath = null)
         {
-            settingsPath = settingsPath ?? Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
+            var cwd = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            if (settingsPath == null)
+            {
+                settingsPath = Path.Combine(cwd, "settings.json");
+            }
+            else if (!settingsPath.Contains(@"\")) // If filename only
+            {
+                settingsPath = Path.Combine(cwd, settingsPath);
+            }
 
-            if (!File.Exists(settingsPath)) { throw new FileNotFoundException("Settings file ('settings.json') not found."); }
+            if (!File.Exists(settingsPath)) { throw new FileNotFoundException($@"Settings file ""{settingsPath}"" not found."); }
 
             string jsonSettings = File.ReadAllText(settingsPath, Encoding.UTF8);
 
