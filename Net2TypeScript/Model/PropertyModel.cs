@@ -7,10 +7,10 @@ namespace jasMIN.Net2TypeScript.Model
 {
     class PropertyModel : ClrTypeModelBase
     {
-        public PropertyModel(Settings settings, PropertyInfo propertyInfo, Type ownerType)
+        public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo, Type ownerType)
             : base(
                   propertyInfo.PropertyType.IsNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType, 
-                  settings)
+                  globalSettings)
         {
             this.PropInfo = propertyInfo;
             this.OwnerType = ownerType;
@@ -31,7 +31,7 @@ namespace jasMIN.Net2TypeScript.Model
 
         PropertyInfo PropInfo { get; set; }
 
-        Type OwnerType { get; set; }
+        public Type OwnerType { get; private set; }
 
         bool IsNullableType { get; set; }
 

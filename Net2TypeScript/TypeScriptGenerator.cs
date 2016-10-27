@@ -1,5 +1,6 @@
 ﻿using jasMIN.Net2TypeScript.Model;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web.Script.Serialization;
@@ -8,10 +9,9 @@ namespace jasMIN.Net2TypeScript
 {
     static class TypeScriptGenerator
     {
-        public static GeneratorResult GenerateTypeScript(Settings settings = null)
+        public static GeneratorResult GenerateTypeScript(GlobalSettings globalSettings)
         {
-            settings = settings ?? GetSettingsFromJson();
-            var ns = new NameSpaceModel(settings, settings.clrRootNamespace);
+            var ns = new NamespaceModel(globalSettings, globalSettings.clrRootNamespace);
             var sbDeclarations = new StringBuilder();
             var sbEnums = new StringBuilder();
             ns.AppendTs(sbDeclarations);
@@ -22,35 +22,29 @@ namespace jasMIN.Net2TypeScript
             };
         }
 
-        public static Settings GetSettingsFromJson(string settingsPath = null)
+        public static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
         {
-            var cwd = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            if (settingsPath == null)
-            {
-                settingsPath = Path.Combine(cwd, "settings.json");
-            }
-            else if (!settingsPath.Contains(@"\")) // If filename only
-            {
-                settingsPath = Path.Combine(cwd, settingsPath);
-            }
-
             if (!File.Exists(settingsPath)) { throw new FileNotFoundException($@"Settings file ""{settingsPath}"" not found."); }
 
             string jsonSettings = File.ReadAllText(settingsPath, Encoding.UTF8);
 
             var deserializer = new JavaScriptSerializer();
-            var settings = (Settings)deserializer.Deserialize(jsonSettings, typeof(Settings));
+            var settings = (GlobalSettings)deserializer.Deserialize(jsonSettings, typeof(GlobalSettings));
 
             return settings;
         }
 
-        public static void ValidateSettings(Settings settings)
+        public static void NormalizeAndValidateSettings(Settings settings, string cwd)
         {
             // TODO: Validate that settings object has the expected properties
 
-            if (!File.Exists(settings.assemblyPath))
+            settings.assemblyPaths = settings.assemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
+            settings.declarationsOutputPath = ResolvePath(settings.declarationsOutputPath, cwd);
+            settings.modelModuleOutputPath = ResolvePath(settings.modelModuleOutputPath, cwd);
+
+            if (settings.assemblyPaths.Any(ap => !File.Exists(ap)))
             {
-                throw new FileNotFoundException(string.Format("Assembly '{0}' not found.", settings.assemblyPath));
+                throw new FileNotFoundException("Some of the specified assemblies could not be found.");
             }
 
             var declarationsOutputDir = Path.GetDirectoryName(settings.declarationsOutputPath);
@@ -65,6 +59,17 @@ namespace jasMIN.Net2TypeScript
                 throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.modelModuleOutputPath));
             }
 
+        }
+
+        static string ResolvePath(string path, string cwd)
+        {
+            path = path.Replace("/", "\\");
+
+            if (!Path.IsPathRooted(path))
+            {
+                path = Path.GetFullPath(Path.Combine(cwd, path));
+            }
+            return path;
         }
     }
 }

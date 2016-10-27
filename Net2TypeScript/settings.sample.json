@@ -1,34 +1,43 @@
 ﻿{
   "$schema": "settings.schema.json",
-  "assemblyPath": "C:\\_Git\\MySolution\\MyProject\\bin\\MyProject.dll",
-  "declarationsOutputPath": "C:\\_Git\\MySolution\\MyProject\\customtypings\\model.d.ts",
-  "modelModuleOutputPath": "C:\\_Git\\MySolution\\MyProject\\wwwroot\\model\\model.ts",
-  "clrRootNamespace": "MySolution.MyProject",
-  "tsRootNamespace": "Model",
+  "assemblyPaths": [
+    "../MyApp/ApiModel.dll",
+    "../MyApp/DomainModel.dll"
+  ],
+  "declarationsOutputPath": "../MyCode/typings/model.d.ts",
+  "modelModuleOutputPath": "../MyCode/model/model.ts",
+  "clrRootNamespace": "MyApp",
+  "tsRootNamespace": null,
   "classNamespaceFilter": [
-    "MySolution.MyProject.Namespace1",
-    "MySolution.MyProject.Namespace1.SubNamespace1",
-    "MySolution.MyProject.Namespace2"
+    "MyApp.ApiModel.Models",
+    "MyApp.DomainModel.Db"
   ],
   "indent": "    ",
   "enumType": "stringliteral",
   "camelCase": true,
-  "definitelyTypedRelPath": "C:\\_Git\\MySolution\\MyProject\\typings",
+  "strictNullChecks": true,
+  "typingsPaths": {
+    "knockout": "../typings/globals/knockout/index.d.ts",
+    "breeze": "../typings/globals/breeze/index.d.ts"
+  },
   "useKnockout": true,
   "useBreeze": true,
-  "strictNullChecks": true,
-  "globalExtensions": {
-    "isValid": "KnockoutObservable<boolean>"
+  "namespaceOverrides": {
+    "MyApp.ApiModel.Models": {
+      "useKnockout": false,
+      "useBreeze": false
+    },
+    "MyApp.DomainModel.Models": {
+      "extraProperties": {
+        "isValid": "KnockoutObservable<boolean>"
+      }
+    }
   },
-  "perTypeExtensions": {
-    "MyProjectMySolution.MyProject.Model.MyClass1": {
-      "fullName": "KnockoutComputed<string>"
-    },
-    "MyProjectMySolution.MyProject.Model.MyClass2": {
-      "price": "KnockoutComputed<number>"
-    },
-    "MyProjectMySolution.MyProject.Model.MyClass3": {
-      "prica": "KnockoutComputed<number>"
+  "classOverrides": {
+    "MyApp.DomainModel.Models.User": {
+      "extraProperties": {
+        "fullName": "KnockoutComputed<number>"
+      }
     }
   }
 }

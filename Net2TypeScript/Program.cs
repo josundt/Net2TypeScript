@@ -20,32 +20,30 @@ namespace jasMIN.Net2TypeScript
             try
             {
                 var settingsMap = ArgsToDictionary(args);
+                var settingsFilePath = ExtractSettingsFilePath(settingsMap);
+                var globalSettings = TypeScriptGenerator.GetGlobalSettingsFromJson(settingsFilePath);
 
-                string settingsFile = null;
-                if (settingsMap.ContainsKey("settings")) {
-                    settingsFile = settingsMap["settings"];
-                    settingsMap.Remove("settings");
-                }
-                var settings = TypeScriptGenerator.GetSettingsFromJson(settingsFile);
+                MergeCmdArgsWithSettings(settingsMap, globalSettings);
 
-                MergeCmdArgsWithSettings(settingsMap, settings);
+                TypeScriptGenerator.NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath));
 
-                TypeScriptGenerator.ValidateSettings(settings);
-
-                var generatorResult = TypeScriptGenerator.GenerateTypeScript(settings);
+                var generatorResult = TypeScriptGenerator.GenerateTypeScript(globalSettings);
 
                 if (!string.IsNullOrEmpty(generatorResult.Declarations))
                 {
-                    File.WriteAllText(settings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
+                    File.WriteAllText(globalSettings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
                 }
                 if (!string.IsNullOrEmpty(generatorResult.EnumModel))
                 {
-                    File.WriteAllText(settings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
+                    File.WriteAllText(globalSettings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ERROR: " + ex.Message);
+#if DEBUG
+                Console.WriteLine(ex.StackTrace);
+#endif
                 result = -1;
             }
 
@@ -112,6 +110,26 @@ namespace jasMIN.Net2TypeScript
                 }
 
             }
+        }
+
+        static string ExtractSettingsFilePath(Dictionary<string, string> settingsMap)
+        {
+            string path = null;
+            if (settingsMap.ContainsKey("settings"))
+            {
+                path = settingsMap["settings"];
+                settingsMap.Remove("settings");
+            }
+            var cwd = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            if (path == null)
+            {
+                path = Path.Combine(cwd, "settings.json");
+            }
+            else if (!Path.IsPathRooted(path)) // If filename only
+            {
+                path = Path.Combine(cwd, path);
+            }
+            return path;
         }
     }
 }

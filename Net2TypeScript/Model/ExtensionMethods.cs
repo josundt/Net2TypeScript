@@ -28,7 +28,7 @@ namespace jasMIN.Net2TypeScript.Model
             var result = true;
             try
             {
-                outputString = (settings.tsRootNamespace + type.Namespace.Remove(0, settings.clrRootNamespace.Length));
+                outputString = settings.ToTsFullName(type.Namespace);
             }
             catch(Exception)
             {
@@ -37,6 +37,7 @@ namespace jasMIN.Net2TypeScript.Model
             }
             return result;
         }
+
 
         //public static string GetRelativeNamespaceName(this Type propertyType, Type ownerType, Settings settings)
         //{
@@ -132,10 +133,11 @@ namespace jasMIN.Net2TypeScript.Model
                 }
 
                 tsType = string.Format(
-                    "{0}[]",
-                    propertyType.IsGenericType
-                        ? GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings)
-                        : "any");
+                    "Array<{0}>",
+                    //propertyType.IsGenericType ? 
+                        GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings)
+                    //    : "any"
+                    );
                 if (settings.strictNullChecks)
                 {
                     tsType += " | null";
@@ -158,7 +160,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
             }
 
-            if (settings.useKnockout && !skipKnockoutObservableWrapper)
+            if (settings.useKnockout == true && !skipKnockoutObservableWrapper)
             {
                 if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
                 {
@@ -178,6 +180,16 @@ namespace jasMIN.Net2TypeScript.Model
             return tsType;
         }
     }
+
+    static class SettingsExtensions
+    {
+        public static string ToTsFullName(this Settings settings, string clrFullName)
+        {
+            var namespaceSegment = clrFullName.Remove(0, settings.clrRootNamespace.Length + 1);
+            return string.IsNullOrWhiteSpace(settings.tsRootNamespace) ? namespaceSegment : $"{settings.tsRootNamespace}.{namespaceSegment}";
+        }
+    }
+
 
     static class StringExtensions
     {

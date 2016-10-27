@@ -8,8 +8,8 @@ namespace jasMIN.Net2TypeScript.Model
 {
     class ClassModel : ClrTypeModelBase
     {
-        public ClassModel(Settings settings, Type type)
-            : base(type, settings)
+        public ClassModel(GlobalSettings globalSettings, Type type)
+            : base(type, globalSettings)
         {
             if (!type.IsClass || !type.IsPublic)
             {
@@ -27,7 +27,7 @@ namespace jasMIN.Net2TypeScript.Model
         {
             foreach (PropertyInfo propertyInfo in Type.GetProperties())
             {
-                this.Properties.Add(new PropertyModel(Settings, propertyInfo, Type));
+                this.Properties.Add(new PropertyModel(this._globalSettings, propertyInfo, Type));
             }
         }
 
@@ -42,7 +42,7 @@ namespace jasMIN.Net2TypeScript.Model
             sb.AppendFormat("{0}interface {1}{2} {{\r\n",
                 IndentationContext,
                 TsTypeName,
-                Settings.useBreeze ? " extends breeze.Entity" : string.Empty);
+                Settings.useBreeze == true ? " extends breeze.Entity" : string.Empty);
 
             // TODO: Filter non-public props
             // RENDER PROPERTYINFOS
@@ -52,33 +52,33 @@ namespace jasMIN.Net2TypeScript.Model
             }
 
 
-            if (Settings.globalExtensions != null)
+            if (Settings.extraProperties != null)
             {
-                foreach (KeyValuePair<string, object> prop in Settings.globalExtensions)
+                foreach (KeyValuePair<string, string> prop in Settings.extraProperties)
                 {
                     AppendExtensionProperty(sb, prop, Settings);
                 }
             }
 
-            if (Settings.perTypeExtensions != null)
-            {
-                foreach (KeyValuePair<string, object> typeExtensionProp in Settings.perTypeExtensions)
-                {
-                    var targetClassType = typeExtensionProp.ToString().Substring(1, typeExtensionProp.ToString().Length - 2).Split(',')[0].Trim();
-                    if (Type.FullName.Equals(targetClassType))
-                    {
-                        foreach (var prop in (Dictionary<string, object>)typeExtensionProp.Value)
-                        {
-                            AppendExtensionProperty(sb, prop, Settings);
-                        }
-                    }
-                }
-            }
+            //if (Settings.perTypeExtensions != null)
+            //{
+            //    foreach (KeyValuePair<string, Dictionary<string, string>> typeExtensionProp in Settings.perTypeExtensions)
+            //    {
+            //        var targetClassType = typeExtensionProp.ToString().Substring(1, typeExtensionProp.ToString().Length - 2).Split(',')[0].Trim();
+            //        if (Type.FullName.Equals(targetClassType))
+            //        {
+            //            foreach (var prop in typeExtensionProp.Value)
+            //            {
+            //                AppendExtensionProperty(sb, prop, Settings);
+            //            }
+            //        }
+            //    }
+            //}
 
             sb.AppendLine($"{IndentationContext}}}");
         }
 
-        void AppendExtensionProperty(StringBuilder sb, KeyValuePair<string, object> prop, Settings settings)
+        void AppendExtensionProperty(StringBuilder sb, KeyValuePair<string, string> prop, Settings settings)
         {
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();

@@ -8,8 +8,8 @@ namespace jasMIN.Net2TypeScript.Model
 {
     class EnumModel : ClrTypeModelBase
     {
-        public EnumModel(Settings settings, Type type)
-            : base(type, settings)
+        public EnumModel(GlobalSettings globalSettings, Type type)
+            : base(type, globalSettings)
         {
             if (!type.IsEnum || !type.IsPublic)
             {
