@@ -70,7 +70,7 @@ namespace jasMIN.Net2TypeScript.Model
 
             // Processing entities (class types)
             var allClassTypes = GetTypes(assemblies)
-                .Where(t => t.IsClass && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
+                .Where(t => (t.IsClass || t.IsInterface) && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
             // Processing enums
@@ -143,7 +143,7 @@ namespace jasMIN.Net2TypeScript.Model
         {
             if (IsRoot)
             {
-                if (Settings.useKnockout == true)
+                if (Settings.knockoutMapping != KnockoutMappingOptions.None && Settings.knockoutMapping != null)
                 {
                     if (Settings.typingsPaths == null || Settings.typingsPaths.knockout == null)
                     {

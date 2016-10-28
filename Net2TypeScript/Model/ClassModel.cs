@@ -13,7 +13,9 @@ namespace jasMIN.Net2TypeScript.Model
         {
             var fullName = type.FullName;
 
-            if (!type.IsClass || !type.IsPublic)
+            var isValidType = (type.IsClass || type.IsInterface) && type.IsPublic;
+
+            if (!isValidType)
             {
                 throw new InvalidOperationException("Not a public class type");
             }

@@ -97,11 +97,12 @@
         }
       }
     },
-    "useKnockout": {
+    "knockoutMapping": {
       "id": "useKnockout",
-      "type": "boolean",
+      "enum": [ "none", "allprops", "valuetypesonly" ],
+      "type": "string",
       "default": false,
-      "description": "(Optional). When true, all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T>. Typically used with knockout.mapping plugin or breeze.js"
+      "description": "(Optional). When \"allprops\", all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T> (typically used with breeze.js). When \"valuetypesonly\", object type properties will not be converted to observables (typically used with knockout.mapping plugin)."
     },
     "useBreeze": {
       "id": "useBreeze",
@@ -119,11 +120,12 @@
       }
     },
     "namespaceOverrides": {
-      "useKnockout": {
+      "knockoutMapping": {
         "id": "useKnockout",
-        "type": "boolean",
+        "enum": [ "none", "all", "valuetypes" ],
+        "type": "string",
         "default": false,
-        "description": "(Optional). When true, all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T>. Typically used with knockout.mapping plugin or breeze.js"
+        "description": "(Optional). When \"allprops\", all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T> (typically used with breeze.js). When \"valuetypesonly\", object type properties will not be converted to observables (typically used with knockout.mapping plugin)."
       },
       "useBreeze": {
         "id": "useBreeze",
@@ -142,11 +144,12 @@
       }
     },
     "classOverrides": {
-      "useKnockout": {
+      "knockoutMapping": {
         "id": "useKnockout",
-        "type": "boolean",
+        "enum": [ "off", "all", "valuetypes" ],
+        "type": "string",
         "default": false,
-        "description": "(Optional). When true, all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T>. Typically used with knockout.mapping plugin or breeze.js"
+        "description": "(Optional). When \"allprops\", all collection properties Array<T> will be written in TS as KnockoutObservableArray<T>, and all other properties T will be written in TS as KnockoutObservable<T> (typically used with breeze.js). When \"valuetypesonly\", object type properties will not be converted to observables (typically used with knockout.mapping plugin)."
       },
       "useBreeze": {
         "id": "useBreeze",

@@ -20,14 +20,16 @@
     "knockout": "../typings/globals/knockout/index.d.ts",
     "breeze": "../typings/globals/breeze/index.d.ts"
   },
-  "useKnockout": true,
-  "useBreeze": true,
+  "knockoutMapping": "none",
+  "useBreeze": false,
   "namespaceOverrides": {
     "MyApp.ApiModel.Models": {
-      "useKnockout": false,
+      "useKnockout": "valuetypes",
       "useBreeze": false
     },
     "MyApp.DomainModel.Models": {
+      "useKnockout": "all",
+      "useBreeze": true,
       "extraProperties": {
         "isValid": "KnockoutObservable<boolean>"
       }

@@ -160,7 +160,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
             }
 
-            if (settings.useKnockout == true && !skipKnockoutObservableWrapper)
+            if (settings.knockoutMapping != null && settings.knockoutMapping != KnockoutMappingOptions.None && !skipKnockoutObservableWrapper)
             {
                 if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
                 {
@@ -173,7 +173,15 @@ namespace jasMIN.Net2TypeScript.Model
                 }
                 else
                 {
-                    tsType = string.Format("KnockoutObservable<{0}>", tsType);
+                    var isObjectType = (propertyType.IsClass || propertyType.IsInterface) && propertyType != typeof(string);
+
+                    var isMappedProp = (
+                        settings.knockoutMapping == KnockoutMappingOptions.All
+                        ||
+                        (settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !isObjectType)
+                    );
+
+                    tsType = isMappedProp ? string.Format("KnockoutObservable<{0}>", tsType) : tsType;
                 }
             }
 

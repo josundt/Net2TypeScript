@@ -1,4 +1,5 @@
 ﻿using jasMIN.Net2TypeScript.Model;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -34,13 +35,17 @@ namespace jasMIN.Net2TypeScript
             return settings;
         }
 
-        public static void NormalizeAndValidateSettings(Settings settings, string cwd)
+        public static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd)
         {
             // TODO: Validate that settings object has the expected properties
 
             settings.assemblyPaths = settings.assemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
             settings.declarationsOutputPath = ResolvePath(settings.declarationsOutputPath, cwd);
             settings.modelModuleOutputPath = ResolvePath(settings.modelModuleOutputPath, cwd);
+
+            ValidateGeneratorSettings(settings);
+            settings.namespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
+            settings.classOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
 
             if (settings.assemblyPaths.Any(ap => !File.Exists(ap)))
             {
@@ -59,6 +64,19 @@ namespace jasMIN.Net2TypeScript
                 throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.modelModuleOutputPath));
             }
 
+        }
+
+        static void ValidateGeneratorSettings(GeneratorSettings genSettings) {
+            if (!new[] {
+                    null,
+                    KnockoutMappingOptions.None, 
+                    KnockoutMappingOptions.All,
+                    KnockoutMappingOptions.ValueTypes
+                }.Any(s => s == genSettings.knockoutMapping)
+            )
+            {
+                throw new Exception($"Invalid knockoutMappingOptions value: {genSettings.knockoutMapping}");
+            }
         }
 
         static string ResolvePath(string path, string cwd)

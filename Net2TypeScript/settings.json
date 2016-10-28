@@ -22,14 +22,15 @@
     "knockout": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/app/typings/typings/globals/knockout/index.d.ts",
     "breeze": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/app/typings/typings/globals/breeze/index.d.ts"
   },
-  "useKnockout": true,
+  "knockoutMapping": "none",
   "useBreeze": true,
   "namespaceOverrides": {
     "AdraMatch.Balancer.Web": {
-      "useKnockout": false,
+      "knockoutmapping": "valuetypes",
       "useBreeze": false
     },
     "AdraMatch.Balancer.Model.Db": {
+      "knockoutmapping": "valuetypes",
       "extraProperties": {
         "isValid": "KnockoutObservable<boolean>"
       }

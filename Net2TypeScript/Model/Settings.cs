@@ -11,6 +11,13 @@ namespace jasMIN.Net2TypeScript.Model
         public string breeze { get; set; } 
     }
 
+    public static class KnockoutMappingOptions
+    {
+        public static string None = "none";
+        public static string All = "all";
+        public static string ValueTypes = "valuetypes";
+    }
+
     public class GeneratorSettings
     {
         public GeneratorSettings()
@@ -18,7 +25,7 @@ namespace jasMIN.Net2TypeScript.Model
             this.extraProperties = new Dictionary<string, string>();
         }
 
-        public bool? useKnockout { get; set; }
+        public string knockoutMapping { get; set; }
         public bool? useBreeze { get; set; }
         public Dictionary<string, string> extraProperties { get; set; }
 
@@ -42,7 +49,7 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 result = result ?? new GeneratorSettings();
                 result.useBreeze = genSetting.useBreeze.HasValue ? genSetting.useBreeze : result.useBreeze;
-                result.useKnockout = genSetting.useKnockout.HasValue ? genSetting.useKnockout : result.useKnockout;
+                result.knockoutMapping = !string.IsNullOrEmpty(genSetting.knockoutMapping) ? genSetting.knockoutMapping : result.knockoutMapping;
                 foreach (var kvp in genSetting.extraProperties)
                 {
                     if (!result.extraProperties.ContainsKey(kvp.Key))
@@ -127,7 +134,7 @@ namespace jasMIN.Net2TypeScript.Model
         {
             var result = this.Clone();
             result.useBreeze = genSettings.useBreeze.HasValue ? genSettings.useBreeze : result.useBreeze;
-            result.useKnockout = genSettings.useKnockout.HasValue ? genSettings.useKnockout : result.useKnockout;
+            result.knockoutMapping = !string.IsNullOrEmpty(genSettings.knockoutMapping) ? genSettings.knockoutMapping : result.knockoutMapping;
             result.extraProperties = genSettings.extraProperties;
             return result;
         }
@@ -139,6 +146,12 @@ namespace jasMIN.Net2TypeScript.Model
     {
         public Dictionary<string, GeneratorSettings> namespaceOverrides { get; set; }
         public Dictionary<string, GeneratorSettings> classOverrides { get; set; }
+
+        public GlobalSettings()
+        {
+            this.namespaceOverrides = new Dictionary<string, GeneratorSettings>();
+            this.classOverrides = new Dictionary<string, GeneratorSettings>();
+        }
 
         public Settings GetNamespaceSettings(string namespaceName)
         {
