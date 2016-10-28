@@ -11,6 +11,8 @@ namespace jasMIN.Net2TypeScript.Model
         public ClassModel(GlobalSettings globalSettings, Type type)
             : base(type, globalSettings)
         {
+            var fullName = type.FullName;
+
             if (!type.IsClass || !type.IsPublic)
             {
                 throw new InvalidOperationException("Not a public class type");

@@ -42,7 +42,7 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 result = result ?? new GeneratorSettings();
                 result.useBreeze = genSetting.useBreeze.HasValue ? genSetting.useBreeze : result.useBreeze;
-                result.useKnockout = genSetting.useKnockout.HasValue ? genSetting.useBreeze : result.useBreeze;
+                result.useKnockout = genSetting.useKnockout.HasValue ? genSetting.useKnockout : result.useKnockout;
                 foreach (var kvp in genSetting.extraProperties)
                 {
                     if (!result.extraProperties.ContainsKey(kvp.Key))
