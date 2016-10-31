@@ -20,13 +20,13 @@ namespace jasMIN.Net2TypeScript.Model
                     {
                         this._settings = this._globalSettings.GetNamespaceSettings(this.ClrFullName);
                     }
-                    else if (this is ClassModel)
+                    else if (this is ClassOrInterfaceModel)
                     {
                         this._settings = this._globalSettings.GetClassSettings(this.ClrFullName);
                     }
                     else if (this is PropertyModel)
                     {
-                        this._settings = this._globalSettings.GetClassSettings((this as PropertyModel).OwnerType.FullName);
+                        this._settings = this._globalSettings.GetClassSettings((this as PropertyModel).DeclaringType.FullName);
                     }
                     else
                     {

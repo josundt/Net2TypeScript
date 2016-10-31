@@ -7,33 +7,51 @@ namespace jasMIN.Net2TypeScript.Model
 {
     class PropertyModel : ClrTypeModelBase
     {
-        public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo, Type ownerType)
+        public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo)
             : base(
                   propertyInfo.PropertyType.IsNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType, 
                   globalSettings)
         {
             this.PropInfo = propertyInfo;
-            this.OwnerType = ownerType;
-            this.IsNullableType = propertyInfo.PropertyType.IsNullableType();
+
+            if (!(propertyInfo.CanRead || propertyInfo.GetGetMethod().IsPublic))
+            {
+                throw new Exception($"Property {PropInfo.DeclaringType.FullName}.{PropInfo.Name} is not readable.");
+            }
+
         }
 
-        protected override string TsTypeName => 
-            Type.GetTypeScriptTypeName(this.IsNullableType, this.OwnerType, Settings);
+        PropertyInfo PropInfo { get; set; }
 
-        protected override string IndentationContext =>
-            string.Concat(Enumerable.Repeat(Settings.indent, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+        public Type DeclaringType => 
+            PropInfo.DeclaringType;
 
-        protected override int ExtraIndents => 
+        bool IsNullableType =>
+            PropInfo.PropertyType.IsNullableType();
+
+        bool IsReadOnly =>
+            !(PropInfo.CanWrite && PropInfo.GetSetMethod() != null && PropInfo.GetSetMethod().IsPublic);
+
+        bool IsObjectType =>
+            (PropInfo.PropertyType.IsClass || PropInfo.PropertyType.IsInterface) && PropInfo.PropertyType != typeof(string);
+
+        bool IsKnockoutObservable =>
+            Settings.knockoutMapping != null && (Settings.knockoutMapping == KnockoutMappingOptions.All || (Settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !this.IsObjectType));
+
+        string AccessModifier =>
+            IsReadOnly && !IsKnockoutObservable ? "readonly " : "";
+
+        protected override int ExtraIndents =>
             2;
 
         string TsName =>
             Settings.camelCase ? PropInfo.Name.ToCamelCase() : PropInfo.Name;
 
-        PropertyInfo PropInfo { get; set; }
+        protected override string TsTypeName => 
+            Type.GetTypeScriptTypeName(IsNullableType, DeclaringType, Settings);
 
-        public Type OwnerType { get; private set; }
-
-        bool IsNullableType { get; set; }
+        protected override string IndentationContext =>
+            string.Concat(Enumerable.Repeat(Settings.indent, DeclaringType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
 
         public override void AppendTs(StringBuilder sb)
         {
@@ -54,7 +72,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
 
                 sb.AppendLine(
-                    $"{IndentationContext}{TsName}: {TsTypeName};");
+                    $"{IndentationContext}{AccessModifier}{TsName}: {TsTypeName};");
             }
         }
     }

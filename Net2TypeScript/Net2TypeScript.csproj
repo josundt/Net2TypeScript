@@ -69,7 +69,7 @@
   <ItemGroup>
     <Compile Include="Model\ClrModelBase.cs" />
     <Compile Include="Model\ClrTypeModelBase.cs" />
-    <Compile Include="Model\ClassModel.cs" />
+    <Compile Include="Model\ClassOrInterfaceModel.cs" />
     <Compile Include="Model\EnumModel.cs" />
     <Compile Include="Model\GeneratorResult.cs" />
     <Compile Include="Model\NamespaceModel.cs" />

@@ -27,6 +27,8 @@ namespace jasMIN.Net2TypeScript.Model
 
         public string knockoutMapping { get; set; }
         public bool? useBreeze { get; set; }
+        public bool? excludeClass { get; set; }
+        public bool? excludeInterface { get; set; }
         public Dictionary<string, string> extraProperties { get; set; }
 
 
@@ -41,15 +43,19 @@ namespace jasMIN.Net2TypeScript.Model
             return clone;
         }
 
-        protected GeneratorSettings Merge(GeneratorSettings initialSetting, params GeneratorSettings[] generatorSettingsColletion)
+        protected T Merge<T>(T initialSetting, params GeneratorSettings[] generatorSettingsColletion) where T : GeneratorSettings, new()
         {
-            var result = initialSetting != null ? initialSetting.Clone() : null;
+            var result = initialSetting;
 
             foreach (var genSetting in generatorSettingsColletion.Where(gs => gs != null))
             {
-                result = result ?? new GeneratorSettings();
-                result.useBreeze = genSetting.useBreeze.HasValue ? genSetting.useBreeze : result.useBreeze;
-                result.knockoutMapping = !string.IsNullOrEmpty(genSetting.knockoutMapping) ? genSetting.knockoutMapping : result.knockoutMapping;
+                result = result ?? new T();
+
+                result.excludeClass = genSetting.excludeClass ?? result.excludeClass;
+                result.excludeInterface = genSetting.excludeInterface ?? result.excludeInterface;
+                result.knockoutMapping = genSetting.knockoutMapping ?? result.knockoutMapping;
+                result.useBreeze = genSetting.useBreeze ?? result.useBreeze;
+                
                 foreach (var kvp in genSetting.extraProperties)
                 {
                     if (!result.extraProperties.ContainsKey(kvp.Key))
@@ -129,17 +135,6 @@ namespace jasMIN.Net2TypeScript.Model
             };
             return clone;
         }
-
-        public Settings GetEffectiveSettings(GeneratorSettings genSettings)
-        {
-            var result = this.Clone();
-            result.useBreeze = genSettings.useBreeze.HasValue ? genSettings.useBreeze : result.useBreeze;
-            result.knockoutMapping = !string.IsNullOrEmpty(genSettings.knockoutMapping) ? genSettings.knockoutMapping : result.knockoutMapping;
-            result.extraProperties = genSettings.extraProperties;
-            return result;
-        }
-
-
     }
 
     public class GlobalSettings : Settings
@@ -153,6 +148,13 @@ namespace jasMIN.Net2TypeScript.Model
             this.classOverrides = new Dictionary<string, GeneratorSettings>();
         }
 
+        Settings GetEffectiveSettings(GeneratorSettings genSettings)
+        {
+            var result = Merge(this.Clone(), genSettings) as Settings;
+
+            return result;
+        }
+
         public Settings GetNamespaceSettings(string namespaceName)
         {
             var applicableNsSettings = this.namespaceOverrides
@@ -160,7 +162,7 @@ namespace jasMIN.Net2TypeScript.Model
                 .OrderBy(kvp => kvp.Key)
                 .Select(kvp => kvp.Value);
 
-            var effectiveGenSettings = Merge(this, applicableNsSettings.ToArray());
+            var effectiveGenSettings = Merge(this.Clone(), applicableNsSettings.ToArray());
 
             return this.GetEffectiveSettings(effectiveGenSettings);
         }
@@ -171,7 +173,7 @@ namespace jasMIN.Net2TypeScript.Model
 
             var classSettings = this.classOverrides.ContainsKey(className) ? this.classOverrides[className] : null;
 
-            var effectiveGenSettings = Merge(nsSettings, classSettings);
+            var effectiveGenSettings = Merge(nsSettings.Clone(), classSettings);
 
             return this.GetEffectiveSettings(effectiveGenSettings);
 

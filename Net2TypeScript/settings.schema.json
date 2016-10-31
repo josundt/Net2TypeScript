@@ -110,6 +110,18 @@
       "default": false,
       "description": "(Optional). When true, all class types X will be written as TS interfaces inheriting from breeze.Entity \"interface X extends breeze.entity { [...] }"
     },
+    "excludeClass": {
+      "id": "excludeClass",
+      "type": "boolean",
+      "default": false,
+      "description": "(Optional). When true, all .NET Class types will be excluded TypeScript typings generator."
+    },
+    "excludeInterface": {
+      "id": "excludeInterface",
+      "type": "boolean",
+      "default": false,
+      "description": "(Optional). When true, all .NET Interface types will be excluded TypeScript typings generator."
+    },
     "extraProperties": {
       "id": "globalExtensions",
       "type": [ "object", "null" ],
@@ -132,6 +144,18 @@
         "type": "boolean",
         "default": false,
         "description": "(Optional). When true, all class types X will be written as TS interfaces inheriting from breeze.Entity \"interface X extends breeze.entity { [...] }"
+      },
+      "excludeClass": {
+        "id": "excludeClass",
+        "type": "boolean",
+        "default": false,
+        "description": "(Optional). When true, all .NET Class types will be excluded TypeScript typings generator."
+      },
+      "excludeInterface": {
+        "id": "excludeInterface",
+        "type": "boolean",
+        "default": false,
+        "description": "(Optional). When true, all .NET Interface types will be excluded TypeScript typings generator."
       },
       "extraProperties": {
         "id": "globalExtensions",
@@ -156,6 +180,18 @@
         "type": "boolean",
         "default": false,
         "description": "(Optional). When true, all class types X will be written as TS interfaces inheriting from breeze.Entity \"interface X extends breeze.entity { [...] }"
+      },
+      "excludeClass": {
+        "id": "excludeClass",
+        "type": "boolean",
+        "default": false,
+        "description": "(Optional). When true, all .NET Class types will be excluded TypeScript typings generator."
+      },
+      "excludeInterface": {
+        "id": "excludeInterface",
+        "type": "boolean",
+        "default": false,
+        "description": "(Optional). When true, all .NET Interface types will be excluded TypeScript typings generator."
       },
       "extraProperties": {
         "id": "globalExtensions",

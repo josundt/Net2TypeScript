@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace jasMIN.Net2TypeScript.Model
@@ -21,6 +23,14 @@ namespace jasMIN.Net2TypeScript.Model
         public static bool IsNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        public static bool ImplementsInterface(this Type type, Type interfaceType)
+        {
+            return type.GetInterfaces().Any(i =>
+                interfaceType.IsGenericType 
+                    ? i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType 
+                    : i == type);
         }
 
         public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
@@ -132,12 +142,13 @@ namespace jasMIN.Net2TypeScript.Model
                     itemType = itemType.GetGenericArguments()[0];
                 }
 
+                var isReadOnlyCollection = false; //propertyType.ImplementsInterface(typeof(IReadOnlyCollection<>));
+
                 tsType = string.Format(
-                    "Array<{0}>",
-                    //propertyType.IsGenericType ? 
-                        GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings)
-                    //    : "any"
-                    );
+                    "{0}<{1}>",
+                    isReadOnlyCollection ? "ReadOnlyArray" : "Array",
+                    GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings));
+
                 if (settings.strictNullChecks)
                 {
                     tsType += " | null";

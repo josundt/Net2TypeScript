@@ -15,7 +15,7 @@ namespace jasMIN.Net2TypeScript.Model
             : base(settings)
         {
             this.ClrFullName = name;
-            this.Entities = new List<ClassModel>();
+            this.Entities = new List<ClassOrInterfaceModel>();
             this.Enums = new List<EnumModel>();
             this.ChildNamespaces = new List<NamespaceModel>();
 
@@ -52,7 +52,7 @@ namespace jasMIN.Net2TypeScript.Model
         bool ContainsEnums =>
             Enums.Count > 0 || ChildNamespaces.Any(ns => ns.ContainsEnums);
 
-        List<ClassModel> Entities { get; set; }
+        List<ClassOrInterfaceModel> Entities { get; set; }
 
         List<EnumModel> Enums { get; set; }
 
@@ -85,7 +85,7 @@ namespace jasMIN.Net2TypeScript.Model
 
                 foreach (var classType in nsClassTypes)
                 {
-                    this.Entities.Add(new ClassModel(this._globalSettings, classType));
+                    this.Entities.Add(new ClassOrInterfaceModel(this._globalSettings, classType));
                 }
             }
 
@@ -143,7 +143,12 @@ namespace jasMIN.Net2TypeScript.Model
         {
             if (IsRoot)
             {
-                if (Settings.knockoutMapping != KnockoutMappingOptions.None && Settings.knockoutMapping != null)
+                List<GeneratorSettings> allGeneratorSettings = new List<GeneratorSettings> ();
+                allGeneratorSettings.Add(this._globalSettings);
+                allGeneratorSettings.AddRange(this._globalSettings.namespaceOverrides.Values);
+                allGeneratorSettings.AddRange(this._globalSettings.classOverrides.Values);
+
+                if (allGeneratorSettings.Any(gs => gs.knockoutMapping != KnockoutMappingOptions.None && gs.knockoutMapping != null))
                 {
                     if (Settings.typingsPaths == null || Settings.typingsPaths.knockout == null)
                     {
@@ -151,7 +156,8 @@ namespace jasMIN.Net2TypeScript.Model
                     }
                     sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.knockout);
                 }
-                if (Settings.useBreeze == true)
+
+                if (allGeneratorSettings.Any(gs => gs.useBreeze == true))
                 {
                     if (Settings.typingsPaths == null || Settings.typingsPaths.breeze == null)
                     {
