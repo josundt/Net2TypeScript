@@ -113,6 +113,8 @@ namespace jasMIN.Net2TypeScript.Model
                 .Distinct()
                 .ToList();
 
+            childNamespaces.Sort();
+
             foreach (var childNamespace in childNamespaces)
             {
                 this.ChildNamespaces.Add(new NamespaceModel(this._globalSettings, childNamespace));
@@ -176,8 +178,16 @@ namespace jasMIN.Net2TypeScript.Model
 
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
+                        sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
+                }
 
-                    sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
+                foreach (var ns in this.ChildNamespaces)
+                {
+                    ns.AppendTs(sb);
+                }
+
+                if (!(this.IsRoot && !this.IsTsRoot))
+                {
 
                     foreach (var entity in this.Entities)
                     {
@@ -188,16 +198,7 @@ namespace jasMIN.Net2TypeScript.Model
                     {
                         enumModel.AppendTs(sb);
                     }
-                }
 
-
-                foreach (var ns in this.ChildNamespaces)
-                {
-                    ns.AppendTs(sb);
-                }
-
-                if (!(this.IsRoot && !this.IsTsRoot))
-                {
                     sb.AppendLine();
                     sb.AppendLine($"{IndentationContext}}}");
                 }

@@ -31,7 +31,12 @@ namespace jasMIN.Net2TypeScript.Model
         {
             foreach (PropertyInfo propertyInfo in Type.GetProperties().Where(prop => prop.CanRead && prop.GetGetMethod().IsPublic))
             {
-                this.Properties.Add(new PropertyModel(this._globalSettings, propertyInfo));
+                var isDefinedAsExtraProp =
+                    this.Settings.extraProperties.Any(ep => ep.Key == (Settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));
+
+                if (!isDefinedAsExtraProp) {
+                    this.Properties.Add(new PropertyModel(this._globalSettings, propertyInfo, Type));
+                }
             }
         }
 
@@ -40,7 +45,8 @@ namespace jasMIN.Net2TypeScript.Model
 
             var skip =
                 (this.Type.IsClass && this.Settings.excludeClass == true) ||
-                (this.Type.IsInterface && this.Settings.excludeInterface == true);
+                (this.Type.IsInterface && this.Settings.excludeInterface == true) ||
+                this.Properties.Count == 0;
 
 
             if (!skip) {
@@ -68,7 +74,10 @@ namespace jasMIN.Net2TypeScript.Model
                 {
                     foreach (KeyValuePair<string, string> prop in Settings.extraProperties)
                     {
-                        AppendExtensionProperty(sb, prop, Settings);
+                        if (!string.IsNullOrEmpty(prop.Value))
+                        {
+                            AppendExtensionProperty(sb, prop, Settings);
+                        }
                     }
                 }
 
@@ -82,7 +91,8 @@ namespace jasMIN.Net2TypeScript.Model
         {
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();
-
+            sb.AppendFormat("{0}/** Extra/overridden property */\r\n",
+                            IndentationContext + settings.indent);
             sb.AppendFormat("{0}{1}: {2};\r\n",
                             IndentationContext + settings.indent,
                             tsPropName,

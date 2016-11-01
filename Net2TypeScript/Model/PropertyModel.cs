@@ -7,12 +7,13 @@ namespace jasMIN.Net2TypeScript.Model
 {
     class PropertyModel : ClrTypeModelBase
     {
-        public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo)
+        public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo, Type ownerType)
             : base(
                   propertyInfo.PropertyType.IsNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType, 
                   globalSettings)
         {
             this.PropInfo = propertyInfo;
+            this.OwnerType = ownerType;
 
             if (!(propertyInfo.CanRead || propertyInfo.GetGetMethod().IsPublic))
             {
@@ -23,8 +24,7 @@ namespace jasMIN.Net2TypeScript.Model
 
         PropertyInfo PropInfo { get; set; }
 
-        public Type DeclaringType => 
-            PropInfo.DeclaringType;
+        public Type OwnerType { get; private set; }
 
         bool IsNullableType =>
             PropInfo.PropertyType.IsNullableType();
@@ -48,10 +48,10 @@ namespace jasMIN.Net2TypeScript.Model
             Settings.camelCase ? PropInfo.Name.ToCamelCase() : PropInfo.Name;
 
         protected override string TsTypeName => 
-            Type.GetTypeScriptTypeName(IsNullableType, DeclaringType, Settings);
+            Type.GetTypeScriptTypeName(IsNullableType, OwnerType, Settings);
 
         protected override string IndentationContext =>
-            string.Concat(Enumerable.Repeat(Settings.indent, DeclaringType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+            string.Concat(Enumerable.Repeat(Settings.indent, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
 
         public override void AppendTs(StringBuilder sb)
         {

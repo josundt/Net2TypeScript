@@ -58,7 +58,7 @@ namespace jasMIN.Net2TypeScript.Model
                 
                 foreach (var kvp in genSetting.extraProperties)
                 {
-                    if (!result.extraProperties.ContainsKey(kvp.Key))
+                    if (result.extraProperties.ContainsKey(kvp.Key))
                     {
                         result.extraProperties.Remove(kvp.Key);
                     }

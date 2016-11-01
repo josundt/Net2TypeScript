@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "settings.schema.json",
+  "$schema": "./settings.schema.json",
   "assemblyPaths": [
     "../MyApp/ApiModel.dll",
     "../MyApp/DomainModel.dll"
