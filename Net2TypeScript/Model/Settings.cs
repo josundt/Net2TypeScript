@@ -91,7 +91,6 @@ namespace jasMIN.Net2TypeScript.Model
         public List<string> enumNamespaceFilter { get; set; }
         public string indent { get; set; }
         public bool camelCase { get; set; }
-        public bool strictNullChecks { get; set; }
         public TypingsPaths typingsPaths { get; set; }
 
         public new Settings Clone()

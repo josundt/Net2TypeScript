@@ -9,18 +9,15 @@ namespace jasMIN.Net2TypeScript.Model
 {
     static class ExtensionMethods
     {
-        public static bool IsNumericType(this Type type)
+        static void ThrowIfNullable(Type type)
         {
-            return
-                type == typeof(short) ||
-                type == typeof(int) ||
-                type == typeof(long) ||
-                type == typeof(decimal) ||
-                type == typeof(float) ||
-                type == typeof(double);
+            if (type.IsClrNullableType())
+            {
+                throw new Exception("Nullable types are not allowed at this point");
+            }
         }
 
-        public static bool IsNullableType(this Type type)
+        public static bool IsClrNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
@@ -28,9 +25,79 @@ namespace jasMIN.Net2TypeScript.Model
         public static bool ImplementsInterface(this Type type, Type interfaceType)
         {
             return type.GetInterfaces().Any(i =>
-                interfaceType.IsGenericType 
-                    ? i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType 
+                interfaceType.IsGenericType
+                    ? i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType
                     : i == type);
+        }
+
+        public static bool IsTypeScriptNumberType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return new[] {
+                typeof(short),
+                typeof(int),
+                typeof(long),
+                typeof(decimal),
+                typeof(float),
+                typeof(double)
+            }.Any(t => t == type);
+        }
+
+        public static bool IsTypeScriptArrayType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return typeof(IEnumerable).IsAssignableFrom(type) && !type.IsEnum && type != typeof(string);
+        }
+        
+        public static bool IsTypeScriptDateType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return new[] {
+                typeof(DateTime),
+                typeof(DateTimeOffset)
+            }.Any(t => t == type);
+        }
+
+        public static bool IsTypeScriptBoolType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return type == typeof(bool);
+        }
+
+        public static bool IsTypeScriptStringType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return new[] {
+                typeof(string),
+                typeof(Guid),
+                typeof(byte),
+                typeof(byte[])
+            }.Any(t => t == type);
+        }
+
+        public static bool IsTypeScriptInterfaceType(this Type type) {
+            return (type.IsClass || type.IsInterface) && type != typeof(string);
+        }
+
+        public static bool IsTypeScriptNullableType(this Type type)
+        {
+            ThrowIfNullable(type);
+
+            return type.IsTypeScriptArrayType()
+                || (type.IsTypeScriptStringType() && type != typeof(Guid))
+                || type.IsTypeScriptArrayType()
+                || type.IsTypeScriptInterfaceType();
+        }
+
+        public static bool IsTypeScriptObservableType(this Type type, Settings settings)
+        {
+            return settings.knockoutMapping == KnockoutMappingOptions.All || (settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType());
+                
         }
 
         public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
@@ -46,157 +113,6 @@ namespace jasMIN.Net2TypeScript.Model
                 outputString = null;
             }
             return result;
-        }
-
-
-        //public static string GetRelativeNamespaceName(this Type propertyType, Type ownerType, Settings settings)
-        //{
-        //    return propertyType.GetTypeScriptNamespaceName(settings);
-        //}
-
-        public static string GetTypeScriptTypeName(this Type propertyType, bool isNullableType, Type ownerType, Settings settings, bool skipKnockoutObservableWrapper = false)
-        {
-            if (propertyType.IsNullableType())
-            {
-                throw new Exception("Nullable types should be unwrapped before this point");
-            }
-            //if (isNullableType)
-            //{
-            //    propertyType = propertyType.GetGenericArguments()[0];
-            //}
-
-            string tsType = null;
-
-            if (IsNumericType(propertyType))
-            {
-                tsType = "number";
-                if (settings.strictNullChecks && isNullableType)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTimeOffset))
-            {
-                tsType = "Date";
-                if (settings.strictNullChecks && isNullableType)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType == typeof(bool))
-            {
-                tsType = "boolean";
-                if (settings.strictNullChecks && isNullableType)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType == typeof(Guid) || propertyType == typeof(string))
-            {
-                tsType = "string";
-                if (settings.strictNullChecks)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType == typeof(byte[]) || propertyType == typeof(byte))
-            {
-                tsType = "string";
-                if (settings.strictNullChecks && isNullableType)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType.IsEnum)
-            {
-                if (settings.enumType == "enum" || settings.enumType == "stringliteral")
-                {
-                    string propertyTypeTsNs;
-                    if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
-                    {
-                        tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
-                    }
-                    else
-                    {
-                        tsType = "Object";
-                    }
-                }
-                else
-                {
-                    tsType = settings.enumType;
-                }
-
-                if (settings.strictNullChecks && isNullableType)
-                {
-                    tsType += " | null";
-
-                }
-
-            }
-            else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
-            {
-                var itemType = propertyType.HasElementType ? propertyType.GetElementType() : propertyType.GenericTypeArguments[0];
-                var itemTypeIsNullable = itemType.IsNullableType();
-                if (itemTypeIsNullable)
-                {
-                    itemType = itemType.GetGenericArguments()[0];
-                }
-
-                var isReadOnlyCollection = false; //propertyType.ImplementsInterface(typeof(IReadOnlyCollection<>));
-
-                tsType = string.Format(
-                    "{0}<{1}>",
-                    isReadOnlyCollection ? "ReadOnlyArray" : "Array",
-                    GetTypeScriptTypeName(itemType, itemTypeIsNullable, ownerType, settings));
-
-                if (settings.strictNullChecks)
-                {
-                    tsType += " | null";
-                }
-            }
-            else if (propertyType.IsClass || propertyType.IsInterface)
-            {
-                string propertyTypeTsNs;
-                if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
-                {
-                    tsType = $"{propertyTypeTsNs}.{propertyType.Name}";
-                }
-                else
-                {
-                    tsType = "Object";
-                }
-                if (settings.strictNullChecks)
-                {
-                    tsType += " | null";
-                }
-            }
-
-            if (settings.knockoutMapping != null && settings.knockoutMapping != KnockoutMappingOptions.None && !skipKnockoutObservableWrapper)
-            {
-                if (typeof(IEnumerable).IsAssignableFrom(propertyType) && !propertyType.IsEnum && propertyType != typeof(string))
-                {
-                    var itemType = propertyType.HasElementType ? propertyType.GetElementType() : propertyType.GenericTypeArguments[0];
-                    tsType = string.Format(
-                        "KnockoutObservableArray<{0}>",
-                        propertyType.IsGenericType
-                            ? GetTypeScriptTypeName(itemType, false, ownerType, settings, true)
-                            : "any");
-                }
-                else
-                {
-                    var isObjectType = (propertyType.IsClass || propertyType.IsInterface) && propertyType != typeof(string);
-
-                    var isMappedProp = (
-                        settings.knockoutMapping == KnockoutMappingOptions.All
-                        ||
-                        (settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !isObjectType)
-                    );
-
-                    tsType = isMappedProp ? string.Format("KnockoutObservable<{0}>", tsType) : tsType;
-                }
-            }
-
-            return tsType;
         }
     }
 

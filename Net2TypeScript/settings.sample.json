@@ -15,7 +15,6 @@
   "indent": "    ",
   "enumType": "stringliteral",
   "camelCase": true,
-  "strictNullChecks": true,
   "typingsPaths": {
     "knockout": "../typings/globals/knockout/index.d.ts",
     "breeze": "../typings/globals/breeze/index.d.ts"
