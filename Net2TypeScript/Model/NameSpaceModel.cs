@@ -217,9 +217,10 @@ namespace jasMIN.Net2TypeScript.Model
 
                 if (IsRoot)
                 {
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
-                    sb.AppendLine();
                     sb.AppendLine("/* tslint:disable:variable-name */");
+                    sb.AppendLine("/* tslint:disable:no-reference */");
+                    sb.AppendLine();
+                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
                     sb.AppendLine();
                 }
 
@@ -256,6 +257,7 @@ namespace jasMIN.Net2TypeScript.Model
                 if (IsRoot)
                 {
                     sb.AppendLine();
+                    sb.AppendLine("/* tslint:enable:no-reference */");
                     sb.AppendLine("/* tslint:enable:variable-name */");
                 }
 
