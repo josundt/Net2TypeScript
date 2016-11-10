@@ -251,7 +251,7 @@ namespace jasMIN.Net2TypeScript.Model
                 if (IsTsRoot)
                 {
                     sb.AppendLine();
-                    sb.AppendLine($"{IndentationContext}export let {TsName} = {namespaceName};");
+                    sb.AppendLine($"{IndentationContext}export const {TsName} = {namespaceName};");
                 }
 
                 if (IsRoot)
