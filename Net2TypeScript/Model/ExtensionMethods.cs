@@ -84,14 +84,33 @@ namespace jasMIN.Net2TypeScript.Model
             return (type.IsClass || type.IsInterface) && type != typeof(string);
         }
 
-        public static bool IsTypeScriptNullableType(this Type type)
+        public static bool IsTypeScriptNullableType(this Type type, Settings settings, bool isArrayItem)
         {
             ThrowIfNullable(type);
 
-            return type.IsTypeScriptArrayType()
-                || (type.IsTypeScriptStringType() && type != typeof(Guid))
-                || type.IsTypeScriptArrayType()
-                || type.IsTypeScriptInterfaceType();
+            var result = false;
+
+            if (type.IsTypeScriptArrayType())
+            {
+                result = settings.nonNullableArrays != true;
+            }
+            else if (type.IsTypeScriptInterfaceType())
+            {
+                if (isArrayItem)
+                {
+                    result = settings.nonNullableArrayEntityItems != true;
+                }
+                else
+                {
+                    result = settings.nonNullableEntities != true;
+                }
+            }
+            else if (type.IsTypeScriptStringType() && type != typeof(Guid))
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         public static bool IsTypeScriptObservableType(this Type type, Settings settings)

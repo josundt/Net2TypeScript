@@ -227,7 +227,7 @@ namespace jasMIN.Net2TypeScript.Tests
         }
 
         [TestMethod]
-        public void TypeScriptTypeTests_ListOfStrings()
+        public void TypeScriptTypeTests_ListOfStrings_DefaultSettings()
         {
             var settings = new Settings {
             };
@@ -252,6 +252,102 @@ namespace jasMIN.Net2TypeScript.Tests
                 IsKnockoutObservable = false,
                 TypeName = "string",
                 ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_ListOfStrings_NonNullableArraySetting()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrays = true
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<string>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Array",
+                ToStringResult = "Array<string | null>"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_ListOfClasses_NonNullableArrayEntityItemsSetting()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrayEntityItems = true,
+                clrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<TsTypeAssertion>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Array",
+                ToStringResult = "Array<Tests.TsTypeAssertion> | null"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_ListOfClasses_NonNullableArraySettingsAndNonNullableArrayEntityItemsSettings()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrays = true,
+                nonNullableArrayEntityItems = true,
+                clrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<TsTypeAssertion>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Array",
+                ToStringResult = "Array<Tests.TsTypeAssertion>"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
             });
         }
 
@@ -302,6 +398,27 @@ namespace jasMIN.Net2TypeScript.Tests
                 IsKnockoutObservable = false,
                 TypeName = "Tests.TsTypeAssertion",
                 ToStringResult = "Tests.TsTypeAssertion | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_Class_NonNullableEntitiesSetting()
+        {
+            var settings = new Settings
+            {
+                nonNullableEntities = true,
+                clrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(TsTypeAssertion), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
             });
         }
 
@@ -367,6 +484,37 @@ namespace jasMIN.Net2TypeScript.Tests
 
             tsType.AssertEquals(new TsTypeAssertion
             {
+                IsNullable = true,
+                IsGeneric = true,
+                IsKnockoutObservable = true,
+                TypeName = "KnockoutObservableArray",
+                ToStringResult = "KnockoutObservableArray<string | null> | null"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_KnockoutObservableListOfStrings_NonNullableArraySetting()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrays = true
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<string>), settings, true);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
                 IsNullable = false,
                 IsGeneric = true,
                 IsKnockoutObservable = true,
@@ -386,6 +534,71 @@ namespace jasMIN.Net2TypeScript.Tests
             });
         }
 
+        [TestMethod]
+        public void TypeScriptTypeTests_KnockoutObservableListOfClasses_NonNullableArrayEntityItemsSetting()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrayEntityItems = true,
+                clrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<TsTypeAssertion>), settings, true);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = true,
+                IsKnockoutObservable = true,
+                TypeName = "KnockoutObservableArray",
+                ToStringResult = "KnockoutObservableArray<Tests.TsTypeAssertion> | null"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_KnockoutObservableListOfClasses_NonNullableArraySettingsAndNonNullableArrayEntityItemsSettings()
+        {
+            var settings = new Settings
+            {
+                nonNullableArrays = true,
+                nonNullableArrayEntityItems = true,
+                clrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(List<TsTypeAssertion>), settings, true);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = true,
+                IsKnockoutObservable = true,
+                TypeName = "KnockoutObservableArray",
+                ToStringResult = "KnockoutObservableArray<Tests.TsTypeAssertion>"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
+            });
+        }
+
 
         [TestMethod]
         public void TypeScriptTypeTests_KnockoutObservableListOfListOfStrings()
@@ -398,11 +611,11 @@ namespace jasMIN.Net2TypeScript.Tests
 
             tsType.AssertEquals(new TsTypeAssertion
             {
-                IsNullable = false,
+                IsNullable = true,
                 IsGeneric = true,
                 IsKnockoutObservable = true,
                 TypeName = "KnockoutObservableArray",
-                ToStringResult = "KnockoutObservableArray<Array<string | null> | null>"
+                ToStringResult = "KnockoutObservableArray<Array<string | null> | null> | null"
             });
 
             var genericTsArg1 = tsType.GenericTypeArguments[0];
@@ -443,11 +656,11 @@ namespace jasMIN.Net2TypeScript.Tests
     {
         public static void AssertEquals(this ITypeScriptType tsType, TsTypeAssertion assertion)
         {
-            Assert.AreEqual(assertion.IsNullable, tsType.IsNullable);
-            Assert.AreEqual(assertion.IsGeneric, tsType.IsGeneric);
-            Assert.AreEqual(assertion.IsKnockoutObservable, tsType.IsKnockoutObservable);
-            Assert.AreEqual(assertion.TypeName, tsType.TypeName);
-            Assert.AreEqual(assertion.ToStringResult, tsType.ToString());
+            Assert.AreEqual(assertion.IsNullable, tsType.IsNullable, $"Expected IsNullable to be {assertion.IsNullable}");
+            Assert.AreEqual(assertion.IsGeneric, tsType.IsGeneric, $"Expected IsGeneric to be {assertion.IsGeneric}");
+            Assert.AreEqual(assertion.IsKnockoutObservable, tsType.IsKnockoutObservable, $"Expected IsKnockoutObservable to be {assertion.IsKnockoutObservable}");
+            Assert.AreEqual(assertion.TypeName, tsType.TypeName, $"Expected TypeName to be {assertion.TypeName}");
+            Assert.AreEqual(assertion.ToStringResult, tsType.ToString(), $"Expected ToStringResult to be {assertion.ToStringResult}");
         }
     }
 

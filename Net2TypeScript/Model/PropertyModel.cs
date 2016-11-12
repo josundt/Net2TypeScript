@@ -15,7 +15,7 @@ namespace jasMIN.Net2TypeScript.Model
         {
             this.PropInfo = propertyInfo;
             this.OwnerType = ownerType;
-            this.TsPropInfo = new TypeScriptPropertyInfo(propertyInfo, this.Settings);
+            this.TsPropInfo = new TypeScriptPropertyInfo(propertyInfo, ownerType, this.Settings);
 
             if (!(propertyInfo.CanRead || propertyInfo.GetGetMethod().IsPublic))
             {

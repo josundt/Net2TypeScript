@@ -30,6 +30,9 @@ namespace jasMIN.Net2TypeScript.Model
         public bool? excludeClass { get; set; }
         public bool? excludeInterface { get; set; }
         public Dictionary<string, string> extraProperties { get; set; }
+        public bool? nonNullableEntities { get; set; }
+        public bool? nonNullableArrays { get; set; }
+        public bool? nonNullableArrayEntityItems { get; set; }
 
 
         public GeneratorSettings Clone()
@@ -55,7 +58,10 @@ namespace jasMIN.Net2TypeScript.Model
                 result.excludeInterface = genSetting.excludeInterface ?? result.excludeInterface;
                 result.knockoutMapping = genSetting.knockoutMapping ?? result.knockoutMapping;
                 result.useBreeze = genSetting.useBreeze ?? result.useBreeze;
-                
+                result.nonNullableArrayEntityItems = genSetting.nonNullableArrayEntityItems ?? result.nonNullableArrayEntityItems;
+                result.nonNullableEntities = genSetting.nonNullableEntities ?? result.nonNullableEntities;
+                result.nonNullableArrays = genSetting.nonNullableArrays ?? result.nonNullableArrays;
+
                 foreach (var kvp in genSetting.extraProperties)
                 {
                     if (result.extraProperties.ContainsKey(kvp.Key))
@@ -175,9 +181,7 @@ namespace jasMIN.Net2TypeScript.Model
             var effectiveGenSettings = Merge(nsSettings.Clone(), classSettings);
 
             return this.GetEffectiveSettings(effectiveGenSettings);
-
         }
-
     }
 
 

@@ -35,6 +35,8 @@
     "AdraMatch.Balancer.Model.Db": {
       "knockoutmapping": "valuetypes",
       "useBreeze": true,
+      "nonNullableArrays": true,
+      "nonNullableArrayEntityItems": true,
       "extraProperties": {
         "isValid": "KnockoutObservable<boolean>"
       }

@@ -26,7 +26,8 @@ namespace jasMIN.Net2TypeScript.Model
                     }
                     else if (this is PropertyModel)
                     {
-                        this._settings = this._globalSettings.GetClassSettings((this as PropertyModel).OwnerType.FullName);
+                        var propModel = this as PropertyModel;
+                        this._settings = this._globalSettings.GetClassSettings(propModel.OwnerType.FullName);
                     }
                     else
                     {
