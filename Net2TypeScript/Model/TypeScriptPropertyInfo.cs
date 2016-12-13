@@ -179,7 +179,13 @@ namespace jasMIN.Net2TypeScript.Model
 
 
 
-            this.PropertyType = TypeScriptType.FromClrType(propertyInfo.PropertyType, settings, isKnockoutObservable, ownerType.IsTypeScriptArrayType(), Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute)));
+            this.PropertyType = TypeScriptType.FromClrType(
+                propertyInfo.PropertyType, 
+                settings, 
+                isKnockoutObservable, 
+                ownerType.IsTypeScriptArrayType(), 
+                Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute))
+            );
             this.PropertyName = settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
             this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && propertyInfo.GetSetMethod().IsPublic);
         }
