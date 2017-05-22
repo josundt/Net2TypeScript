@@ -176,7 +176,7 @@ namespace jasMIN.Net2TypeScript.Model
 
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
-                        sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
+                    sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
                 }
 
                 foreach (var ns in this.ChildNamespaces)
@@ -219,15 +219,14 @@ namespace jasMIN.Net2TypeScript.Model
                     sb.AppendLine("/* tslint:disable:no-reference */");
                     sb.AppendLine();
                     sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
-                    sb.AppendLine();
                 }
 
-                var possiblyExport = IsTsRoot ? string.Empty : "export";
+                var possiblyExport = IsTsRoot ? string.Empty : "export ";
                 var namespaceName = IsTsRoot ? $"{TsName}Enums" : TsName;
 
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
-                    sb.AppendLine($"{IndentationContext}{possiblyExport} namespace {namespaceName} {{");
+                    sb.AppendLine($"{IndentationContext}{possiblyExport}namespace {namespaceName} {{");
 
                     foreach (var enumModel in this.Enums)
                     {
