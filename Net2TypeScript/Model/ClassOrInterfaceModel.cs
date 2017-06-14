@@ -57,7 +57,7 @@ namespace jasMIN.Net2TypeScript.Model
                     TsFullName,
                     ClrFullName);
 
-                sb.AppendFormat("{0}interface {1}{2} {{\r\n",
+                sb.AppendFormat("{0}export interface {1}{2} {{\r\n",
                     IndentationContext,
                     TsTypeName,
                     Settings.useBreeze == true ? " extends breeze.Entity" : string.Empty);

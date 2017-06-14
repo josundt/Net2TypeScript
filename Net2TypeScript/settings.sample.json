@@ -4,8 +4,7 @@
     "../MyApp/ApiModel.dll",
     "../MyApp/DomainModel.dll"
   ],
-  "declarationsOutputPath": "../MyCode/typings/model.d.ts",
-  "modelModuleOutputPath": "../MyCode/model/model.ts",
+  "outputPath": "../MyCode/typings/model.d.ts",
   "clrRootNamespace": "MyApp",
   "tsRootNamespace": null,
   "classNamespaceFilter": [
@@ -13,7 +12,7 @@
     "MyApp.DomainModel.Db"
   ],
   "indent": "    ",
-  "enumType": "stringliteral",
+  "enumType": "string",
   "camelCase": true,
   "typingsPaths": {
     "knockout": "../typings/globals/knockout/index.d.ts",

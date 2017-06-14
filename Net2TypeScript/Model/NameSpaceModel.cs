@@ -172,11 +172,9 @@ namespace jasMIN.Net2TypeScript.Model
 
                 sb.AppendLine();
 
-                var possiblyDeclare = IsTsRoot ? "declare " : "";
-
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
-                    sb.AppendLine($"{IndentationContext}{possiblyDeclare}namespace {TsName} {{");
+                    sb.AppendLine($"{IndentationContext}export namespace {TsName} {{");
                 }
 
                 foreach (var ns in this.ChildNamespaces)
@@ -204,61 +202,5 @@ namespace jasMIN.Net2TypeScript.Model
 
         }
 
-        public void AppendEnums(StringBuilder sb)
-        {
-
-            if (ContainsEnums)
-            {
-
-
-                sb.AppendLine();
-
-                if (IsRoot)
-                {
-                    sb.AppendLine("/* tslint:disable:variable-name */");
-                    sb.AppendLine("/* tslint:disable:no-reference */");
-                    sb.AppendLine();
-                    sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.modelModuleOutputPath.GetRelativePathTo(Settings.declarationsOutputPath));
-                }
-
-                var possiblyExport = IsTsRoot ? string.Empty : "export ";
-                var namespaceName = IsTsRoot ? $"{TsName}Enums" : TsName;
-
-                if (!(this.IsRoot && !this.IsTsRoot))
-                {
-                    sb.AppendLine($"{IndentationContext}{possiblyExport}namespace {namespaceName} {{");
-
-                    foreach (var enumModel in this.Enums)
-                    {
-                        enumModel.AppendEnums(sb);
-                    }
-                }
-
-                foreach (var ns in this.ChildNamespaces)
-                {
-                    ns.AppendEnums(sb);
-                }
-
-                if (!(this.IsRoot && !this.IsTsRoot))
-                {
-                    sb.AppendLine();
-                    sb.AppendLine($"{IndentationContext}}}");
-                }
-
-                if (IsTsRoot)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine($"{IndentationContext}export const {TsName} = {namespaceName};");
-                }
-
-                if (IsRoot)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("/* tslint:enable:no-reference */");
-                    sb.AppendLine("/* tslint:enable:variable-name */");
-                }
-
-            }
-        }
     }
 }

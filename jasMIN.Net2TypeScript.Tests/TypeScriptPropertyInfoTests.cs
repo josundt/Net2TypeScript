@@ -221,8 +221,8 @@ namespace jasMIN.Net2TypeScript.Tests
                 IsNullable = true,
                 IsGeneric = false,
                 IsKnockoutObservable = false,
-                TypeName = "Object",
-                ToStringResult = "Object | null"
+                TypeName = "object",
+                ToStringResult = "object | null"
             });
         }
 
@@ -437,8 +437,8 @@ namespace jasMIN.Net2TypeScript.Tests
                 IsNullable = true,
                 IsGeneric = false,
                 IsKnockoutObservable = false,
-                TypeName = "Object",
-                ToStringResult = "Object | null"
+                TypeName = "object",
+                ToStringResult = "object | null"
             });
         }
 

@@ -27,15 +27,11 @@ namespace jasMIN.Net2TypeScript
 
                 TypeScriptGenerator.NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath));
 
-                var generatorResult = TypeScriptGenerator.GenerateTypeScript(globalSettings);
+                var output = TypeScriptGenerator.GenerateTypeScript(globalSettings);
 
-                if (!string.IsNullOrEmpty(generatorResult.Declarations))
+                if (!string.IsNullOrEmpty(output))
                 {
-                    File.WriteAllText(globalSettings.declarationsOutputPath, generatorResult.Declarations, Encoding.UTF8);
-                }
-                if (!string.IsNullOrEmpty(generatorResult.EnumModel))
-                {
-                    File.WriteAllText(globalSettings.modelModuleOutputPath, generatorResult.EnumModel, Encoding.UTF8);
+                    File.WriteAllText(globalSettings.outputPath, output, Encoding.UTF8);
                 }
             }
             catch (Exception ex)

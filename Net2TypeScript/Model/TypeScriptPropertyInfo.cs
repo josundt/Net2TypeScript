@@ -74,7 +74,7 @@ namespace jasMIN.Net2TypeScript.Model
             }
             else if (propertyType.IsEnum)
             {
-                if (settings.enumType == "enum" || settings.enumType == "stringliteral")
+                if (settings.enumType == "number" || settings.enumType == "string")
                 {
                     string propertyTypeTsNs;
                     if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
@@ -106,7 +106,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
                 else
                 {
-                    tsType.TypeName = "Object";
+                    tsType.TypeName = "object";
                 }
             }
 

@@ -10,17 +10,24 @@ namespace jasMIN.Net2TypeScript
 {
     static class TypeScriptGenerator
     {
-        public static GeneratorResult GenerateTypeScript(GlobalSettings globalSettings)
+        public static string GenerateTypeScript(GlobalSettings globalSettings)
         {
             var ns = new NamespaceModel(globalSettings, globalSettings.clrRootNamespace);
-            var sbDeclarations = new StringBuilder();
-            var sbEnums = new StringBuilder();
-            ns.AppendTs(sbDeclarations);
-            ns.AppendEnums(sbEnums);
-            return new GeneratorResult {
-                Declarations = sbDeclarations.ToString(),
-                EnumModel = sbEnums.ToString()
+
+            var tslintDisables = new[] {
+                "no-unnecessary-qualifier",
+                "array-type"
             };
+
+            var sb = new StringBuilder();
+
+            sb.Append(string.Join("", tslintDisables.Select(td => $"// tslint:disable:{td}\r\n")));
+
+            ns.AppendTs(sb);
+
+            sb.Append(string.Join("", tslintDisables.Select(td => $"// tslint:enable:{td}\r\n")));
+
+            return sb.ToString();
         }
 
         public static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
@@ -40,8 +47,7 @@ namespace jasMIN.Net2TypeScript
             // TODO: Validate that settings object has the expected properties
 
             settings.assemblyPaths = settings.assemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
-            settings.declarationsOutputPath = ResolvePath(settings.declarationsOutputPath, cwd);
-            settings.modelModuleOutputPath = ResolvePath(settings.modelModuleOutputPath, cwd);
+            settings.outputPath = ResolvePath(settings.outputPath, cwd);
 
             ValidateGeneratorSettings(settings);
             settings.namespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
@@ -52,18 +58,11 @@ namespace jasMIN.Net2TypeScript
                 throw new FileNotFoundException("Some of the specified assemblies could not be found.");
             }
 
-            var declarationsOutputDir = Path.GetDirectoryName(settings.declarationsOutputPath);
-            if (declarationsOutputDir == null || !Directory.Exists(declarationsOutputDir))
+            var outputPath = Path.GetDirectoryName(settings.outputPath);
+            if (outputPath == null || !Directory.Exists(outputPath))
             {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.declarationsOutputPath));
+                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.outputPath));
             }
-
-            var enumModelOutputDir = Path.GetDirectoryName(settings.modelModuleOutputPath);
-            if (enumModelOutputDir == null || !Directory.Exists(enumModelOutputDir))
-            {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.modelModuleOutputPath));
-            }
-
         }
 
         static void ValidateGeneratorSettings(GeneratorSettings genSettings) {

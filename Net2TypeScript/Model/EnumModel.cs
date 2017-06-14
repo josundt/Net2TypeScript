@@ -20,81 +20,46 @@ namespace jasMIN.Net2TypeScript.Model
 
         protected override int ExtraIndents => 1;
 
-        List<string> StringValues
-            => Type.GetMembers(BindingFlags.Public | BindingFlags.Static).Select(t => t.Name).ToList();
-
-        string TsStringLiteralType
-            => string.Join("|", StringValues.Select(s => $@"""{s}"""));
-
-        public override void AppendTs(StringBuilder sb) {
-
-            if (Settings.enumType == "stringliteral")
+        IEnumerable<string> Names
+        {
+            get
             {
-                sb.AppendLine();
-
-                sb.AppendFormat(
-                    "{0}/** Enum: {1} ({2}) */\r\n",
-                    IndentationContext,
-                    TsFullName,
-                    ClrFullName);
-
-                sb.AppendLine($"{IndentationContext}type {TsTypeName} = {TsStringLiteralType};");
-
+                return Enum.GetNames(typeof(Type));
             }
-
-            // PS ! Not used or working
-            //if (settings.enumType == "enum")
-            //{
-            //    sb.AppendFormat(
-            //        "/** {0} **/\r\n",
-            //        enumType.FullName);
-
-            //    sb.AppendFormat(
-            //        "declare enum {0} {{\r\n",
-            //        enumType.Name);
-
-            //    var valueIterator = 0;
-            //    var enumKeys = Enum.GetNames(enumType);
-            //    var enumValues = Enum.GetValues(enumType);
-            //    foreach (object enumValue in enumValues)
-            //    {
-            //        sb.AppendFormat(
-            //            "{0}{1} = {2}{3}\r\n",
-            //            settings.tab,
-            //            enumKeys[valueIterator].ToCamelCase(),
-            //            Convert.ChangeType(enumValue, enumType.GetEnumUnderlyingType()),
-            //            valueIterator == enumKeys.Length - 1 ? null : ",");
-
-            //        valueIterator++;
-            //    }
-
-            //    sb.AppendLine("}\r\n");
-            //}
-
         }
 
-        public void AppendEnums(StringBuilder sb)
+        Dictionary<string, string> Values
         {
-            if (Settings.enumType == "stringliteral")
+            get
             {
-                sb.AppendLine();
-
-                sb.AppendFormat(
-                    "{0}/** Enum: {1} ({2}) */\r\n",
-                    IndentationContext,
-                    TsFullName,
-                    ClrFullName);
-
-                sb.AppendLine($"{IndentationContext}export namespace {TsTypeName} {{");
-                sb.AppendLine($@"{IndentationContext}{Settings.indent}export namespace Values {{");
-                foreach (var stringValue in StringValues)
+                var result = new Dictionary<string, string>();
+                foreach(var rawValue in Enum.GetValues(this.Type))
                 {
-                    sb.AppendLine($@"{IndentationContext}{Settings.indent}{Settings.indent}export const {stringValue}: {TsFullName} = ""{stringValue}"";");
-                }
-                sb.AppendLine($@"{IndentationContext}{Settings.indent}}}");
-                sb.AppendLine($"{IndentationContext}}}");
+                    var name = Enum.GetName(this.Type, rawValue);
 
+                    var value = this._globalSettings.enumType == "string" 
+                        ? $@"""{name}"""
+                        : Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this.Type)).ToString();
+
+                    result.Add(name, value);
+                }
+                return result;
             }
+        }
+        public override void AppendTs(StringBuilder sb) {
+
+            sb.AppendLine($"{IndentationContext}export enum {TsTypeName} {{");
+
+            var i = 0;
+            foreach (var value in this.Values)
+            {
+                var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
+                sb.AppendLine($@"{IndentationContext}{Settings.indent}{value.Key} = {value.Value}{possiblyComma}");
+                i++;
+            }
+
+            sb.AppendLine($@"{IndentationContext}}}");
+
         }
     }
 }

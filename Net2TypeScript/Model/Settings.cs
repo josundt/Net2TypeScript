@@ -83,13 +83,12 @@ namespace jasMIN.Net2TypeScript.Model
         {
             // Initializing default values
             this.indent = "    ";
-            this.enumType = "stringliteral";
+            this.enumType = "string";
             this.tsRootNamespace = this.clrRootNamespace;
             this.extraProperties = new Dictionary<string, string>();
         }
         public List<string> assemblyPaths { get; set; }
-        public string declarationsOutputPath { get; set; }
-        public string modelModuleOutputPath { get; set; }
+        public string outputPath { get; set; }
         public string clrRootNamespace { get; set; }
         public string tsRootNamespace { get; set; }
         public string enumType { get; set; }
