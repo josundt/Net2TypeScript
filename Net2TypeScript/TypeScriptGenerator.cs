@@ -21,7 +21,7 @@ namespace jasMIN.Net2TypeScript
 
             var sb = new StringBuilder();
 
-            sb.Append(string.Join("", tslintDisables.Select(td => $"// tslint:disable:{td}\r\n")));
+            sb.Append(string.Join("\r\n", tslintDisables.Select(td => $"// tslint:disable:{td}")));
 
             ns.AppendTs(sb);
 

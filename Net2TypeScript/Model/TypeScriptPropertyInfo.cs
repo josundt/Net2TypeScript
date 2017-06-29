@@ -83,7 +83,7 @@ namespace jasMIN.Net2TypeScript.Model
                     }
                     else
                     {
-                        tsType.TypeName = "Object";
+                        tsType.TypeName = "object";
                     }
                 }
                 else
