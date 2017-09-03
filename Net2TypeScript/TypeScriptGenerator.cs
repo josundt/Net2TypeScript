@@ -16,7 +16,8 @@ namespace jasMIN.Net2TypeScript
 
             var tslintDisables = new[] {
                 "no-unnecessary-qualifier",
-                "array-type"
+                "array-type",
+                "no-shadowed-variable"
             };
 
             var sb = new StringBuilder();
