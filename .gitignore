@@ -30,3 +30,5 @@ _ReSharper*/
 
 #Nuget packages
 /Source/packages/*
+
+/.vs

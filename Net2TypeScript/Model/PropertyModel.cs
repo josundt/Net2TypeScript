@@ -26,6 +26,8 @@ namespace jasMIN.Net2TypeScript.Model
 
         PropertyInfo PropInfo { get; set; }
 
+        public string PropName => this.PropInfo.Name;
+
         public Type OwnerType { get; private set; }
 
         public TypeScriptPropertyInfo TsPropInfo { get; set; }
