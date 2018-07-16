@@ -80,7 +80,8 @@
           "default": "string",
           "enum": [
             "string",
-            "number"
+            "number",
+            "stringIfNotFlagEnum"
           ],
           "description": "(Optional, default \"string\". Specifies how .NET Enum types should be translated to TypeScript. \"string\" will translate into a string enum; \"number\" will translate it into a number enum."
         },

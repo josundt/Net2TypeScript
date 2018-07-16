@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     abstract class ClrModelBase
     {

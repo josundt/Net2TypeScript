@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     static class ExtensionMethods
     {
@@ -92,17 +92,17 @@ namespace jasMIN.Net2TypeScript.Model
 
             if (type.IsTypeScriptArrayType())
             {
-                result = settings.nonNullableArrays != true;
+                result = settings.NonNullableArrays != true;
             }
             else if (type.IsTypeScriptInterfaceType())
             {
                 if (isArrayItem)
                 {
-                    result = settings.nonNullableArrayEntityItems != true;
+                    result = settings.NonNullableArrayEntityItems != true;
                 }
                 else
                 {
-                    result = settings.nonNullableEntities != true;
+                    result = settings.NonNullableEntities != true;
                 }
             }
             else if (type.IsTypeScriptStringType() && type != typeof(Guid))
@@ -115,7 +115,7 @@ namespace jasMIN.Net2TypeScript.Model
 
         public static bool IsTypeScriptObservableType(this Type type, Settings settings)
         {
-            return settings.knockoutMapping == KnockoutMappingOptions.All || (settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType());
+            return settings.KnockoutMapping == KnockoutMappingOptions.All || (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType());
                 
         }
 
@@ -139,8 +139,8 @@ namespace jasMIN.Net2TypeScript.Model
     {
         public static string ToTsFullName(this Settings settings, string clrFullName)
         {
-            var namespaceSegment = clrFullName.Remove(0, settings.clrRootNamespace.Length + 1);
-            return string.IsNullOrWhiteSpace(settings.tsRootNamespace) ? namespaceSegment : $"{settings.tsRootNamespace}.{namespaceSegment}";
+            var namespaceSegment = clrFullName.Remove(0, settings.ClrRootNamespace.Length + 1);
+            return string.IsNullOrWhiteSpace(settings.TsRootNamespace) ? namespaceSegment : $"{settings.TsRootNamespace}.{namespaceSegment}";
         }
     }
 

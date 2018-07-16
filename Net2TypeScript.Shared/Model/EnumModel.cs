@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     class EnumModel : ClrTypeModelBase
     {
@@ -36,10 +36,17 @@ namespace jasMIN.Net2TypeScript.Model
                 foreach(var rawValue in Enum.GetValues(this.Type))
                 {
                     var name = Enum.GetName(this.Type, rawValue);
+                    var enumOutputSetting = this._globalSettings.EnumType;
 
-                    var value = this._globalSettings.enumType == "string" 
-                        ? $@"""{name}"""
-                        : Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this.Type)).ToString();
+                    bool useNumeric = enumOutputSetting != "string";
+
+                    if (enumOutputSetting == "stringIfNotFlagEnum") {
+                        useNumeric = this.Type.GetCustomAttributes(typeof(FlagsAttribute), false)?.Length > 0;
+                    }
+
+                    var value = useNumeric
+                        ? Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this.Type)).ToString()
+                        : $@"""{name}""";
 
                     result.Add(name, value);
                 }
@@ -54,7 +61,7 @@ namespace jasMIN.Net2TypeScript.Model
             foreach (var value in this.Values)
             {
                 var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
-                sb.AppendLine($@"{IndentationContext}{Settings.indent}{value.Key} = {value.Value}{possiblyComma}");
+                sb.AppendLine($@"{IndentationContext}{Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
                 i++;
             }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     class ClassOrInterfaceModel : ClrTypeModelBase
     {
@@ -34,7 +34,7 @@ namespace jasMIN.Net2TypeScript.Model
                 foreach (PropertyInfo propertyInfo in type.GetProperties().Where(prop => prop.CanRead && prop.GetGetMethod().IsPublic))
                 {
                     var isDefinedAsExtraProp =
-                        this.Settings.extraProperties.Any(ep => ep.Key == (Settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));
+                        this.Settings.ExtraProperties.Any(ep => ep.Key == (Settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));
 
                     if (!isDefinedAsExtraProp)
                     {
@@ -66,7 +66,7 @@ namespace jasMIN.Net2TypeScript.Model
             if (result != null)
             {
                 var baseTypeAssemblyName = result.Assembly.FullName.Split(',')[0];
-                if (!this._globalSettings.assemblyPaths.Any(ap => ap.Contains(baseTypeAssemblyName))) {
+                if (!this._globalSettings.AssemblyPaths.Any(ap => ap.Contains(baseTypeAssemblyName))) {
                     result = null;
                 }
                 else if (result == classOrInterface)
@@ -81,8 +81,8 @@ namespace jasMIN.Net2TypeScript.Model
         {
 
             var skip =
-                (this.Type.IsClass && this.Settings.excludeClass == true) ||
-                (this.Type.IsInterface && this.Settings.excludeInterface == true) ||
+                (this.Type.IsClass && this.Settings.ExcludeClass == true) ||
+                (this.Type.IsInterface && this.Settings.ExcludeInterface == true) ||
                 this.Properties.Count == 0;
 
 
@@ -98,7 +98,7 @@ namespace jasMIN.Net2TypeScript.Model
                 sb.AppendFormat("{0}export interface {1}{2} {{\r\n",
                     IndentationContext,
                     TsTypeName,
-                    Settings.useBreeze == true ? " extends breeze.Entity" : string.Empty);
+                    Settings.UseBreeze == true ? " extends breeze.Entity" : string.Empty);
 
                 // TODO: Filter non-public props
                 // RENDER PROPERTYINFOS
@@ -108,9 +108,9 @@ namespace jasMIN.Net2TypeScript.Model
                 }
 
 
-                if (Settings.extraProperties != null)
+                if (Settings.ExtraProperties != null)
                 {
-                    foreach (KeyValuePair<string, string> prop in Settings.extraProperties)
+                    foreach (KeyValuePair<string, string> prop in Settings.ExtraProperties)
                     {
                         if (!string.IsNullOrEmpty(prop.Value))
                         {
@@ -130,9 +130,9 @@ namespace jasMIN.Net2TypeScript.Model
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();
             sb.AppendFormat("{0}/** Extra/overridden property */\r\n",
-                            IndentationContext + settings.indent);
+                            IndentationContext + settings.Indent);
             sb.AppendFormat("{0}{1}: {2};\r\n",
-                            IndentationContext + settings.indent,
+                            IndentationContext + settings.Indent,
                             tsPropName,
                             tsTypeName);
         }

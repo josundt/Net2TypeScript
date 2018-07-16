@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     abstract class ClrTypeModelBase : ClrModelBase
     {
@@ -15,7 +15,7 @@ namespace jasMIN.Net2TypeScript.Model
         public override abstract void AppendTs(StringBuilder sb);
 
         protected override string IndentationContext =>
-            string.Concat(Enumerable.Repeat(Settings.indent, Type.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+            string.Concat(Enumerable.Repeat(Settings.Indent, Type.Namespace.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length + ExtraIndents));
 
         protected Type Type { get; private set; }
         protected virtual string TsTypeName => Type.Name;

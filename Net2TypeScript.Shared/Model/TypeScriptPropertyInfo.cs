@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     public interface ITypeScriptType
     {
@@ -74,7 +74,7 @@ namespace jasMIN.Net2TypeScript.Model
             }
             else if (propertyType.IsEnum)
             {
-                if (settings.enumType == "number" || settings.enumType == "string")
+                if (settings.EnumType == "stringIfNotFlagEnum" || settings.EnumType == "number" || settings.EnumType == "string")
                 {
                     string propertyTypeTsNs;
                     if (propertyType.TryGetTypeScriptNamespaceName(settings, out propertyTypeTsNs))
@@ -88,7 +88,7 @@ namespace jasMIN.Net2TypeScript.Model
                 }
                 else
                 {
-                    tsType.TypeName = settings.enumType;
+                    tsType.TypeName = settings.EnumType;
                 }
             }
             else if (propertyType.IsTypeScriptArrayType())
@@ -161,7 +161,7 @@ namespace jasMIN.Net2TypeScript.Model
         public TypeScriptPropertyInfo(PropertyInfo propertyInfo, Type ownerType, Settings settings)        {
 
             var isKnockoutObservable = false;
-            if (settings.knockoutMapping != null && settings.knockoutMapping != KnockoutMappingOptions.None)
+            if (settings.KnockoutMapping != null && settings.KnockoutMapping != KnockoutMappingOptions.None)
             {
                 var propertyType = propertyInfo.PropertyType.IsClrNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType;
                 if (propertyType.IsTypeScriptArrayType())
@@ -171,9 +171,9 @@ namespace jasMIN.Net2TypeScript.Model
                 else
                 {
                     isKnockoutObservable = 
-                        settings.knockoutMapping == KnockoutMappingOptions.All
+                        settings.KnockoutMapping == KnockoutMappingOptions.All
                         ||
-                        (settings.knockoutMapping == KnockoutMappingOptions.ValueTypes && !propertyInfo.PropertyType.IsTypeScriptInterfaceType());
+                        (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !propertyInfo.PropertyType.IsTypeScriptInterfaceType());
                 }
             }
 
@@ -186,7 +186,7 @@ namespace jasMIN.Net2TypeScript.Model
                 ownerType.IsTypeScriptArrayType(), 
                 Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute))
             );
-            this.PropertyName = settings.camelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
+            this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
             this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && propertyInfo.GetSetMethod().IsPublic);
         }
         public ITypeScriptType PropertyType { get; private set; }

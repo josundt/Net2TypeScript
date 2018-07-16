@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     class NamespaceModel : ClrModelBase
     {
@@ -23,16 +23,16 @@ namespace jasMIN.Net2TypeScript.Model
         }
 
         protected override string IndentationContext =>
-                string.Concat(Enumerable.Repeat(Settings.indent, ClrFullName.Split('.').Length - Settings.clrRootNamespace.Split('.').Length));
+                string.Concat(Enumerable.Repeat(Settings.Indent, ClrFullName.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length));
 
         bool IsRoot => 
-            Settings.clrRootNamespace == this.ClrFullName;
+            Settings.ClrRootNamespace == this.ClrFullName;
 
         bool IsDirectChildOfRoot =>
-            this.ClrFullName.Split('.').Length - Settings.clrRootNamespace.Split('.').Length == 1;
+            this.ClrFullName.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length == 1;
 
         bool IsTsRoot =>
-            (this.IsRoot && !string.IsNullOrWhiteSpace(Settings.tsRootNamespace)) || (this.IsDirectChildOfRoot && string.IsNullOrWhiteSpace(Settings.tsRootNamespace));
+            (this.IsRoot && !string.IsNullOrWhiteSpace(Settings.TsRootNamespace)) || (this.IsDirectChildOfRoot && string.IsNullOrWhiteSpace(Settings.TsRootNamespace));
 
         string TsName => 
             ClrFullName.Split('.').Last();
@@ -41,10 +41,10 @@ namespace jasMIN.Net2TypeScript.Model
             Settings.ToTsFullName(ClrFullName);
 
         bool IncludeClasses => 
-            Settings.classNamespaceFilter == null || Settings.classNamespaceFilter.Contains(ClrFullName);
+            Settings.ClassNamespaceFilter == null || Settings.ClassNamespaceFilter.Contains(ClrFullName);
 
         bool IncludeEnums => 
-            Settings.enumNamespaceFilter == null || Settings.enumNamespaceFilter.Contains(ClrFullName);
+            Settings.EnumNamespaceFilter == null || Settings.EnumNamespaceFilter.Contains(ClrFullName);
 
         bool IsEmpty =>
             Entities.Count + Enums.Count == 0 && ChildNamespaces.All(ns => ns.IsEmpty);
@@ -61,7 +61,7 @@ namespace jasMIN.Net2TypeScript.Model
         void Initialize()
         {
 
-            List<Assembly> assemblies = Settings.assemblyPaths.Select(ap => Assembly.LoadFrom(ap)).ToList();
+            List<Assembly> assemblies = Settings.AssemblyPaths.Select(ap => Assembly.LoadFrom(ap)).ToList();
             foreach (var a in assemblies)
             {
                 a.GetReferencedAssemblies();
@@ -147,22 +147,22 @@ namespace jasMIN.Net2TypeScript.Model
             {
                 List<GeneratorSettings> allGeneratorSettings = new List<GeneratorSettings> ();
                 allGeneratorSettings.Add(this._globalSettings);
-                allGeneratorSettings.AddRange(this._globalSettings.namespaceOverrides.Values);
-                allGeneratorSettings.AddRange(this._globalSettings.classOverrides.Values);
+                allGeneratorSettings.AddRange(this._globalSettings.NamespaceOverrides.Values);
+                allGeneratorSettings.AddRange(this._globalSettings.ClassOverrides.Values);
 
-                if (allGeneratorSettings.Any(gs => gs.knockoutMapping != KnockoutMappingOptions.None && gs.knockoutMapping != null))
+                if (allGeneratorSettings.Any(gs => gs.KnockoutMapping != KnockoutMappingOptions.None && gs.KnockoutMapping != null))
                 {
-                    if (Settings.typingsPaths != null && Settings.typingsPaths.knockout != null)
+                    if (Settings.TypingsPaths != null && Settings.TypingsPaths.Knockout != null)
                     {
-                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.knockout);
+                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Knockout);
                     }
                 }
 
-                if (allGeneratorSettings.Any(gs => gs.useBreeze == true))
+                if (allGeneratorSettings.Any(gs => gs.UseBreeze == true))
                 {
-                    if (Settings.typingsPaths != null && Settings.typingsPaths.breeze == null)
+                    if (Settings.TypingsPaths != null && Settings.TypingsPaths.Breeze == null)
                     {
-                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.typingsPaths.breeze);
+                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Breeze);
                     }
                 }
             }

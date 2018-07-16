@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace jasMIN.Net2TypeScript.Model
+namespace jasMIN.Net2TypeScript.Shared.Model
 {
     class PropertyModel : ClrTypeModelBase
     {
@@ -36,7 +36,7 @@ namespace jasMIN.Net2TypeScript.Model
             2;
 
         protected override string IndentationContext =>
-            string.Concat(Enumerable.Repeat(Settings.indent, OwnerType.Namespace.Split('.').Length - Settings.clrRootNamespace.Split('.').Length + ExtraIndents));
+            string.Concat(Enumerable.Repeat(Settings.Indent, OwnerType.Namespace.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length + ExtraIndents));
 
         public override void AppendTs(StringBuilder sb)
         {

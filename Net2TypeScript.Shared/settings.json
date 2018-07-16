@@ -1,10 +1,9 @@
 ﻿{
   "$schema": "./settings.schema.json",
   "assemblyPaths": [
-    
-    "../../../../AdraMatch.Balancer/Source/AdraMatch.Balancer.Model/bin/Debug/AdraMatch.Balancer.Model.dll"
+    "C:/_Git/Adra.Balancer/Source/AdraMatch.Balancer.Model/bin/Debug/AdraMatch.Balancer.Model.dll"
   ],
-  "outputPath": "../../../../../Users/Jorn/Desktop/model.d.ts",
+  "outputPath": "C:/Users/Jorn.Andre.Sundt/Desktop/model.ts",
   "clrRootNamespace": "AdraMatch.Balancer",
   "tsRootNamespace": null,
   "classNamespaceFilter": [
@@ -16,7 +15,7 @@
     "AdraMatch.Balancer.Model.Import"
   ],
   "indent": "    ",
-  "enumType": "string",
+  "enumType": "stringIfNotFlagEnum",
   "camelCase": true,
   "typingsPaths": {
     "knockout": "C:/_Git/AdraMatch.Balancer/Source/AdraMatch.Balancer.Web/app/typings/typings/globals/knockout/index.d.ts",
@@ -25,7 +24,7 @@
   "knockoutMapping": "none",
   "useBreeze": false,
   "excludeClass": false,
-  "excludeInterface":  true,
+  "excludeInterface": true,
   "namespaceOverrides": {
     "AdraMatch.Balancer.Web": {
       "knockoutmapping": "valuetypes",

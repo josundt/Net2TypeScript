@@ -1,6 +1,6 @@
 ﻿using jasMIN.Net2TypeScript.Shared;
 
-namespace jasMIN.Net2TypeScript
+namespace NetCore2TypeScript
 {
     static class Program
     {

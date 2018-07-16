@@ -1,18 +1,17 @@
-﻿using jasMIN.Net2TypeScript.Model;
+﻿using jasMIN.Net2TypeScript.Shared.Model;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Web.Script.Serialization;
 
-namespace jasMIN.Net2TypeScript
+namespace jasMIN.Net2TypeScript.Shared
 {
     static class TypeScriptGenerator
     {
         public static string GenerateTypeScript(GlobalSettings globalSettings)
         {
-            var ns = new NamespaceModel(globalSettings, globalSettings.clrRootNamespace);
+            var ns = new NamespaceModel(globalSettings, globalSettings.ClrRootNamespace);
 
             var tslintDisables = new[] {
                 "no-unnecessary-qualifier",
@@ -37,8 +36,7 @@ namespace jasMIN.Net2TypeScript
 
             string jsonSettings = File.ReadAllText(settingsPath, Encoding.UTF8);
 
-            var deserializer = new JavaScriptSerializer();
-            var settings = (GlobalSettings)deserializer.Deserialize(jsonSettings, typeof(GlobalSettings));
+            var settings = Json.Deserialize<GlobalSettings>(jsonSettings);
 
             return settings;
         }
@@ -47,22 +45,22 @@ namespace jasMIN.Net2TypeScript
         {
             // TODO: Validate that settings object has the expected properties
 
-            settings.assemblyPaths = settings.assemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
-            settings.outputPath = ResolvePath(settings.outputPath, cwd);
+            settings.AssemblyPaths = settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
+            settings.OutputPath = ResolvePath(settings.OutputPath, cwd);
 
             ValidateGeneratorSettings(settings);
-            settings.namespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
-            settings.classOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
+            settings.NamespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
+            settings.ClassOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
 
-            if (settings.assemblyPaths.Any(ap => !File.Exists(ap)))
+            if (settings.AssemblyPaths.Any(ap => !File.Exists(ap)))
             {
                 throw new FileNotFoundException("Some of the specified assemblies could not be found.");
             }
 
-            var outputPath = Path.GetDirectoryName(settings.outputPath);
+            var outputPath = Path.GetDirectoryName(settings.OutputPath);
             if (outputPath == null || !Directory.Exists(outputPath))
             {
-                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.outputPath));
+                throw new FileNotFoundException(string.Format("Output directory '{0}' not found.", settings.OutputPath));
             }
         }
 
@@ -72,10 +70,10 @@ namespace jasMIN.Net2TypeScript
                     KnockoutMappingOptions.None, 
                     KnockoutMappingOptions.All,
                     KnockoutMappingOptions.ValueTypes
-                }.Any(s => s == genSettings.knockoutMapping)
+                }.Any(s => s == genSettings.KnockoutMapping)
             )
             {
-                throw new Exception($"Invalid knockoutMappingOptions value: {genSettings.knockoutMapping}");
+                throw new Exception($"Invalid knockoutMappingOptions value: {genSettings.KnockoutMapping}");
             }
         }
 

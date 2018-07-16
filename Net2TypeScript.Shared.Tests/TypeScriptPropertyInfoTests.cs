@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using jasMIN.Net2TypeScript.Model;
 using System.Collections.Generic;
 using System.Linq;
+using jasMIN.Net2TypeScript.Shared.Model;
 
 namespace jasMIN.Net2TypeScript.Tests
 {
