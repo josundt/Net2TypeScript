@@ -108,7 +108,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 .Distinct();
 
             var childNamespaces = allNamespaces
-                .Where(ns => ns.StartsWith(this.ClrFullName, StringComparison.Ordinal) && ns.Length > this.ClrFullName.Length)
+                .Where(ns => ns.StartsWith($"{this.ClrFullName}.", StringComparison.Ordinal) && ns.Length > this.ClrFullName.Length)
                 .Select(ns => string.Format("{0}.{1}", this.ClrFullName, ns.Substring(this.ClrFullName.Length).Split('.')[1]))
                 .Distinct()
                 .ToList();
