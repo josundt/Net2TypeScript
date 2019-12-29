@@ -52,7 +52,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
             foreach (var genSetting in generatorSettingsColletion.Where(gs => gs != null))
             {
-                result = result ?? new T();
+                result ??= new T();
 
                 result.ExcludeClass = genSetting.ExcludeClass ?? result.ExcludeClass;
                 result.ExcludeInterface = genSetting.ExcludeInterface ?? result.ExcludeInterface;

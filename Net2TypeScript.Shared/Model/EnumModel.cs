@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.IO;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -53,19 +51,21 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 return result;
             }
         }
-        public override void AppendTs(StringBuilder sb) {
+        public override StreamWriter WriteTs(StreamWriter sw) {
 
-            sb.AppendLine($"{IndentationContext}export enum {TsTypeName} {{");
+            sw.WriteLine($"{IndentationContext}export enum {TsTypeName} {{");
 
             var i = 0;
             foreach (var value in this.Values)
             {
                 var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
-                sb.AppendLine($@"{IndentationContext}{Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
+                sw.WriteLine($@"{IndentationContext}{Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
                 i++;
             }
 
-            sb.AppendLine($@"{IndentationContext}}}");
+            sw.WriteLine($@"{IndentationContext}}}");
+
+            return sw;
 
         }
     }

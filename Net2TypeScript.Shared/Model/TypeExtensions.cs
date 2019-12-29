@@ -7,7 +7,7 @@ using System.Text;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
-    static class ExtensionMethods
+    static class TypeExtensions
     {
         static void ThrowIfNullable(Type type)
         {
@@ -144,7 +144,6 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         }
     }
 
-
     static class StringExtensions
     {
         public static string ToCamelCase(this string str)
@@ -201,4 +200,14 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             return result;
         }
     }
+
+    static class StreamWriterExtensions
+    {
+        public static StreamWriter WriteFormat(this StreamWriter sw, string interpolationString, params object[] args)
+        {
+            sw.Write(string.Format(interpolationString, args));
+            return sw;
+        }
+    }
+
 }

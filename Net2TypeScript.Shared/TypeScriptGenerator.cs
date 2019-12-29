@@ -2,14 +2,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace jasMIN.Net2TypeScript.Shared
 {
     static class TypeScriptGenerator
     {
-        public static string GenerateTypeScript(GlobalSettings globalSettings)
+        public static void GenerateTypeScript(GlobalSettings globalSettings, Stream outStream)
         {
             var ns = new NamespaceModel(globalSettings, globalSettings.ClrRootNamespace);
 
@@ -19,15 +18,13 @@ namespace jasMIN.Net2TypeScript.Shared
                 "no-shadowed-variable"
             };
 
-            var sb = new StringBuilder();
+            using var sw = new StreamWriter(outStream);
+            
+            sw.Write(string.Join("\r\n", tslintDisables.Select(td => $"// tslint:disable:{td}")));
 
-            sb.Append(string.Join("\r\n", tslintDisables.Select(td => $"// tslint:disable:{td}")));
+            ns.WriteTs(sw);
 
-            ns.AppendTs(sb);
-
-            sb.Append(string.Join("", tslintDisables.Select(td => $"// tslint:enable:{td}\r\n")));
-
-            return sb.ToString();
+            sw.Write(string.Join("", tslintDisables.Select(td => $"// tslint:enable:{td}\r\n")));
         }
 
         public static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)

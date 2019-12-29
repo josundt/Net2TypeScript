@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -77,7 +77,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             return result;
         }
 
-        public override void AppendTs(StringBuilder sb)
+        public override StreamWriter WriteTs(StreamWriter sw)
         {
 
             var skip =
@@ -89,13 +89,13 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             if (!skip)
             {
 
-                sb.AppendFormat("\r\n{0}/** {1}: {2} ({3}) */\r\n",
+                sw.WriteFormat("\r\n{0}/** {1}: {2} ({3}) */\r\n",
                     IndentationContext,
                     this.Type.IsClass ? "Class" : "Interface",
                     TsFullName,
                     ClrFullName);
 
-                sb.AppendFormat("{0}export interface {1}{2} {{\r\n",
+                sw.WriteFormat("{0}export interface {1}{2} {{\r\n",
                     IndentationContext,
                     TsTypeName,
                     Settings.UseBreeze == true ? " extends breeze.Entity" : string.Empty);
@@ -104,7 +104,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 // RENDER PROPERTYINFOS
                 foreach (var prop in this.Properties)
                 {
-                    prop.AppendTs(sb);
+                    prop.WriteTs(sw);
                 }
 
 
@@ -114,24 +114,25 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                     {
                         if (!string.IsNullOrEmpty(prop.Value))
                         {
-                            AppendExtensionProperty(sb, prop, Settings);
+                            WriteExtensionProperty(sw, prop, Settings);
                         }
                     }
                 }
 
-                sb.AppendLine($"{IndentationContext}}}");
+                sw.WriteLine($"{IndentationContext}}}");
 
             }
 
+            return sw;
         }
 
-        void AppendExtensionProperty(StringBuilder sb, KeyValuePair<string, string> prop, Settings settings)
+        void WriteExtensionProperty(StreamWriter sw, KeyValuePair<string, string> prop, Settings settings)
         {
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();
-            sb.AppendFormat("{0}/** Extra/overridden property */\r\n",
+            sw.WriteFormat("{0}/** Extra/overridden property */\r\n",
                             IndentationContext + settings.Indent);
-            sb.AppendFormat("{0}{1}: {2};\r\n",
+            sw.WriteFormat("{0}{1}: {2};\r\n",
                             IndentationContext + settings.Indent,
                             tsPropName,
                             tsTypeName);

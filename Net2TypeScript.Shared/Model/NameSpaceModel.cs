@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -141,12 +138,14 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         }
 
-        public override void AppendTs(StringBuilder sb)
+        public override StreamWriter WriteTs(StreamWriter sw)
         {
             if (IsRoot)
             {
-                List<GeneratorSettings> allGeneratorSettings = new List<GeneratorSettings> ();
-                allGeneratorSettings.Add(this._globalSettings);
+                List<GeneratorSettings> allGeneratorSettings = new List<GeneratorSettings>
+                {
+                    this._globalSettings
+                };
                 allGeneratorSettings.AddRange(this._globalSettings.NamespaceOverrides.Values);
                 allGeneratorSettings.AddRange(this._globalSettings.ClassOverrides.Values);
 
@@ -154,7 +153,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 {
                     if (Settings.TypingsPaths != null && Settings.TypingsPaths.Knockout != null)
                     {
-                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Knockout);
+                        sw.WriteFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Knockout);
                     }
                 }
 
@@ -162,7 +161,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 {
                     if (Settings.TypingsPaths != null && Settings.TypingsPaths.Breeze == null)
                     {
-                        sb.AppendFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Breeze);
+                        sw.WriteFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Breeze);
                     }
                 }
             }
@@ -170,16 +169,16 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             if(!IsEmpty)
             {
 
-                sb.AppendLine();
+                sw.WriteLine();
 
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
-                    sb.AppendLine($"{IndentationContext}export namespace {TsName} {{");
+                    sw.WriteLine($"{IndentationContext}export namespace {TsName} {{");
                 }
 
                 foreach (var ns in this.ChildNamespaces)
                 {
-                    ns.AppendTs(sb);
+                    ns.WriteTs(sw);
                 }
 
                 if (!(this.IsRoot && !this.IsTsRoot))
@@ -187,19 +186,20 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
                     foreach (var entity in this.Entities)
                     {
-                        entity.AppendTs(sb);
+                        entity.WriteTs(sw);
                     }
 
                     foreach (var enumModel in this.Enums)
                     {
-                        enumModel.AppendTs(sb);
+                        enumModel.WriteTs(sw);
                     }
 
-                    sb.AppendLine();
-                    sb.AppendLine($"{IndentationContext}}}");
+                    sw.WriteLine();
+                    sw.WriteLine($"{IndentationContext}}}");
                 }
             }
 
+            return sw;
         }
 
     }

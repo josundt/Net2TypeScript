@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -38,7 +37,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         protected override string IndentationContext =>
             string.Concat(Enumerable.Repeat(Settings.Indent, OwnerType.Namespace.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length + ExtraIndents));
 
-        public override void AppendTs(StringBuilder sb)
+        public override StreamWriter WriteTs(StreamWriter sw)
         {
             if (TsTypeName != null)
             {
@@ -46,7 +45,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
                 if (Type.IsEnum)
                 {
-                    sb.AppendFormat(
+                    sw.WriteFormat(
                         "{0}/** Enum{1}: {2} */\r\n",
                         IndentationContext,
                         PropInfo.PropertyType.IsClrNullableType() ? " (NULLABLE)" : null,
@@ -54,20 +53,22 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 }
                 else if (PropInfo.PropertyType.IsClrNullableType())
                 {
-                    sb.AppendLine($"{IndentationContext}/** Nullable */");
+                    sw.WriteLine($"{IndentationContext}/** Nullable */");
                 }
 
                 if (Type == typeof(Guid) || Type == typeof(Guid?))
                 {
-                    sb.AppendFormat(
+                    sw.WriteFormat(
                         "{0}/** Guid{1} */\r\n",
                         IndentationContext,
                         PropInfo.PropertyType.IsClrNullableType() ? " (NULLABLE)" : null);
                 }
 
-                sb.AppendLine(
+                sw.WriteLine(
                     $"{IndentationContext}{TsPropInfo.ToString()};");
             }
+
+            return sw;
         }
     }
 }

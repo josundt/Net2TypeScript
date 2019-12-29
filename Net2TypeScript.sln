@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net2TypeScript", "Net2TypeScript\Net2TypeScript.csproj", "{D9B99963-5403-4B81-9A05-31EB640881CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net2TypeScript", "Net2TypeScript\Net2TypeScript.csproj", "{D9B99963-5403-4B81-9A05-31EB640881CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore2TypeScript", "NetCore2TypeScript\NetCore2TypeScript.csproj", "{8C4289DF-BE25-46BE-B594-B8E11E2590DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net2TypeScript.Shared", "Net2TypeScript.Shared\Net2TypeScript.Shared.csproj", "{815066C0-80CA-44E4-82EF-E24EDEF7DA00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net2TypeScript.Shared.Tests", "Net2TypeScript.Shared.Tests\Net2TypeScript.Shared.Tests.csproj", "{37716D31-C392-4E4B-A09C-D65A02AF08C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net2TypeScript.Shared.Tests", "Net2TypeScript.Shared.Tests\Net2TypeScript.Shared.Tests.csproj", "{7A860DDF-5072-4B77-97B6-C679DB13D3DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{815066C0-80CA-44E4-82EF-E24EDEF7DA00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{815066C0-80CA-44E4-82EF-E24EDEF7DA00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{815066C0-80CA-44E4-82EF-E24EDEF7DA00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37716D31-C392-4E4B-A09C-D65A02AF08C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37716D31-C392-4E4B-A09C-D65A02AF08C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37716D31-C392-4E4B-A09C-D65A02AF08C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37716D31-C392-4E4B-A09C-D65A02AF08C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A860DDF-5072-4B77-97B6-C679DB13D3DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A860DDF-5072-4B77-97B6-C679DB13D3DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A860DDF-5072-4B77-97B6-C679DB13D3DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A860DDF-5072-4B77-97B6-C679DB13D3DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

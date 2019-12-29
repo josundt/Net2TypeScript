@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Linq;
-using System.Text;
 using jasMIN.Net2TypeScript.Shared.Model;
 using System.Collections.Generic;
 
@@ -27,12 +26,8 @@ namespace jasMIN.Net2TypeScript.Shared
 
                 TypeScriptGenerator.NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath));
 
-                var output = TypeScriptGenerator.GenerateTypeScript(globalSettings);
-
-                if (!string.IsNullOrEmpty(output))
-                {
-                    File.WriteAllText(globalSettings.OutputPath, output, Encoding.UTF8);
-                }
+                using var outStream = File.OpenWrite(globalSettings.OutputPath);
+                TypeScriptGenerator.GenerateTypeScript(globalSettings, outStream);
             }
             catch (Exception ex)
             {
@@ -62,7 +57,7 @@ namespace jasMIN.Net2TypeScript.Shared
                 throw new ArgumentException("Wrong command line arguments.");
             }
 
-            for (int i = 0; i < args.Length; i = i + 2)
+            for (int i = 0; i < args.Length; i += 2)
             {
                 if (!args[i].StartsWith("--", StringComparison.Ordinal))
                 {
@@ -89,14 +84,13 @@ namespace jasMIN.Net2TypeScript.Shared
                 {
                     if (propInfo.PropertyType == typeof(bool?) || propInfo.PropertyType == typeof(bool))
                     {
-                        bool boolValue = false;
-                        if (!bool.TryParse(kvp.Value, out boolValue))
+                        if (!bool.TryParse(kvp.Value, out bool boolValue))
                         {
                             throw new ArgumentException(string.Format("Not a boolean value: '{0}'", kvp.Value));
                         }
                         else
                         {
-                            propInfo.SetValue(settings, boolValue);
+                            propInfo.SetValue(settings, false);
                         }
                     }
                     else if (propInfo.PropertyType == typeof(string))

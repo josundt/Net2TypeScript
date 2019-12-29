@@ -1,23 +1,23 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
 
 namespace jasMIN.Net2TypeScript.Shared
 {
     public static class Json
     {
-        public static JsonSerializerSettings Settings => new JsonSerializerSettings
+        private static JsonSerializerOptions Settings => new JsonSerializerOptions
         {
-            //ContractResolver = new CamelCasePropertyNamesContractResolver()
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        public static string Serialize(object o)
+        public static string Serialize<T>(T o)
         {
-            return JsonConvert.SerializeObject(o, Settings);
+            return JsonSerializer.Serialize<T>(o, Settings);
         }
 
         public static T Deserialize<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json, Settings);
+            return JsonSerializer.Deserialize<T>(json, Settings);
         }
     }
 }

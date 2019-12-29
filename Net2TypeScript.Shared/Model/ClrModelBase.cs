@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System.IO;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -6,10 +6,12 @@ namespace jasMIN.Net2TypeScript.Shared.Model
     {
         private Settings _settings = null;
         protected GlobalSettings _globalSettings;
+
         protected ClrModelBase(GlobalSettings globalSettings)
         {
             this._globalSettings = globalSettings;
         }
+        
         protected Settings Settings
         {
             get
@@ -37,8 +39,11 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 return this._settings;
             }
         }
+
         protected abstract string IndentationContext { get; }
+        
         protected string ClrFullName { get; set; }
-        public abstract void AppendTs(StringBuilder sb);
+        
+        public abstract StreamWriter WriteTs(StreamWriter sw);
     }
 }
