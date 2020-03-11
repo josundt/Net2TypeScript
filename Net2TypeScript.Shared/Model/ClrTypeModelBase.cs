@@ -1,16 +1,33 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
     abstract class ClrTypeModelBase : ClrModelBase
     {
+        private static readonly Regex GenericTypeNameFixRegEx = new Regex(@"`.*$", RegexOptions.Compiled);
+
         protected ClrTypeModelBase(Type type, GlobalSettings globalSettings)
             : base(globalSettings)
         {
             this.Type = type;
-            this.ClrFullName = Type.FullName;
+            if (type.IsGenericTypeDefinition)
+            {
+                var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
+
+                var baseFullName = GenericTypeNameFixRegEx.Replace(type.FullName, string.Empty);
+                this.ClrFullName = $"{baseFullName}<{string.Join(", ", genericArgNames)}>";
+
+                var baseName = GenericTypeNameFixRegEx.Replace(type.Name, string.Empty);
+                this.TsTypeName = $"{baseName}<{string.Join(", ", genericArgNames)}>";
+            }
+            else
+            {
+                this.ClrFullName = type.FullName;
+                this.TsTypeName = type.Name;
+            }
         }
 
         public override abstract StreamWriter WriteTs(StreamWriter sw);
@@ -20,8 +37,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         protected Type Type { get; private set; }
 
-        protected virtual string TsTypeName => Type.Name;
-        
+        protected virtual string TsTypeName { get; }
+
         protected virtual string TsFullName => Settings.ToTsFullName(ClrFullName);
 
         protected abstract int ExtraIndents { get; }

@@ -18,13 +18,40 @@ namespace jasMIN.Net2TypeScript.Shared
                 "no-shadowed-variable"
             };
 
+            var eslintDisables = new[]
+            {
+                "@typescript-eslint/no-unnecessary-qualifier"
+            };
+
             using var sw = new StreamWriter(outStream);
-            
-            sw.Write(string.Join("\r\n", tslintDisables.Select(td => $"// tslint:disable:{td}")));
+
+            sw.Write(
+                string.Join(
+                    "\r\n",
+                    eslintDisables.Select(
+                        ed => $"/* eslint-disable {ed} */"
+                    ).Concat(
+                        tslintDisables.Select(
+                            td => $"/* tslint:disable:{td} */"
+                        )
+                    )
+                )
+            );
 
             ns.WriteTs(sw);
 
-            sw.Write(string.Join("", tslintDisables.Select(td => $"// tslint:enable:{td}\r\n")));
+            sw.Write(
+                string.Join(
+                    "",
+                    eslintDisables.Select(
+                        ed => $"/* eslint-enable {ed} */\r\n"
+                    ).Concat(
+                        tslintDisables.Select(
+                            td => $"/* tslint:enable:{td} */\r\n"
+                        )
+                    )
+                )
+            );
         }
 
         public static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
@@ -61,10 +88,11 @@ namespace jasMIN.Net2TypeScript.Shared
             }
         }
 
-        static void ValidateGeneratorSettings(GeneratorSettings genSettings) {
+        static void ValidateGeneratorSettings(GeneratorSettings genSettings)
+        {
             if (!new[] {
                     null,
-                    KnockoutMappingOptions.None, 
+                    KnockoutMappingOptions.None,
                     KnockoutMappingOptions.All,
                     KnockoutMappingOptions.ValueTypes
                 }.Any(s => s == genSettings.KnockoutMapping)

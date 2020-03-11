@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -50,7 +49,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
             return typeof(IEnumerable).IsAssignableFrom(type) && !type.IsEnum && type != typeof(string);
         }
-        
+
         public static bool IsTypeScriptDateType(this Type type)
         {
             ThrowIfNullable(type);
@@ -76,11 +75,13 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 typeof(string),
                 typeof(Guid),
                 typeof(byte),
-                typeof(byte[])
+                typeof(byte[]),
+                typeof(TimeSpan)
             }.Any(t => t == type);
         }
 
-        public static bool IsTypeScriptInterfaceType(this Type type) {
+        public static bool IsTypeScriptInterfaceType(this Type type)
+        {
             return (type.IsClass || type.IsInterface) && type != typeof(string);
         }
 
@@ -105,7 +106,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                     result = settings.NonNullableEntities != true;
                 }
             }
-            else if (type.IsTypeScriptStringType() && type != typeof(Guid))
+            else if (type.IsTypeScriptStringType() && type != typeof(Guid) && type != typeof(TimeSpan))
             {
                 result = true;
             }
@@ -116,7 +117,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public static bool IsTypeScriptObservableType(this Type type, Settings settings)
         {
             return settings.KnockoutMapping == KnockoutMappingOptions.All || (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType());
-                
+
         }
 
         public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
@@ -126,7 +127,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             {
                 outputString = settings.ToTsFullName(type.Namespace);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 result = false;
                 outputString = null;
@@ -154,7 +155,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             }
             return str;
         }
-   
+
         public static string GetRelativePathTo(this string absPath, string relTo, bool backSlash = false)
         {
             absPath = Path.GetDirectoryName(absPath);
@@ -192,7 +193,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             relativePath.Append(relDirs[relDirs.Length - 1]);
 
             var result = relativePath.ToString();
-            if(!backSlash)
+            if (!backSlash)
             {
                 result = result.Replace("\\", "/");
             }

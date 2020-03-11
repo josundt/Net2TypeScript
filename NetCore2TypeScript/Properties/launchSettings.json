@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NetCore2TypeScript": {
+      "commandName": "Project",
+      "commandLineArgs": "--settings \"C:\\temp\\setup-net2typescript\\settings.json\""
+    }
+  }
+}

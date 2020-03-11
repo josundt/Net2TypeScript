@@ -1,8 +1,8 @@
-﻿using System;
+﻿using jasMIN.Net2TypeScript.Shared.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using jasMIN.Net2TypeScript.Shared.Model;
 
 namespace jasMIN.Net2TypeScript.Tests
 {
@@ -21,12 +21,14 @@ namespace jasMIN.Net2TypeScript.Tests
                 typeof(double)
             };
 
-            var settings = new Settings {};
+            var settings = new Settings { };
 
             var tsTypes = clrTypes.Select(nt => TypeScriptType.FromClrType(nt, settings)).ToList();
 
-            foreach(var tsType in tsTypes) {
-                tsType.AssertEquals(new TsTypeAssertion {
+            foreach (var tsType in tsTypes)
+            {
+                tsType.AssertEquals(new TsTypeAssertion
+                {
                     IsNullable = false,
                     IsGeneric = false,
                     IsKnockoutObservable = false,
@@ -170,7 +172,8 @@ namespace jasMIN.Net2TypeScript.Tests
         [TestMethod]
         public void TypeScriptTypeTests_Enum()
         {
-            var settings = new Settings {
+            var settings = new Settings
+            {
                 ClrRootNamespace = "System"
             };
 
@@ -227,9 +230,48 @@ namespace jasMIN.Net2TypeScript.Tests
         }
 
         [TestMethod]
+        public void TypeScriptTypeTests_Timespan()
+        {
+            var settings = new Settings
+            {
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(TimeSpan), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_NullableTimespan()
+        {
+            var settings = new Settings
+            {
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(TimeSpan?), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
         public void TypeScriptTypeTests_ListOfStrings_DefaultSettings()
         {
-            var settings = new Settings {
+            var settings = new Settings
+            {
             };
 
             var tsType = TypeScriptType.FromClrType(typeof(List<string>), settings);
@@ -639,6 +681,33 @@ namespace jasMIN.Net2TypeScript.Tests
                 TypeName = "string",
                 ToStringResult = "string | null"
             });
+        }
+
+        class GenericClass<T>
+        {
+            public T Item { get; set; }
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_GenericTypeDefinitionParameterProperty()
+        {
+            var settings = new Settings
+            {
+            };
+
+            Type type = typeof(GenericClass<>).GetProperty("Item").PropertyType;
+            var genericParamName = typeof(GenericClass<>).GetGenericArguments().First().Name;
+            var tsType = TypeScriptType.FromClrType(type, settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = genericParamName,
+                ToStringResult = $"{genericParamName} | null"
+            });
+
         }
 
     }

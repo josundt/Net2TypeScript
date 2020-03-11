@@ -9,7 +9,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
     {
         public PropertyModel(GlobalSettings globalSettings, PropertyInfo propertyInfo, Type ownerType)
             : base(
-                  propertyInfo.PropertyType.IsClrNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType, 
+                  propertyInfo.PropertyType.IsClrNullableType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType,
                   globalSettings)
         {
             this.PropInfo = propertyInfo;
@@ -60,6 +60,14 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 {
                     sw.WriteFormat(
                         "{0}/** Guid{1} */\r\n",
+                        IndentationContext,
+                        PropInfo.PropertyType.IsClrNullableType() ? " (NULLABLE)" : null);
+                }
+
+                if (Type == typeof(TimeSpan) || Type == typeof(TimeSpan?))
+                {
+                    sw.WriteFormat(
+                        "{0}/** TimeSpan{1} */\r\n",
                         IndentationContext,
                         PropInfo.PropertyType.IsClrNullableType() ? " (NULLABLE)" : null);
                 }

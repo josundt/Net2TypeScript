@@ -25,19 +25,15 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public string TypeName { get; private set; }
         public bool IsNullable { get; private set; }
-        public bool IsGeneric {
-            get
-            {
-                return this.GenericTypeArguments.Count > 0;
-            }
-        }
+        public bool IsGeneric => this.GenericTypeArguments.Count > 0;
+
         public bool IsKnockoutObservable { get; private set; }
         public List<ITypeScriptType> GenericTypeArguments { get; private set; }
 
         public static ITypeScriptType FromClrType(
-            Type clrType, 
-            Settings settings, 
-            bool isKnockoutObservable = false, 
+            Type clrType,
+            Settings settings,
+            bool isKnockoutObservable = false,
             bool isArrayItem = false,
             bool isRequiredProperty = false
         )
@@ -96,6 +92,10 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 var itemType = propertyType.HasElementType ? propertyType.GetElementType() : propertyType.GenericTypeArguments[0];
                 tsType.TypeName = "Array";
                 tsType.GenericTypeArguments.Add(FromClrType(itemType, settings, false, true));
+            }
+            else if (propertyType.IsGenericParameter)
+            {
+                tsType.TypeName = propertyType.Name;
             }
             else if (propertyType.IsTypeScriptInterfaceType())
             {
@@ -158,7 +158,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
     public class TypeScriptPropertyInfo
     {
-        public TypeScriptPropertyInfo(PropertyInfo propertyInfo, Type ownerType, Settings settings)        {
+        public TypeScriptPropertyInfo(PropertyInfo propertyInfo, Type ownerType, Settings settings)
+        {
 
             var isKnockoutObservable = false;
             if (settings.KnockoutMapping != null && settings.KnockoutMapping != KnockoutMappingOptions.None)
@@ -170,20 +171,18 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 }
                 else
                 {
-                    isKnockoutObservable = 
+                    isKnockoutObservable =
                         settings.KnockoutMapping == KnockoutMappingOptions.All
                         ||
                         (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !propertyInfo.PropertyType.IsTypeScriptInterfaceType());
                 }
             }
 
-
-
             this.PropertyType = TypeScriptType.FromClrType(
-                propertyInfo.PropertyType, 
-                settings, 
-                isKnockoutObservable, 
-                ownerType.IsTypeScriptArrayType(), 
+                propertyInfo.PropertyType,
+                settings,
+                isKnockoutObservable,
+                ownerType.IsTypeScriptArrayType(),
                 Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute))
             );
             this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
