@@ -6,6 +6,10 @@
     <RootNamespace>jasMIN.Net2TypeScript.Shared</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>None</DebugType>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="System.Text.Json" Version="4.7.0" />
