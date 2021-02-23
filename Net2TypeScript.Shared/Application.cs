@@ -1,10 +1,10 @@
-﻿using System;
+﻿using jasMIN.Net2TypeScript.Shared.Model;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Linq;
-using jasMIN.Net2TypeScript.Shared.Model;
-using System.Collections.Generic;
+using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.Shared
 {
@@ -110,7 +110,7 @@ namespace jasMIN.Net2TypeScript.Shared
                 path = settingsMap["settings"];
                 settingsMap.Remove("settings");
             }
-            var cwd = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            var cwd = AppContext.BaseDirectory;
             if (path == null)
             {
                 path = Path.Combine(cwd, "settings.json");
