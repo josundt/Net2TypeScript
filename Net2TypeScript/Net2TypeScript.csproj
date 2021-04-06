@@ -5,6 +5,7 @@
     <TargetFramework>net461</TargetFramework>
     <RuntimeIdentifiers>win7-x86</RuntimeIdentifiers>
     <ApplicationIcon>Net2TypeScript.ico</ApplicationIcon>
+    <Version>5.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

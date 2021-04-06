@@ -39,7 +39,17 @@
         "nonNullableArrayEntityItems": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, properties of CLR class/interface types can not be null when inside a collection/array type in TypeScript."
+          "description": "(Optional). When true, items of CLR class/interface types can not be null when inside a collection/array type in TypeScript."
+        },
+        "nonNullableDictionaries": {
+          "type": "boolean",
+          "default": false,
+          "description": "(Optional). When true, properties of CLR IDictionary<TKey, TValue> types can not be null in TypeScript."
+        },
+        "nonNullableDictionaryEntityValues": {
+          "type": "boolean",
+          "default": false,
+          "description": "(Optional). When true, properties of CLR class/interface types can not be null when in the value of a IDictionary<TKey, TValue> type in TypeScript."
         },
         "extraProperties": {
           "type": [ "object", "null" ],

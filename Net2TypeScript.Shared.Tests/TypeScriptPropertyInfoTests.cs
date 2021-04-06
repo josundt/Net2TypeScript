@@ -424,6 +424,176 @@ namespace jasMIN.Net2TypeScript.Tests
         }
 
         [TestMethod]
+        public void TypeScriptTypeTests_DictionaryOfStringString_DefaultSettings()
+        {
+            var settings = new Settings
+            {
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(Dictionary<string, string>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Record",
+                ToStringResult = "Record<string, string | null> | null"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string"
+            });
+
+            var genericTsArg2 = tsType.GenericTypeArguments[1];
+
+            genericTsArg2.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_IDictionaryOfStringString_NonNullableDictionariesSetting()
+        {
+            var settings = new Settings
+            {
+                NonNullableDictionaries = true
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(IDictionary<string, string>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Record",
+                ToStringResult = "Record<string, string | null>"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string"
+            });
+
+            var genericTsArg2 = tsType.GenericTypeArguments[1];
+
+            genericTsArg2.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string | null"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_DictionaryOfStringClass_NonNullableDictionaryEntityValuesSetting()
+        {
+            var settings = new Settings
+            {
+                NonNullableDictionaryEntityValues = true,
+                ClrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(Dictionary<string, TsTypeAssertion>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = true,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Record",
+                ToStringResult = "Record<string, Tests.TsTypeAssertion> | null"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string"
+            });
+
+            var genericTsArg2 = tsType.GenericTypeArguments[1];
+
+            genericTsArg2.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
+            });
+        }
+
+        [TestMethod]
+        public void TypeScriptTypeTests_IReadOnlyDictionaryOfStringClass_NonNullableDictionariesAndNonNullableDictionaryEntityValuesSetting()
+        {
+            var settings = new Settings
+            {
+                NonNullableDictionaries = true,
+                NonNullableDictionaryEntityValues = true,
+                ClrRootNamespace = "jasMIN.Net2TypeScript"
+            };
+
+            var tsType = TypeScriptType.FromClrType(typeof(IReadOnlyDictionary<string, TsTypeAssertion>), settings);
+
+            tsType.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = true,
+                IsKnockoutObservable = false,
+                TypeName = "Record",
+                ToStringResult = "Record<string, Tests.TsTypeAssertion>"
+            });
+
+            var genericTsArg1 = tsType.GenericTypeArguments[0];
+
+            genericTsArg1.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "string",
+                ToStringResult = "string"
+            });
+
+            var genericTsArg2 = tsType.GenericTypeArguments[1];
+
+            genericTsArg2.AssertEquals(new TsTypeAssertion
+            {
+                IsNullable = false,
+                IsGeneric = false,
+                IsKnockoutObservable = false,
+                TypeName = "Tests.TsTypeAssertion",
+                ToStringResult = "Tests.TsTypeAssertion"
+            });
+        }
+
+        [TestMethod]
         public void TypeScriptTypeTests_Class()
         {
             var settings = new Settings

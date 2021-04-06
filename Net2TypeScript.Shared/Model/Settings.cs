@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
@@ -22,7 +21,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
     {
         public GeneratorSettings()
         {
-            this.ExtraProperties = new Dictionary<string, string>();
+            ExtraProperties = new Dictionary<string, string>();
         }
 
         public string KnockoutMapping { get; set; }
@@ -33,13 +32,14 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public bool? NonNullableEntities { get; set; }
         public bool? NonNullableArrays { get; set; }
         public bool? NonNullableArrayEntityItems { get; set; }
-
+        public bool? NonNullableDictionaries { get; set; }
+        public bool? NonNullableDictionaryEntityValues { get; set; }
 
         public GeneratorSettings Clone()
         {
-            var clone = (GeneratorSettings)this.MemberwiseClone();
+            var clone = (GeneratorSettings)MemberwiseClone();
             clone.ExtraProperties = new Dictionary<string, string>();
-            foreach (var kvp in this.ExtraProperties)
+            foreach (var kvp in ExtraProperties)
             {
                 clone.ExtraProperties.Add(kvp.Key, kvp.Value);
             }
@@ -61,6 +61,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 result.NonNullableArrayEntityItems = genSetting.NonNullableArrayEntityItems ?? result.NonNullableArrayEntityItems;
                 result.NonNullableEntities = genSetting.NonNullableEntities ?? result.NonNullableEntities;
                 result.NonNullableArrays = genSetting.NonNullableArrays ?? result.NonNullableArrays;
+                result.NonNullableDictionaries = genSetting.NonNullableDictionaries ?? result.NonNullableDictionaries;
+                result.NonNullableDictionaryEntityValues = genSetting.NonNullableDictionaryEntityValues ?? result.NonNullableDictionaryEntityValues;
 
                 foreach (var kvp in genSetting.ExtraProperties)
                 {
@@ -82,10 +84,10 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public Settings()
         {
             // Initializing default values
-            this.Indent = "    ";
-            this.EnumType = "string";
-            this.TsRootNamespace = this.ClrRootNamespace;
-            this.ExtraProperties = new Dictionary<string, string>();
+            Indent = "    ";
+            EnumType = "string";
+            TsRootNamespace = ClrRootNamespace;
+            ExtraProperties = new Dictionary<string, string>();
         }
         public List<string> AssemblyPaths { get; set; }
         public string OutputPath { get; set; }
@@ -100,42 +102,42 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public new Settings Clone()
         {
-            var clone = (Settings)this.MemberwiseClone();
+            var clone = (Settings)MemberwiseClone();
 
             clone.ExtraProperties = new Dictionary<string, string>();
-            foreach (var kvp in this.ExtraProperties)
+            foreach (var kvp in ExtraProperties)
             {
                 clone.ExtraProperties.Add(kvp.Key, kvp.Value);
             }
 
             clone.AssemblyPaths = new List<string>();
-            foreach (var s in this.AssemblyPaths)
+            foreach (var s in AssemblyPaths)
             {
                 clone.AssemblyPaths.Add(s);
             }
 
-            if (this.ClassNamespaceFilter != null)
+            if (ClassNamespaceFilter != null)
             {
                 clone.ClassNamespaceFilter = new List<string>();
-                foreach (var s in this.ClassNamespaceFilter)
+                foreach (var s in ClassNamespaceFilter)
                 {
                     clone.ClassNamespaceFilter.Add(s);
                 }
             }
 
-            if (this.EnumNamespaceFilter != null)
+            if (EnumNamespaceFilter != null)
             {
                 clone.EnumNamespaceFilter = new List<string>();
-                foreach (var s in this.EnumNamespaceFilter)
+                foreach (var s in EnumNamespaceFilter)
                 {
                     clone.EnumNamespaceFilter.Add(s);
                 }
             }
 
-            clone.TypingsPaths = this.TypingsPaths == null ? null : new TypingsPaths
+            clone.TypingsPaths = TypingsPaths == null ? null : new TypingsPaths
             {
-                Breeze = this.TypingsPaths.Breeze,
-                Knockout = this.TypingsPaths.Knockout
+                Breeze = TypingsPaths.Breeze,
+                Knockout = TypingsPaths.Knockout
             };
             return clone;
         }
@@ -148,38 +150,38 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public GlobalSettings()
         {
-            this.NamespaceOverrides = new Dictionary<string, GeneratorSettings>();
-            this.ClassOverrides = new Dictionary<string, GeneratorSettings>();
+            NamespaceOverrides = new Dictionary<string, GeneratorSettings>();
+            ClassOverrides = new Dictionary<string, GeneratorSettings>();
         }
 
         Settings GetEffectiveSettings(GeneratorSettings genSettings)
         {
-            var result = Merge(this.Clone(), genSettings) as Settings;
+            var result = Merge(Clone(), genSettings) as Settings;
 
             return result;
         }
 
         public Settings GetNamespaceSettings(string namespaceName)
         {
-            var applicableNsSettings = this.NamespaceOverrides
+            var applicableNsSettings = NamespaceOverrides
                 .Where(kvp => namespaceName.StartsWith(kvp.Key, StringComparison.Ordinal))
                 .OrderBy(kvp => kvp.Key)
                 .Select(kvp => kvp.Value);
 
-            var effectiveGenSettings = Merge(this.Clone(), applicableNsSettings.ToArray());
+            var effectiveGenSettings = Merge(Clone(), applicableNsSettings.ToArray());
 
-            return this.GetEffectiveSettings(effectiveGenSettings);
+            return GetEffectiveSettings(effectiveGenSettings);
         }
 
         public Settings GetClassSettings(string className)
         {
-            var nsSettings = this.GetNamespaceSettings(className);
+            var nsSettings = GetNamespaceSettings(className);
 
-            var classSettings = this.ClassOverrides.ContainsKey(className) ? this.ClassOverrides[className] : null;
+            var classSettings = ClassOverrides.ContainsKey(className) ? ClassOverrides[className] : null;
 
             var effectiveGenSettings = Merge(nsSettings.Clone(), classSettings);
 
-            return this.GetEffectiveSettings(effectiveGenSettings);
+            return GetEffectiveSettings(effectiveGenSettings);
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -46,8 +47,13 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public static bool IsTypeScriptArrayType(this Type type)
         {
             ThrowIfNullable(type);
+            return typeof(IEnumerable).IsAssignableFrom(type) && !type.IsEnum && type != typeof(string) && !type.IsTypeScriptRecordType();
+        }
 
-            return typeof(IEnumerable).IsAssignableFrom(type) && !type.IsEnum && type != typeof(string);
+        public static bool IsTypeScriptRecordType(this Type type)
+        {
+            ThrowIfNullable(type);
+            return type.IsDictionaryInterface() || type.GetInterfaces().Any(i => i.IsDictionaryInterface());
         }
 
         public static bool IsTypeScriptDateType(this Type type)
@@ -85,7 +91,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             return (type.IsClass || type.IsInterface) && type != typeof(string);
         }
 
-        public static bool IsTypeScriptNullableType(this Type type, Settings settings, bool isArrayItem)
+        public static bool IsTypeScriptNullableType(this Type type, Settings settings, bool isArrayItem, bool isDictionaryValue)
         {
             ThrowIfNullable(type);
 
@@ -95,11 +101,19 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             {
                 result = settings.NonNullableArrays != true;
             }
+            else if (type.IsTypeScriptRecordType())
+            {
+                result = settings.NonNullableDictionaries != true;
+            }
             else if (type.IsTypeScriptInterfaceType())
             {
                 if (isArrayItem)
                 {
                     result = settings.NonNullableArrayEntityItems != true;
+                }
+                else if (isDictionaryValue)
+                {
+                    result = settings.NonNullableDictionaryEntityValues != true;
                 }
                 else
                 {
@@ -131,6 +145,17 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             {
                 result = false;
                 outputString = null;
+            }
+            return result;
+        }
+
+        private static bool IsDictionaryInterface(this Type type)
+        {
+            var result = false;
+            if (type.IsGenericType && type.IsInterface)
+            {
+                var genTypeDef = type.GetGenericTypeDefinition();
+                result = genTypeDef == typeof(IDictionary<,>) || genTypeDef == typeof(IReadOnlyDictionary<,>);
             }
             return result;
         }
