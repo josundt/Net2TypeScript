@@ -94,10 +94,9 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             if (!skip)
             {
 
-                sw.WriteFormat("{4}{0}/** {1}: {2} ({3}) */{4}",
+                sw.WriteFormat("{3}{0}/** .NET {1}: {2} */{3}",
                     this.IndentationContext,
                     this.Type.IsClass ? "class" : "interface",
-                    this.TsFullName,
                     this.ClrFullName,
                     Environment.NewLine
                 );

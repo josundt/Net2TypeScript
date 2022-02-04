@@ -56,9 +56,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public override StreamWriter WriteTs(StreamWriter sw) {
 
-            sw.WriteFormat("{3}{0}/** enum: {1} ({2}) */{3}",
+            sw.WriteFormat("{2}{0}/** .NET enum: {1} */{2}",
                 this.IndentationContext,
-                this.TsFullName,
                 this.ClrFullName,
                 Environment.NewLine
             );
