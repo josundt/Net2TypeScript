@@ -1,4 +1,4 @@
-﻿using jasMIN.Net2TypeScript.Shared.Model;
+using jasMIN.Net2TypeScript.Shared.Model;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,46 +12,20 @@ namespace jasMIN.Net2TypeScript.Shared
         {
             var ns = new NamespaceModel(globalSettings, globalSettings.ClrRootNamespace);
 
-            var tslintDisables = new[] {
-                "no-unnecessary-qualifier",
-                "array-type",
-                "no-shadowed-variable"
-            };
-
             var eslintDisables = new[]
             {
+                "@typescript-eslint/no-unnecessary-qualifier",
+                "@typescript-eslint/array-type",
+                "@typescript-eslint/indent",
                 "@typescript-eslint/no-unnecessary-qualifier"
             };
 
             using var sw = new StreamWriter(outStream);
 
-            sw.Write(
-                string.Join(
-                    "\r\n",
-                    eslintDisables.Select(
-                        ed => $"/* eslint-disable {ed} */"
-                    ).Concat(
-                        tslintDisables.Select(
-                            td => $"/* tslint:disable:{td} */"
-                        )
-                    )
-                )
-            );
+            sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */");
 
             ns.WriteTs(sw);
 
-            sw.Write(
-                string.Join(
-                    "",
-                    eslintDisables.Select(
-                        ed => $"/* eslint-enable {ed} */\r\n"
-                    ).Concat(
-                        tslintDisables.Select(
-                            td => $"/* tslint:enable:{td} */\r\n"
-                        )
-                    )
-                )
-            );
         }
 
         public static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
@@ -76,9 +50,10 @@ namespace jasMIN.Net2TypeScript.Shared
             settings.NamespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
             settings.ClassOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
 
-            if (settings.AssemblyPaths.Any(ap => !File.Exists(ap)))
+            var missingAssemblyPaths = settings.AssemblyPaths.Where(ap => !File.Exists(ap));
+            if (missingAssemblyPaths.Any())
             {
-                throw new FileNotFoundException("Some of the specified assemblies could not be found.");
+                throw new FileNotFoundException($"Assemblies not found: {string.Join(", ", missingAssemblyPaths)}");
             }
 
             var outputPath = Path.GetDirectoryName(settings.OutputPath);

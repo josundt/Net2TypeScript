@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,16 +12,16 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
     public static class KnockoutMappingOptions
     {
-        public static string None = "none";
-        public static string All = "all";
-        public static string ValueTypes = "valuetypes";
+        public const string None = "none";
+        public const string All = "all";
+        public const string ValueTypes = "valuetypes";
     }
 
     public class GeneratorSettings
     {
         public GeneratorSettings()
         {
-            ExtraProperties = new Dictionary<string, string>();
+            this.ExtraProperties = new Dictionary<string, string>();
         }
 
         public string KnockoutMapping { get; set; }
@@ -37,9 +37,9 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public GeneratorSettings Clone()
         {
-            var clone = (GeneratorSettings)MemberwiseClone();
+            var clone = (GeneratorSettings)this.MemberwiseClone();
             clone.ExtraProperties = new Dictionary<string, string>();
-            foreach (var kvp in ExtraProperties)
+            foreach (var kvp in this.ExtraProperties)
             {
                 clone.ExtraProperties.Add(kvp.Key, kvp.Value);
             }
@@ -84,10 +84,10 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public Settings()
         {
             // Initializing default values
-            Indent = "    ";
-            EnumType = "string";
-            TsRootNamespace = ClrRootNamespace;
-            ExtraProperties = new Dictionary<string, string>();
+            this.Indent = "    ";
+            this.EnumType = "string";
+            this.TsRootNamespace = this.ClrRootNamespace;
+            this.ExtraProperties = new Dictionary<string, string>();
         }
         public List<string> AssemblyPaths { get; set; }
         public string OutputPath { get; set; }
@@ -102,42 +102,42 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public new Settings Clone()
         {
-            var clone = (Settings)MemberwiseClone();
+            var clone = (Settings)this.MemberwiseClone();
 
             clone.ExtraProperties = new Dictionary<string, string>();
-            foreach (var kvp in ExtraProperties)
+            foreach (var kvp in this.ExtraProperties)
             {
                 clone.ExtraProperties.Add(kvp.Key, kvp.Value);
             }
 
             clone.AssemblyPaths = new List<string>();
-            foreach (var s in AssemblyPaths)
+            foreach (var s in this.AssemblyPaths)
             {
                 clone.AssemblyPaths.Add(s);
             }
 
-            if (ClassNamespaceFilter != null)
+            if (this.ClassNamespaceFilter != null)
             {
                 clone.ClassNamespaceFilter = new List<string>();
-                foreach (var s in ClassNamespaceFilter)
+                foreach (var s in this.ClassNamespaceFilter)
                 {
                     clone.ClassNamespaceFilter.Add(s);
                 }
             }
 
-            if (EnumNamespaceFilter != null)
+            if (this.EnumNamespaceFilter != null)
             {
                 clone.EnumNamespaceFilter = new List<string>();
-                foreach (var s in EnumNamespaceFilter)
+                foreach (var s in this.EnumNamespaceFilter)
                 {
                     clone.EnumNamespaceFilter.Add(s);
                 }
             }
 
-            clone.TypingsPaths = TypingsPaths == null ? null : new TypingsPaths
+            clone.TypingsPaths = this.TypingsPaths == null ? null : new TypingsPaths
             {
-                Breeze = TypingsPaths.Breeze,
-                Knockout = TypingsPaths.Knockout
+                Breeze = this.TypingsPaths.Breeze,
+                Knockout = this.TypingsPaths.Knockout
             };
             return clone;
         }
@@ -150,38 +150,38 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public GlobalSettings()
         {
-            NamespaceOverrides = new Dictionary<string, GeneratorSettings>();
-            ClassOverrides = new Dictionary<string, GeneratorSettings>();
+            this.NamespaceOverrides = new Dictionary<string, GeneratorSettings>();
+            this.ClassOverrides = new Dictionary<string, GeneratorSettings>();
         }
 
         Settings GetEffectiveSettings(GeneratorSettings genSettings)
         {
-            var result = Merge(Clone(), genSettings) as Settings;
+            var result = this.Merge(this.Clone(), genSettings) as Settings;
 
             return result;
         }
 
         public Settings GetNamespaceSettings(string namespaceName)
         {
-            var applicableNsSettings = NamespaceOverrides
+            var applicableNsSettings = this.NamespaceOverrides
                 .Where(kvp => namespaceName.StartsWith(kvp.Key, StringComparison.Ordinal))
                 .OrderBy(kvp => kvp.Key)
                 .Select(kvp => kvp.Value);
 
-            var effectiveGenSettings = Merge(Clone(), applicableNsSettings.ToArray());
+            var effectiveGenSettings = this.Merge(this.Clone(), applicableNsSettings.ToArray());
 
-            return GetEffectiveSettings(effectiveGenSettings);
+            return this.GetEffectiveSettings(effectiveGenSettings);
         }
 
         public Settings GetClassSettings(string className)
         {
-            var nsSettings = GetNamespaceSettings(className);
+            var nsSettings = this.GetNamespaceSettings(className);
 
-            var classSettings = ClassOverrides.ContainsKey(className) ? ClassOverrides[className] : null;
+            var classSettings = this.ClassOverrides.ContainsKey(className) ? this.ClassOverrides[className] : null;
 
-            var effectiveGenSettings = Merge(nsSettings.Clone(), classSettings);
+            var effectiveGenSettings = this.Merge(nsSettings.Clone(), classSettings);
 
-            return GetEffectiveSettings(effectiveGenSettings);
+            return this.GetEffectiveSettings(effectiveGenSettings);
         }
     }
 

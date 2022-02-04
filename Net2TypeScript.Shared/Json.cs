@@ -7,7 +7,9 @@ namespace jasMIN.Net2TypeScript.Shared
         private static JsonSerializerOptions Settings => new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            AllowTrailingCommas = true,
+            ReadCommentHandling = JsonCommentHandling.Skip
         };
 
         public static string Serialize<T>(T o)

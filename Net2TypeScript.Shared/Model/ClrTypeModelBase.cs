@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,13 +33,13 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         public override abstract StreamWriter WriteTs(StreamWriter sw);
 
         protected override string IndentationContext =>
-            string.Concat(Enumerable.Repeat(Settings.Indent, Type.Namespace.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length + ExtraIndents));
+            string.Concat(Enumerable.Repeat(this.Settings.Indent, this.Type.Namespace.Split('.').Length - this.Settings.ClrRootNamespace.Split('.').Length + this.ExtraIndents));
 
         protected Type Type { get; private set; }
 
         protected virtual string TsTypeName { get; }
 
-        protected virtual string TsFullName => Settings.ToTsFullName(ClrFullName);
+        protected virtual string TsFullName => this.Settings.ToTsFullName(this.ClrFullName);
 
         protected abstract int ExtraIndents { get; }
 

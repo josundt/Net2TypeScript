@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
@@ -11,7 +11,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         {
             this._globalSettings = globalSettings;
         }
-        
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3060:\"is\" should not be used with \"this\"", Justification = "<Pending>")]
         protected Settings Settings
         {
             get

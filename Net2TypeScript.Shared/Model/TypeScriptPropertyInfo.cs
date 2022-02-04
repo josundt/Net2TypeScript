@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,12 +20,12 @@ namespace jasMIN.Net2TypeScript.Shared.Model
     {
         public TypeScriptType()
         {
-            GenericTypeArguments = new List<ITypeScriptType>();
+            this.GenericTypeArguments = new List<ITypeScriptType>();
         }
 
         public string TypeName { get; private set; }
         public bool IsNullable { get; private set; }
-        public bool IsGeneric => GenericTypeArguments.Count > 0;
+        public bool IsGeneric => this.GenericTypeArguments.Count > 0;
 
         public bool IsKnockoutObservable { get; private set; }
         public List<ITypeScriptType> GenericTypeArguments { get; private set; }
@@ -162,18 +162,18 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         {
             return string.Format(
                 "{0}{1}{2}{3}{4}",
-                TypeName,
-                GenericTypeArguments.Count > 0 ? "<" : string.Empty,
-                string.Join(", ", GenericTypeArguments.Select(tsti => tsti.ToString())),
-                GenericTypeArguments.Count > 0 ? ">" : string.Empty,
-                IsNullable ? " | null" : "");
+                this.TypeName,
+                this.GenericTypeArguments.Count > 0 ? "<" : string.Empty,
+                string.Join(", ", this.GenericTypeArguments.Select(tsti => tsti.ToString())),
+                this.GenericTypeArguments.Count > 0 ? ">" : string.Empty,
+                this.IsNullable ? " | null" : "");
         }
 
         bool IsClrNullableType { get; set; }
 
         TypeScriptType ToKnockoutObservable()
         {
-            IsKnockoutObservable = false;
+            this.IsKnockoutObservable = false;
             return new TypeScriptType
             {
                 IsNullable = false,
@@ -206,7 +206,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 }
             }
 
-            PropertyType = TypeScriptType.FromClrType(
+            this.PropertyType = TypeScriptType.FromClrType(
                 propertyInfo.PropertyType,
                 settings,
                 isKnockoutObservable,
@@ -214,22 +214,25 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 ownerType.IsTypeScriptRecordType(),
                 Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute))
             );
-            PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
-            ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && propertyInfo.GetSetMethod().IsPublic);
+            this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
+            this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && propertyInfo.GetSetMethod().IsPublic);
         }
+
         public ITypeScriptType PropertyType { get; private set; }
+
         public string PropertyName { get; private set; }
+
         public bool ReadOnly { get; private set; }
 
         public override string ToString()
         {
-            var typeInfo = PropertyType.ToString();
+            var typeInfo = this.PropertyType.ToString();
 
             return string.Format(
                 "{0}{1}: {2}",
-                ReadOnly ? "readonly " : string.Empty,
-                PropertyName,
-                PropertyType);
+                this.ReadOnly ? "readonly " : string.Empty,
+                this.PropertyName,
+                this.PropertyType);
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
+    [DebuggerDisplay("namespace: {ClrFullName,nq}")]
     class NamespaceModel : ClrModelBase
     {
         public NamespaceModel(GlobalSettings settings, string name)
@@ -16,38 +18,46 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             this.Enums = new List<EnumModel>();
             this.ChildNamespaces = new List<NamespaceModel>();
 
-            Initialize();
+            this.Initialize();
         }
 
         protected override string IndentationContext =>
-                string.Concat(Enumerable.Repeat(Settings.Indent, ClrFullName.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length));
+                string.Concat(Enumerable.Repeat(this.Settings.Indent, this.ClrFullName.Split('.').Length - this.Settings.ClrRootNamespace.Split('.').Length));
 
-        bool IsRoot => 
-            Settings.ClrRootNamespace == this.ClrFullName;
+        bool IsRoot =>
+            this.Settings.ClrRootNamespace == this.ClrFullName;
 
-        bool IsDirectChildOfRoot =>
-            this.ClrFullName.Split('.').Length - Settings.ClrRootNamespace.Split('.').Length == 1;
+        bool IsRootDirectChild =>
+            this.ClrFullName.Split('.').Length - this.Settings.ClrRootNamespace.Split('.').Length == 1;
 
         bool IsTsRoot =>
-            (this.IsRoot && !string.IsNullOrWhiteSpace(Settings.TsRootNamespace)) || (this.IsDirectChildOfRoot && string.IsNullOrWhiteSpace(Settings.TsRootNamespace));
+            (this.IsRoot && !string.IsNullOrWhiteSpace(this.Settings.TsRootNamespace)) || (this.IsRootDirectChild && string.IsNullOrWhiteSpace(this.Settings.TsRootNamespace));
 
-        string TsName => 
-            ClrFullName.Split('.').Last();
+        string TsName =>
+            this.ClrFullName.Split('.').Last();
 
         string TsFullName =>
-            Settings.ToTsFullName(ClrFullName);
+            this.Settings.ToTsFullName(this.ClrFullName);
 
-        bool IncludeClasses => 
-            Settings.ClassNamespaceFilter == null || Settings.ClassNamespaceFilter.Contains(ClrFullName);
+        bool IncludeClasses =>
+            this.Settings.ClassNamespaceFilter?.Any(f =>
+                f.EndsWith("*")
+                    ? this.ClrFullName.StartsWith(f.Substring(0, f.IndexOf("*")))
+                    : this.ClrFullName == f
+            ) ?? false;
 
-        bool IncludeEnums => 
-            Settings.EnumNamespaceFilter == null || Settings.EnumNamespaceFilter.Contains(ClrFullName);
+        bool IncludeEnums =>
+            this.Settings.EnumNamespaceFilter?.Any(f =>
+                f.EndsWith("*")
+                    ? this.ClrFullName.StartsWith(f.Substring(0, f.IndexOf("*")))
+                    : this.ClrFullName == f
+            ) ?? false;
 
         bool IsEmpty =>
-            Entities.Count + Enums.Count == 0 && ChildNamespaces.All(ns => ns.IsEmpty);
+            this.Entities.Count + this.Enums.Count == 0 && this.ChildNamespaces.All(ns => ns.IsEmpty);
 
         bool ContainsEnums =>
-            Enums.Count > 0 || ChildNamespaces.Any(ns => ns.ContainsEnums);
+            this.Enums.Count > 0 || this.ChildNamespaces.Any(ns => ns.ContainsEnums);
 
         List<ClassOrInterfaceModel> Entities { get; set; }
 
@@ -58,7 +68,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         void Initialize()
         {
 
-            List<Assembly> assemblies = Settings.AssemblyPaths.Select(ap => Assembly.LoadFrom(ap)).ToList();
+            List<Assembly> assemblies = this.Settings.AssemblyPaths.Select(ap => Assembly.LoadFrom(ap)).ToList();
             foreach (var a in assemblies)
             {
                 a.GetReferencedAssemblies();
@@ -66,18 +76,18 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
 
             // Processing entities (class types)
-            var allClassTypes = GetTypes(assemblies)
-                .Where(t => (t.IsClass || t.IsInterface) && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
+            var allClassTypes = this.GetTypes(assemblies)
+                .Where(t => (t.IsClass || t.IsInterface) && t.IsPublic && t.Namespace.StartsWith(this.ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
             // Processing enums
-            var allEnumTypes = GetTypes(assemblies)
-                .Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(ClrFullName, StringComparison.Ordinal))
+            var allEnumTypes = this.GetTypes(assemblies)
+                .Where(t => t.IsEnum && t.IsPublic && t.Namespace.StartsWith(this.ClrFullName, StringComparison.Ordinal))
                 .ToList();
 
-            if(IncludeClasses)
+            if(this.IncludeClasses)
             {
-                var nsClassTypes = allClassTypes.Where(t => t.Namespace == ClrFullName).ToList();
+                var nsClassTypes = allClassTypes.Where(t => t.Namespace == this.ClrFullName).ToList();
                 nsClassTypes.Sort(delegate (Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
                 foreach (var classType in nsClassTypes)
@@ -86,10 +96,9 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 }
             }
 
-
-            if (IncludeEnums)
+            if (this.IncludeEnums)
             {
-                var nsEnumTypes = allEnumTypes.Where(t => t.Namespace == ClrFullName).ToList();
+                var nsEnumTypes = allEnumTypes.Where(t => t.Namespace == this.ClrFullName).ToList();
                 nsEnumTypes.Sort(delegate (Type type1, Type type2) { return string.Compare(type1.Name, type2.Name, StringComparison.Ordinal); });
 
                 foreach (var enumType in nsEnumTypes)
@@ -140,7 +149,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
         public override StreamWriter WriteTs(StreamWriter sw)
         {
-            if (IsRoot)
+            if (this.IsRoot)
             {
                 List<GeneratorSettings> allGeneratorSettings = new List<GeneratorSettings>
                 {
@@ -151,29 +160,37 @@ namespace jasMIN.Net2TypeScript.Shared.Model
 
                 if (allGeneratorSettings.Any(gs => gs.KnockoutMapping != KnockoutMappingOptions.None && gs.KnockoutMapping != null))
                 {
-                    if (Settings.TypingsPaths != null && Settings.TypingsPaths.Knockout != null)
+                    if (this.Settings.TypingsPaths != null && this.Settings.TypingsPaths.Knockout != null)
                     {
-                        sw.WriteFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Knockout);
+                        sw.WriteFormat(
+                            "/// <reference path=\"{0}\"/>{1}",
+                            this.Settings.TypingsPaths.Knockout,
+                            Environment.NewLine
+                        );
                     }
                 }
 
                 if (allGeneratorSettings.Any(gs => gs.UseBreeze == true))
                 {
-                    if (Settings.TypingsPaths != null && Settings.TypingsPaths.Breeze == null)
+                    if (this.Settings.TypingsPaths != null && this.Settings.TypingsPaths.Breeze == null)
                     {
-                        sw.WriteFormat("/// <reference path=\"{0}\"/>\r\n", Settings.TypingsPaths.Breeze);
+                        sw.WriteFormat(
+                            "/// <reference path=\"{0}\"/>{1}",
+                            this.Settings.TypingsPaths.Breeze,
+                            Environment.NewLine
+                        );
                     }
                 }
             }
 
-            if(!IsEmpty)
+            if(!this.IsEmpty)
             {
 
                 sw.WriteLine();
 
                 if (!(this.IsRoot && !this.IsTsRoot))
                 {
-                    sw.WriteLine($"{IndentationContext}export namespace {TsName} {{");
+                    sw.WriteLine($"{this.IndentationContext}export namespace {this.TsName} {{");
                 }
 
                 foreach (var ns in this.ChildNamespaces)
@@ -195,7 +212,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                     }
 
                     sw.WriteLine();
-                    sw.WriteLine($"{IndentationContext}}}");
+                    sw.WriteLine($"{this.IndentationContext}}}");
                 }
             }
 

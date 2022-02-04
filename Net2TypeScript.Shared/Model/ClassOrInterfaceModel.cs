@@ -1,11 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
+
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     class ClassOrInterfaceModel : ClrTypeModelBase
     {
         public ClassOrInterfaceModel(GlobalSettings globalSettings, Type type)
@@ -34,7 +37,7 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 foreach (PropertyInfo propertyInfo in type.GetProperties().Where(prop => prop.CanRead && prop.GetGetMethod().IsPublic))
                 {
                     var isDefinedAsExtraProp =
-                        this.Settings.ExtraProperties.Any(ep => ep.Key == (Settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));
+                        this.Settings.ExtraProperties.Any(ep => ep.Key == (this.Settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));
 
                     if (!isDefinedAsExtraProp)
                     {
@@ -45,6 +48,8 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 type = this.Type.IsInterface ? this.GetBaseType(type) : null;
             }
         }
+
+        private string DebuggerDisplay => @$"{(this.Type.IsClass ? "class" : "interface")}: {this.Type.Name}";
 
         private Type GetBaseType(Type classOrInterface)
         {
@@ -89,16 +94,20 @@ namespace jasMIN.Net2TypeScript.Shared.Model
             if (!skip)
             {
 
-                sw.WriteFormat("\r\n{0}/** {1}: {2} ({3}) */\r\n",
-                    IndentationContext,
-                    this.Type.IsClass ? "Class" : "Interface",
-                    TsFullName,
-                    ClrFullName);
+                sw.WriteFormat("{4}{0}/** {1}: {2} ({3}) */{4}",
+                    this.IndentationContext,
+                    this.Type.IsClass ? "class" : "interface",
+                    this.TsFullName,
+                    this.ClrFullName,
+                    Environment.NewLine
+                );
 
-                sw.WriteFormat("{0}export interface {1}{2} {{\r\n",
-                    IndentationContext,
-                    TsTypeName,
-                    Settings.UseBreeze == true ? " extends breeze.Entity" : string.Empty);
+                sw.WriteFormat("{0}export interface {1}{2} {{{3}",
+                    this.IndentationContext,
+                    this.TsTypeName,
+                    this.Settings.UseBreeze == true ? " extends breeze.Entity" : string.Empty,
+                    Environment.NewLine
+                );
 
                 // TODO: Filter non-public props
                 // RENDER PROPERTYINFOS
@@ -108,18 +117,18 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 }
 
 
-                if (Settings.ExtraProperties != null)
+                if (this.Settings.ExtraProperties != null)
                 {
-                    foreach (KeyValuePair<string, string> prop in Settings.ExtraProperties)
+                    foreach (KeyValuePair<string, string> prop in this.Settings.ExtraProperties)
                     {
                         if (!string.IsNullOrEmpty(prop.Value))
                         {
-                            WriteExtensionProperty(sw, prop, Settings);
+                            this.WriteExtensionProperty(sw, prop, this.Settings);
                         }
                     }
                 }
 
-                sw.WriteLine($"{IndentationContext}}}");
+                sw.WriteLine($"{this.IndentationContext}}}");
 
             }
 
@@ -130,12 +139,18 @@ namespace jasMIN.Net2TypeScript.Shared.Model
         {
             var tsPropName = prop.Key;
             var tsTypeName = prop.Value.ToString();
-            sw.WriteFormat("{0}/** Extra/overridden property */\r\n",
-                            IndentationContext + settings.Indent);
-            sw.WriteFormat("{0}{1}: {2};\r\n",
-                            IndentationContext + settings.Indent,
-                            tsPropName,
-                            tsTypeName);
+            sw.WriteFormat(
+                "{0}/** Extra/overridden property */{1}",
+                this.IndentationContext + settings.Indent,
+                Environment.NewLine
+            );
+            sw.WriteFormat(
+                "{0}{1}: {2};{3}",
+                this.IndentationContext + settings.Indent,
+                tsPropName,
+                tsTypeName,
+                Environment.NewLine
+            );
         }
 
     }

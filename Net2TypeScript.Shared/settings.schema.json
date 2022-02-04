@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "JSON Schema for Net2TypeScript settings",
   "definitions": {
@@ -98,7 +98,7 @@
         "classNamespaceFilter": {
           "type": [ "array", "null" ],
           "default": null,
-          "description": "(Optional). If specified; only classes in the exact subnamespaces will be included in the output; otherwise all classes under clrRootNamespace will be included.",
+          "description": "(Optional). If specified; only classes in the exact subnamespaces will be included in the output (supports ending wildcard); otherwise all classes under clrRootNamespace will be included.",
           "items": {
             "type": "string",
             "uniqueItems": true
@@ -107,7 +107,7 @@
         "enumNamespaceFilter": {
           "type": [ "array", "null" ],
           "default": null,
-          "description": "(Optional). If specified; only Enums in the exact subnamespaces will be included in the output; otherwise all classes under clrRootNamespace will be included.",
+          "description": "(Optional). If specified; only Enums in the exact subnamespaces will be included in the output (supports ending wildcard); otherwise all classes under clrRootNamespace will be included.",
           "items": {
             "type": "string",
             "uniqueItems": true

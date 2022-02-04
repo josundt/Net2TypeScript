@@ -26,7 +26,7 @@ namespace jasMIN.Net2TypeScript.Shared
 
                 TypeScriptGenerator.NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath));
 
-                using var outStream = File.OpenWrite(globalSettings.OutputPath);
+                using var outStream = File.Create(globalSettings.OutputPath);
                 TypeScriptGenerator.GenerateTypeScript(globalSettings, outStream);
             }
             catch (Exception ex)

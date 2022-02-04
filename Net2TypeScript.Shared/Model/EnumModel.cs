@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace jasMIN.Net2TypeScript.Shared.Model
 {
+    [DebuggerDisplay("enum: {Type.Name,nq}")]
     class EnumModel : ClrTypeModelBase
     {
         public EnumModel(GlobalSettings globalSettings, Type type)
@@ -51,19 +53,31 @@ namespace jasMIN.Net2TypeScript.Shared.Model
                 return result;
             }
         }
+
         public override StreamWriter WriteTs(StreamWriter sw) {
 
-            sw.WriteLine($"{IndentationContext}export enum {TsTypeName} {{");
+            sw.WriteFormat("{3}{0}/** enum: {1} ({2}) */{3}",
+                this.IndentationContext,
+                this.TsFullName,
+                this.ClrFullName,
+                Environment.NewLine
+            );
+
+            sw.WriteFormat("{0}export enum {1} {{{2}",
+                this.IndentationContext,
+                this.TsTypeName,
+                Environment.NewLine
+            );
 
             var i = 0;
             foreach (var value in this.Values)
             {
                 var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
-                sw.WriteLine($@"{IndentationContext}{Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
+                sw.WriteLine($@"{this.IndentationContext}{this.Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
                 i++;
             }
 
-            sw.WriteLine($@"{IndentationContext}}}");
+            sw.WriteLine($@"{this.IndentationContext}}}");
 
             return sw;
 
