@@ -94,8 +94,7 @@ static class TypeScriptGenerator
     private static void WriteEslintDisables(StreamWriter sw)
     {
         var eslintDisables = new[]
-{
-            "@typescript-eslint/no-unnecessary-qualifier",
+        {
             "@typescript-eslint/array-type"
         };
         sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */");

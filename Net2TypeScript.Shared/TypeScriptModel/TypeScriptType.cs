@@ -1,6 +1,7 @@
 using jasMIN.Net2TypeScript.Shared.SettingsModel;
 using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace jasMIN.Net2TypeScript.Shared.TypeScriptModel;
 
@@ -14,6 +15,7 @@ public class TypeScriptType : ITypeScriptType
 
     public static ITypeScriptType FromDotNetType(
         Type dotnetType,
+        string? declarerNamespace,
         NullabilityInfo? nullability,
         Settings settings,
         bool isKnockoutObservable = false,
@@ -105,6 +107,7 @@ public class TypeScriptType : ITypeScriptType
             tsType.TypeName = "Array";
             tsType.GenericTypeArguments.Add(FromDotNetType(
                 elementType,
+                declarerNamespace,
                 elementNullability,
                 settings,
                 isKnockoutObservable: false,
@@ -119,6 +122,7 @@ public class TypeScriptType : ITypeScriptType
             tsType.TypeName = "Record";
             tsType.GenericTypeArguments.Add(FromDotNetType(
                 keyType,
+                declarerNamespace,
                 nullability?.GenericTypeArguments[0],
                 settings,
                 isKnockoutObservable: false,
@@ -128,6 +132,7 @@ public class TypeScriptType : ITypeScriptType
             ));
             tsType.GenericTypeArguments.Add(FromDotNetType(
                 valueType,
+                declarerNamespace,
                 nullability?.GenericTypeArguments[1],
                 settings,
                 isKnockoutObservable: false,
@@ -143,7 +148,17 @@ public class TypeScriptType : ITypeScriptType
         {
             if (propertyType.TryGetTypeScriptNamespaceName(settings, out string propertyTypeTsNs))
             {
-                tsType.TypeName = $"{propertyTypeTsNs}.{propertyType.Name}";
+                string scopedNs;
+                if (declarerNamespace != null)
+                {
+                    var trimDeclarerNsRegex = new Regex($"^{declarerNamespace.Replace(".", "\\.", StringComparison.Ordinal)}\\.?");
+                    scopedNs = trimDeclarerNsRegex.Replace(propertyTypeTsNs, string.Empty);
+                }
+                else
+                {
+                    scopedNs = propertyTypeTsNs;
+                }
+                tsType.TypeName = $"{scopedNs}{(string.IsNullOrEmpty(scopedNs) ? "" : ".")}{propertyType.Name}";
             }
             else
             {

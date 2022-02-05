@@ -44,8 +44,12 @@ public class TypeScriptPropertyInfo
 
         var nullability = nullabilityContext.Create(propertyInfo);
 
+        string? declarerTsNamespace = null;
+        propertyInfo.DeclaringType?.TryGetTypeScriptNamespaceName(settings, out declarerTsNamespace);
+
         this.PropertyType = TypeScriptType.FromDotNetType(
             propertyInfo.PropertyType,
+            declarerTsNamespace,
             nullability,
             settings,
             isKnockoutObservable,

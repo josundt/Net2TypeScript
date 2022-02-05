@@ -24,7 +24,7 @@ public class TypeScriptTypeTests
 
         var settings = new Settings { };
 
-        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, settings)).ToList();
+        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, null, settings)).ToList();
 
         foreach (var tsType in tsTypes)
         {
@@ -54,7 +54,7 @@ public class TypeScriptTypeTests
 
         var settings = new Settings { };
 
-        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, settings)).ToList();
+        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, null, settings)).ToList();
 
         foreach (var tsType in tsTypes)
         {
@@ -74,7 +74,7 @@ public class TypeScriptTypeTests
     {
         var settings = new Settings { };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(string), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(string), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -91,7 +91,7 @@ public class TypeScriptTypeTests
     {
         var settings = new Settings { };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(bool), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(bool), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -108,7 +108,7 @@ public class TypeScriptTypeTests
     {
         var settings = new Settings { };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(bool?), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(bool?), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -130,7 +130,7 @@ public class TypeScriptTypeTests
 
         var settings = new Settings { };
 
-        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, settings)).ToList();
+        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, null, settings)).ToList();
 
         foreach (var tsType in tsTypes)
         {
@@ -155,7 +155,7 @@ public class TypeScriptTypeTests
 
         var settings = new Settings { };
 
-        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, settings)).ToList();
+        var tsTypes = dotNetTypes.Select(nt => TypeScriptType.FromDotNetType(nt, null, null, settings)).ToList();
 
         foreach (var tsType in tsTypes)
         {
@@ -178,7 +178,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "System"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -198,7 +198,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "System"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport?), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport?), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -218,7 +218,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "System.ComponentModel"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport?), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(System.ComponentModel.BindableSupport?), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -237,7 +237,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(TimeSpan), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(TimeSpan), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -256,7 +256,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(TimeSpan?), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(TimeSpan?), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -275,7 +275,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -306,7 +306,7 @@ public class TypeScriptTypeTests
             NonNullableArrays = true
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -338,7 +338,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -371,7 +371,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -401,7 +401,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(string[]), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(string[]), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -431,7 +431,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(Dictionary<string, string>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(Dictionary<string, string>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -473,7 +473,7 @@ public class TypeScriptTypeTests
             NonNullableDictionaries = true
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(IDictionary<string, string>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(IDictionary<string, string>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -516,7 +516,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(Dictionary<string, TsTypeAssertion>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(Dictionary<string, TsTypeAssertion>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -560,7 +560,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(IReadOnlyDictionary<string, TsTypeAssertion>), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(IReadOnlyDictionary<string, TsTypeAssertion>), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -602,7 +602,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -623,7 +623,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -643,7 +643,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript.Tests"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, settings);
+        var tsType = TypeScriptType.FromDotNetType(typeof(TsTypeAssertion), null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -662,7 +662,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(string), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(string), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -693,7 +693,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -724,7 +724,7 @@ public class TypeScriptTypeTests
             NonNullableArrays = true
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<string>), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -756,7 +756,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -789,7 +789,7 @@ public class TypeScriptTypeTests
             DotNetRootNamespace = "jasMIN.Net2TypeScript"
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<TsTypeAssertion>), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -820,7 +820,7 @@ public class TypeScriptTypeTests
         {
         };
 
-        var tsType = TypeScriptType.FromDotNetType(typeof(List<List<string>>), null, settings, true);
+        var tsType = TypeScriptType.FromDotNetType(typeof(List<List<string>>), null, null, settings, true);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
@@ -870,7 +870,7 @@ public class TypeScriptTypeTests
 
         Type type = typeof(GenericClass<>).GetProperty("Item")!.PropertyType;
         var genericParamName = typeof(GenericClass<>).GetGenericArguments().First().Name;
-        var tsType = TypeScriptType.FromDotNetType(type, null, settings);
+        var tsType = TypeScriptType.FromDotNetType(type, null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion
         {
