@@ -26,35 +26,40 @@
           "default": false,
           "description": "(Optional). When true, all .NET Interface types will be excluded TypeScript typings generator."
         },
+        "nullableReferenceTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "(Optional). Set to true to propagate nullable reference type information to TypeScript types. NB! Should only be used with assemblies that has enabled nullable reference types."
+        },
         "nonNullableEntities": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, properties of CLR class/interface types can not be null in TypeScript."
+          "description": "(Optional). When true, properties of .NET class/interface types can not be null in TypeScript."
         },
         "nonNullableArrays": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, properties of CLR collection/array types can not be null in TypeScript."
+          "description": "(Optional). When true, properties of .NET collection/array types can not be null in TypeScript."
         },
         "nonNullableArrayEntityItems": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, items of CLR class/interface types can not be null when inside a collection/array type in TypeScript."
+          "description": "(Optional). When true, items of .NET class/interface types can not be null when inside a collection/array type in TypeScript."
         },
         "nonNullableDictionaries": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, properties of CLR IDictionary<TKey, TValue> types can not be null in TypeScript."
+          "description": "(Optional). When true, properties of .NET IDictionary<TKey, TValue> types can not be null in TypeScript."
         },
         "nonNullableDictionaryEntityValues": {
           "type": "boolean",
           "default": false,
-          "description": "(Optional). When true, properties of CLR class/interface types can not be null when in the value of a IDictionary<TKey, TValue> type in TypeScript."
+          "description": "(Optional). When true, properties of .NET class/interface types can not be null when in the value of a IDictionary<TKey, TValue> type in TypeScript."
         },
         "extraProperties": {
           "type": [ "object", "null" ],
           "default": null,
-          "description": "(Optional). Enables adding extra properties to ALL generated TS entity interfaces that did not exist in the CLR class. key=propName; value=typeName",
+          "description": "(Optional). Enables adding extra properties to ALL generated TS entity interfaces that did not exist in the .NET class. key=propName; value=typeName",
           "additionalProperties": {
             "type": [ "string", "null" ]
           }
@@ -76,14 +81,14 @@
           "type": "string",
           "description": "The physical path to the generated model file (absolute path or relative to folder containing config file)."
         },
-        "clrRootNamespace": {
+        "dotNetRootNamespace": {
           "type": "string",
-          "description": "The top namespace in the CLR assembly to extract types from. (CLR Types outside this namespace will be ignored)."
+          "description": "The top namespace in the .NET assembly to extract types from. (.NET Types outside this namespace will be ignored)."
         },
         "tsRootNamespace": {
           "type": [ "string", "null" ],
           "default": null,
-          "description": "(Optional). The namespace name for the output that replaces the clrRootNamespace. (F.ex. to have a shorter namespace in the TypeScript files)."
+          "description": "(Optional). The namespace name for the output that replaces the dotNetRootNamespace. (F.ex. to have a shorter namespace in the TypeScript files)."
         },
         "enumType": {
           "type": "string",
@@ -93,12 +98,12 @@
             "number",
             "stringIfNotFlagEnum"
           ],
-          "description": "(Optional, default \"string\". Specifies how .NET Enum types should be translated to TypeScript. \"string\" will translate into a string enum; \"number\" will translate it into a number enum."
+          "description": "(Optional). If specified, only enums in the listed namespaces will be included. To include enums from \"child\" namespaces, add a wildcard character after the namespace name. If not specified, all enums under dotNetRootNamespace will be included."
         },
         "classNamespaceFilter": {
           "type": [ "array", "null" ],
           "default": null,
-          "description": "(Optional). If specified; only classes in the exact subnamespaces will be included in the output (supports ending wildcard); otherwise all classes under clrRootNamespace will be included.",
+          "description": "(Optional). If specified, only classes in the listed namespaces will be included. To include enums from \"child\" namespaces, add a wildcard character after the namespace name. If not specified, all classes under dotNetRootNamespace will be included.",
           "items": {
             "type": "string",
             "uniqueItems": true
@@ -107,7 +112,7 @@
         "enumNamespaceFilter": {
           "type": [ "array", "null" ],
           "default": null,
-          "description": "(Optional). If specified; only Enums in the exact subnamespaces will be included in the output (supports ending wildcard); otherwise all classes under clrRootNamespace will be included.",
+          "description": "(Optional). If specified; only Enums in the exact subnamespaces will be included in the output (supports ending wildcard); otherwise all classes under dotNetRootNamespace will be included.",
           "items": {
             "type": "string",
             "uniqueItems": true
@@ -143,7 +148,7 @@
         "assemblyPaths",
         "declarationsOutputPath",
         "modelModuleOutputPath",
-        "clrRootNamespace"
+        "dotNetRootNamespace"
       ]
     }
   },
@@ -159,12 +164,14 @@
       "properties": {
         "namespaceOverrides": {
           "type": "object",
+          "description": "Enables overriding the global settings for the specified namespaces. To include enums from \"child\" namespaces, add a wildcard character after the namespace name.",
           "additionalProperties": {
             "$ref": "#/definitions/generatorSettings"
           }
         },
         "classOverrides": {
           "type": "object",
+          "description": "Enables overriding the global settings for the specified classes.",
           "additionalProperties": {
             "$ref": "#/definitions/generatorSettings"
           }

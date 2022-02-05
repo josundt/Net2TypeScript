@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net2TypeScript", "Net2TypeScript\Net2TypeScript.csproj", "{D9B99963-5403-4B81-9A05-31EB640881CF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore2TypeScript", "NetCore2TypeScript\NetCore2TypeScript.csproj", "{8C4289DF-BE25-46BE-B594-B8E11E2590DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net2TypeScript.Shared", "Net2TypeScript.Shared\Net2TypeScript.Shared.csproj", "{815066C0-80CA-44E4-82EF-E24EDEF7DA00}"
@@ -22,10 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D9B99963-5403-4B81-9A05-31EB640881CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9B99963-5403-4B81-9A05-31EB640881CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9B99963-5403-4B81-9A05-31EB640881CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9B99963-5403-4B81-9A05-31EB640881CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C4289DF-BE25-46BE-B594-B8E11E2590DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C4289DF-BE25-46BE-B594-B8E11E2590DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C4289DF-BE25-46BE-B594-B8E11E2590DE}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,43 +1,38 @@
-﻿{
+{
   "$schema": "./settings.schema.json",
   "assemblyPaths": [
-    "../MyApp/ApiModel.dll",
-    "../MyApp/DomainModel.dll"
+    "../../src/Foo.Identity/Foo.Identity.Shared/bin/Debug/netstandard2.0/Foo.Identity.Shared.dll",
+    "../../src/Foo.Identity/Foo.Identity.Web.Models/bin/Debug/netstandard2.0/Foo.Identity.Web.Models.dll",
+    "../../src/Foo.Identity/Foo.Identity.Data.Models/bin/Debug/netstandard2.0/Foo.Identity.Data.Models.dll",
+    "../../src/Foo.Identity/Foo.Identity.Login/bin/Debug/netcoreapp3.1/Foo.Identity.Login.dll"
   ],
-  "outputPath": "../MyCode/typings/model.d.ts",
-  "clrRootNamespace": "MyApp",
+  "outputPath": "../../src/Foo.Identity/Foo.Identity.Setup/ClientApp/src/core/models.ts",
+  "dotNetRootNamespace": "Foo.Identity",
   "tsRootNamespace": null,
   "classNamespaceFilter": [
-    "MyApp.ApiModel.Models",
-    "MyApp.DomainModel.Db"
+    "Foo.Identity.Shared.Enums*",
+    "Foo.Identity.Web.Models*",
+    "Foo.Identity.Data.Models.ApiExposed*",
+    "Foo.Identity.Login.Models.Api*",
+    "Foo.Identity.Web.Models.New*"
+  ],
+  "enumNamespaceFilter": [
+    "Foo.Identity.Shared.Enums*",
+    "Foo.Identity.Web.Models*",
+    "Foo.Identity.Data.Models.ApiExposed*",
+    "Foo.Identity.Login.Models.Api*",
+    "Foo.Identity.Web.Models.New*"
   ],
   "indent": "    ",
-  "enumType": "string",
+  "enumType": "stringIfNotFlagEnum",
   "camelCase": true,
-  "typingsPaths": {
-    "knockout": "../typings/globals/knockout/index.d.ts",
-    "breeze": "../typings/globals/breeze/index.d.ts"
-  },
-  "knockoutMapping": "none",
-  "useBreeze": false,
+  "excludeClass": false,
+  "excludeInterface": true,
+  "nullableReferenceTypes": false,
+
   "namespaceOverrides": {
-    "MyApp.ApiModel.Models": {
-      "useKnockout": "valuetypes",
-      "useBreeze": false
-    },
-    "MyApp.DomainModel.Models": {
-      "useKnockout": "all",
-      "useBreeze": true,
-      "extraProperties": {
-        "isValid": "KnockoutObservable<boolean>"
-      }
-    }
-  },
-  "classOverrides": {
-    "MyApp.DomainModel.Models.User": {
-      "extraProperties": {
-        "fullName": "KnockoutComputed<number>"
-      }
+    "Foo.Identity.Login.Models.Api*": {
+      "nullableReferenceTypes": true
     }
   }
 }
