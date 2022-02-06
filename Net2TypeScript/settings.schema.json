@@ -90,6 +90,12 @@
           "default": null,
           "description": "(Optional). The namespace name for the output that replaces the dotNetRootNamespace. (F.ex. to have a shorter namespace in the TypeScript files)."
         },
+        "tsFlattenNamespaces": {
+          "type": "boolean",
+          "default": false,
+          "description": "(Optional). If true, types in the TypeScript output file will be in a single namespace. PS! This requires having unique class/interface/enum type names."
+        },
+
         "enumType": {
           "type": "string",
           "default": "string",
@@ -105,8 +111,7 @@
           "default": null,
           "description": "(Optional). If specified, only classes in the listed namespaces will be included. To include enums from \"child\" namespaces, add a wildcard character after the namespace name. If not specified, all classes under dotNetRootNamespace will be included.",
           "items": {
-            "type": "string",
-            "uniqueItems": true
+            "type": "string"
           }
         },
         "enumNamespaceFilter": {

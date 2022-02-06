@@ -38,7 +38,7 @@ internal class Generator
         {
             "@typescript-eslint/array-type"
         };
-        sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */");
+        sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */{Environment.NewLine}");
     }
 
     private static void WriteTypesReferences(StreamWriter sw, GlobalSettings globalSettings)

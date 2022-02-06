@@ -7,25 +7,14 @@ abstract class DotNetTypeModelBase : DotNetModelBase
 {
     private static readonly Regex _genericTypeNameFixRegEx = new(@"`.*$", RegexOptions.Compiled);
 
+    private readonly Lazy<string> _tsTypeNameLazy;
+
     protected DotNetTypeModelBase(Type type, GlobalSettings globalSettings)
         : base(globalSettings)
     {
         this._type = type;
-        if (type.IsGenericTypeDefinition)
-        {
-            var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
-
-            var baseFullName = _genericTypeNameFixRegEx.Replace(type.FullName!, string.Empty);
-            this.FullName = $"{baseFullName}<{string.Join(", ", genericArgNames)}>";
-
-            var baseName = _genericTypeNameFixRegEx.Replace(type.Name, string.Empty);
-            this.TsTypeName = $"{baseName}<{string.Join(", ", genericArgNames)}>";
-        }
-        else
-        {
-            this.FullName = type.FullName!;
-            this.TsTypeName = type.Name;
-        }
+        this.FullName = GetFullName(this._type);
+        this._tsTypeNameLazy = new Lazy<string>(() => GetTsTypeName(this._type));
     }
 
     protected readonly Type _type;
@@ -34,8 +23,38 @@ abstract class DotNetTypeModelBase : DotNetModelBase
 
     public string Name => this._type.Name;
 
-    protected virtual string TsTypeName { get; }
+    protected string TsTypeName => this._tsTypeNameLazy.Value;
 
     public override abstract StreamWriter WriteTs(StreamWriter sw, int indentCount);
 
+    private static string GetFullName(Type type)
+    {
+        if (type.IsGenericTypeDefinition)
+        {
+            var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
+
+            var baseFullName = _genericTypeNameFixRegEx.Replace(type.FullName!, string.Empty);
+            return $"{baseFullName}<{string.Join(", ", genericArgNames)}>";
+
+        }
+        else
+        {
+            return type.FullName!;
+        }
+    }
+
+    private static string GetTsTypeName(Type type)
+    {
+        if (type.IsGenericTypeDefinition)
+        {
+            var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
+
+            var baseName = _genericTypeNameFixRegEx.Replace(type.Name, string.Empty);
+            return $"{baseName}<{string.Join(", ", genericArgNames)}>";
+        }
+        else
+        {
+            return type.Name;
+        }
+    }
 }

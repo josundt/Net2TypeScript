@@ -15,6 +15,7 @@ public class Settings : GeneratorSettings
     public string OutputPath { get; set; }
     public string DotNetRootNamespace { get; set; }
     public string TsRootNamespace { get; set; }
+    public bool TsFlattenNamespaces { get; set; }
     public string EnumType { get; set; }
     public List<string> ClassNamespaceFilter { get; set; }
     public List<string> EnumNamespaceFilter { get; set; }

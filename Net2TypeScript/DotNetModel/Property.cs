@@ -28,7 +28,7 @@ class Property : DotNetTypeModelBase
 
     public string PropName => this._propInfo.Name;
 
-    public Type DeclaringType => this._propInfo.DeclaringType!;
+    public Type DeclaringType => this._propInfo?.DeclaringType!;
 
     public TypeScriptProperty TypeScriptProperty { get; }
 

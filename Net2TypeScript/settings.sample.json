@@ -9,6 +9,7 @@
   "outputPath": "../../src/Foo.Identity/Foo.Identity.Setup/ClientApp/src/core/models.ts",
   "dotNetRootNamespace": "Foo.Identity",
   "tsRootNamespace": null,
+  "tsFlattenNamespaces": false,
   "classNamespaceFilter": [
     "Foo.Identity.Shared.Enums*",
     "Foo.Identity.Web.Models*",

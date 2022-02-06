@@ -83,24 +83,6 @@ public class TypeScriptType : ITypeScriptType
         {
             tsType.TypeName = "string";
         }
-        else if (propertyType.IsEnum)
-        {
-            if (settings.EnumType == "stringIfNotFlagEnum" || settings.EnumType == "number" || settings.EnumType == "string")
-            {
-                if (propertyType.TryGetTypeScriptNamespaceName(settings, out string propertyTypeTsNs))
-                {
-                    tsType.TypeName = $"{propertyTypeTsNs}.{propertyType.Name}";
-                }
-                else
-                {
-                    tsType.TypeName = "object";
-                }
-            }
-            else
-            {
-                tsType.TypeName = settings.EnumType;
-            }
-        }
         else if (propertyType.IsTypeScriptArrayType())
         {
             var elementType = propertyType.HasElementType ? propertyType.GetElementType()! : propertyType.GenericTypeArguments[0];
@@ -145,15 +127,25 @@ public class TypeScriptType : ITypeScriptType
         {
             tsType.TypeName = propertyType.Name;
         }
-        else if (propertyType.IsTypeScriptInterfaceType())
+        else if (
+            propertyType.IsTypeScriptInterfaceType() ||
+            propertyType.IsEnum
+        )
         {
             if (propertyType.TryGetTypeScriptNamespaceName(settings, out string propertyTypeTsNs))
             {
                 string scopedNs;
                 if (declarerNamespace != null)
                 {
-                    var trimDeclarerNsRegex = new Regex($"^{declarerNamespace.Replace(".", "\\.", StringComparison.Ordinal)}\\.?");
-                    scopedNs = trimDeclarerNsRegex.Replace(propertyTypeTsNs, string.Empty);
+                    if (settings.TsFlattenNamespaces)
+                    {
+                        scopedNs = string.Empty;
+                    }
+                    else
+                    {
+                        var trimDeclarerNsRegex = new Regex($"^{declarerNamespace.Replace(".", "\\.", StringComparison.Ordinal)}\\.?");
+                        scopedNs = trimDeclarerNsRegex.Replace(propertyTypeTsNs, string.Empty);
+                    }
                 }
                 else
                 {

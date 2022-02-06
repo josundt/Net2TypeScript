@@ -58,34 +58,28 @@ class Namespace : DotNetModelBase
 
     public override StreamWriter WriteTs(StreamWriter sw, int indentCount)
     {
-
         var indent = this.Indent(indentCount);
 
-        var childIndentCount = this._isRoot ? indentCount : indentCount + 1;
+        var childIndentCount = this._isRoot || this.Settings.TsFlattenNamespaces ? indentCount : indentCount + 1;
 
-
-        if (!this.IsEmpty())
+        if (!this._isRoot && !this.Settings.TsFlattenNamespaces)
         {
-            if (!this._isRoot)
-            {
-                sw.WriteLine($"{Environment.NewLine}{indent}export namespace {this.FullName.Split('.').Last()} {{");
-            }
+            sw.WriteLine($"{Environment.NewLine}{indent}export namespace {this.FullName.Split('.').Last()} {{");
+        }
 
-            foreach (var ns in this._childNamespaces)
-            {
-                ns.WriteTs(sw, childIndentCount);
-            }
+        foreach (var ns in this._childNamespaces)
+        {
+            ns.WriteTs(sw, childIndentCount);
+        }
 
-            foreach (var type in this._entities)
-            {
-                type.WriteTs(sw, childIndentCount);
-            }
+        foreach (var type in this._entities)
+        {
+            type.WriteTs(sw, childIndentCount);
+        }
 
-            if (!this._isRoot)
-            {
-                sw.WriteLine($"{indent}}}");
-            }
-
+        if (!this._isRoot && !this.Settings.TsFlattenNamespaces)
+        {
+            sw.WriteLine($"{indent}}}");
         }
 
         return sw;
