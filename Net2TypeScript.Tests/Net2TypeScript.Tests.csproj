@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Net2TypeScript\Net2TypeScript.csproj" />
+    <ProjectReference Include="..\Net2TypeScript\Net2TypeScript.csproj" />
   </ItemGroup>
 
 </Project>

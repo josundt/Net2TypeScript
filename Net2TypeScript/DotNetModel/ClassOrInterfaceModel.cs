@@ -5,11 +5,9 @@ using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-[DebuggerDisplay($"{{{nameof(DebuggerDisplay)},nq}}")]
+[DebuggerDisplay($"{{{nameof(_debuggerDisplay)},nq}}")]
 class ClassOrInterfaceModel : DotNetTypeModelBase
 {
-    private string DebuggerDisplay => @$"{(this.Type.IsClass ? "class" : "interface")}: {this.Type.Name}";
-
     public ClassOrInterfaceModel(Type type, NullabilityInfoContext nullabilityContext, GlobalSettings globalSettings)
         : base(type, globalSettings)
     {
@@ -27,7 +25,7 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
 
     private void Initialize(NullabilityInfoContext nullabilityContext)
     {
-        var type = this.Type;
+        var type = this._type;
 
         while (type != null)
         {
@@ -42,7 +40,7 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
                 }
             }
 
-            type = this.Type.IsInterface ? this.GetBaseType(type) : null;
+            type = this._type.IsInterface ? this.GetBaseType(type) : null;
         }
     }
 
@@ -59,7 +57,7 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
         }
         else if (classOrInterface.IsClass)
         {
-            result = this.Type.BaseType;
+            result = this._type.BaseType;
         }
 
         // If base type not in the included assemblies, skip it
@@ -84,8 +82,8 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
         var indent = this.Indent(indentCount);
 
         var skip =
-            this.Type.IsClass && this.Settings.ExcludeClass == true ||
-            this.Type.IsInterface && this.Settings.ExcludeInterface == true ||
+            this._type.IsClass && this.Settings.ExcludeClass == true ||
+            this._type.IsInterface && this.Settings.ExcludeInterface == true ||
             this.Properties.Count == 0;
 
 
@@ -94,7 +92,7 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
 
             sw.WriteFormat("{3}{0}/** .NET {1}: {2} */{3}",
                 indent,
-                this.Type.IsClass ? "class" : "interface",
+                this._type.IsClass ? "class" : "interface",
                 this.FullName,
                 Environment.NewLine
             );
@@ -150,4 +148,5 @@ class ClassOrInterfaceModel : DotNetTypeModelBase
         );
     }
 
+    private string _debuggerDisplay => @$"{nameof(ClassOrInterfaceModel)}: ""{this._type.Name}"" ({(this._type.IsClass ? "class" : "interface")})";
 }

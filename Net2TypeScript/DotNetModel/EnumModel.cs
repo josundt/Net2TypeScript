@@ -8,7 +8,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 [DebuggerDisplay($"enum: {{{nameof(Name)},nq}}")]
 class EnumModel : DotNetTypeModelBase
 {
-    public EnumModel(GlobalSettings globalSettings, Type type)
+    public EnumModel(Type type, GlobalSettings globalSettings)
         : base(type, globalSettings)
     {
         if (!type.IsEnum || !type.IsPublic)
@@ -18,20 +18,18 @@ class EnumModel : DotNetTypeModelBase
 
     }
 
-    public string Name => this.Type.Name;
-
     Dictionary<string, string> Values
     {
         get
         {
             var result = new Dictionary<string, string>();
-            foreach (var rawValue in Enum.GetValues(this.Type))
+            foreach (var rawValue in Enum.GetValues(this._type))
             {
-                var name = Enum.GetName(this.Type, rawValue);
+                var name = Enum.GetName(this._type, rawValue);
 
                 if (name == null)
                 {
-                    throw new InvalidOperationException($"Could not get enum name: {this.Type.FullName ?? string.Empty}");
+                    throw new InvalidOperationException($"Could not get enum name: {this._type.FullName ?? string.Empty}");
                 }
 
                 var enumOutputSetting = this._globalSettings.EnumType;
@@ -40,11 +38,11 @@ class EnumModel : DotNetTypeModelBase
 
                 if (enumOutputSetting == "stringIfNotFlagEnum")
                 {
-                    useNumeric = this.Type.GetCustomAttributes(typeof(FlagsAttribute), false)?.Length > 0;
+                    useNumeric = this._type.GetCustomAttributes(typeof(FlagsAttribute), false)?.Length > 0;
                 }
 
                 var value = useNumeric
-                    ? Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this.Type), CultureInfo.InvariantCulture).ToString()!
+                    ? Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this._type), CultureInfo.InvariantCulture).ToString()!
                     : $@"""{name}""";
 
                 result.Add(name, value);

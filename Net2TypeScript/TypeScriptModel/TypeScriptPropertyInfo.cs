@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.TypeScriptModel;
 
-[DebuggerDisplay("{ToString()")]
+[DebuggerDisplay($"{nameof(TypeScriptPropertyInfo)}: {{ToString()}}")]
 public class TypeScriptPropertyInfo
 {
     public TypeScriptPropertyInfo(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, Settings settings)

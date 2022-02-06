@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-[DebuggerDisplay($"prop: {{{nameof(PropName)},nq}}")]
+[DebuggerDisplay($"{nameof(PropertyModel)}: {{{nameof(PropName)}}}")]
 class PropertyModel : DotNetTypeModelBase
 {
     public PropertyModel(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, GlobalSettings globalSettings)
@@ -51,7 +51,7 @@ class PropertyModel : DotNetTypeModelBase
 
         if (this.TsTypeName != null)
         {
-            if (this.Type.IsEnum)
+            if (this._type.IsEnum)
             {
                 sw.WriteFormat(
                     "{0}/** Enum{1}: {2} */{3}",
@@ -66,7 +66,7 @@ class PropertyModel : DotNetTypeModelBase
                 sw.WriteLine($"{indent}/** Nullable */");
             }
 
-            if (this.Type == typeof(Guid) || this.Type == typeof(Guid?))
+            if (this._type == typeof(Guid) || this._type == typeof(Guid?))
             {
                 sw.WriteFormat(
                     "{0}/** Guid{1} */{2}",
@@ -76,7 +76,7 @@ class PropertyModel : DotNetTypeModelBase
                 );
             }
 
-            if (this.Type == typeof(TimeSpan) || this.Type == typeof(TimeSpan?))
+            if (this._type == typeof(TimeSpan) || this._type == typeof(TimeSpan?))
             {
                 sw.WriteFormat(
                     "{0}/** TimeSpan{1} */{2}",

@@ -1,5 +1,4 @@
 using jasMIN.Net2TypeScript.SettingsModel;
-using jasMIN.Net2TypeScript.Utils;
 using System.Text.RegularExpressions;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
@@ -11,7 +10,7 @@ abstract class DotNetTypeModelBase : DotNetModelBase
     protected DotNetTypeModelBase(Type type, GlobalSettings globalSettings)
         : base(globalSettings)
     {
-        this.Type = type;
+        this._type = type;
         if (type.IsGenericTypeDefinition)
         {
             var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
@@ -29,13 +28,13 @@ abstract class DotNetTypeModelBase : DotNetModelBase
         }
     }
 
-    protected Type Type { get; private set; }
+    protected readonly Type _type;
 
-    protected string Namespace => this.Type.Namespace ?? string.Empty;
+    public string Namespace() => this._type.Namespace ?? string.Empty;
+
+    public string Name => this._type.Name;
 
     protected virtual string TsTypeName { get; }
-
-    protected virtual string TsFullName => this.Settings.ToTsFullName(this.FullName);
 
     public override abstract StreamWriter WriteTs(StreamWriter sw, int indentCount);
 
