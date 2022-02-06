@@ -1,14 +1,15 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using jasMIN.Net2TypeScript.Utils;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-[DebuggerDisplay($"enum: {{{nameof(Name)},nq}}")]
-class EnumModel : DotNetTypeModelBase
+#if DEBUG
+[System.Diagnostics.DebuggerDisplay($"{nameof(Enum)}: {{{nameof(Name)}}}, {nameof(Values)}: {{{nameof(Values)}.Count}}")]
+#endif
+class Enum : DotNetTypeModelBase
 {
-    public EnumModel(Type type, GlobalSettings globalSettings)
+    public Enum(Type type, GlobalSettings globalSettings)
         : base(type, globalSettings)
     {
         if (!type.IsEnum || !type.IsPublic)
@@ -23,9 +24,9 @@ class EnumModel : DotNetTypeModelBase
         get
         {
             var result = new Dictionary<string, string>();
-            foreach (var rawValue in Enum.GetValues(this._type))
+            foreach (var rawValue in System.Enum.GetValues(this._type))
             {
-                var name = Enum.GetName(this._type, rawValue);
+                var name = System.Enum.GetName(this._type, rawValue);
 
                 if (name == null)
                 {
@@ -42,7 +43,7 @@ class EnumModel : DotNetTypeModelBase
                 }
 
                 var value = useNumeric
-                    ? Convert.ChangeType(rawValue, Enum.GetUnderlyingType(this._type), CultureInfo.InvariantCulture).ToString()!
+                    ? Convert.ChangeType(rawValue, System.Enum.GetUnderlyingType(this._type), CultureInfo.InvariantCulture).ToString()!
                     : $@"""{name}""";
 
                 result.Add(name, value);

@@ -16,7 +16,7 @@ internal class Generator
 
     public void GenerateTypeScript(Func<Stream> openwriteStream)
     {
-        var ns = new NamespaceModel(this.GlobalSettings.DotNetRootNamespace, new NullabilityInfoContext(), this.GlobalSettings);
+        var ns = new Namespace(this.GlobalSettings.DotNetRootNamespace, new NullabilityInfoContext(), this.GlobalSettings);
 
         using var sw = new StreamWriter(openwriteStream());
 

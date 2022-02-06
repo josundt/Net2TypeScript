@@ -1,16 +1,17 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using jasMIN.Net2TypeScript.Utils;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.TypeScriptModel;
 
-[DebuggerDisplay($"{nameof(TypeScriptPropertyInfo)}: {{ToString()}}")]
-public class TypeScriptPropertyInfo
+#if DEBUG
+[System.Diagnostics.DebuggerDisplay($"{nameof(TypeScriptProperty)}: {{ToString()}}")]
+#endif
+public class TypeScriptProperty
 {
-    public TypeScriptPropertyInfo(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, Settings settings)
+    public TypeScriptProperty(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, Settings settings)
     {
         if (propertyInfo is null)
         {

@@ -19,15 +19,15 @@ abstract class DotNetModelBase
         {
             if (this._settings == null)
             {
-                if (this is NamespaceModel)
+                if (this is Namespace)
                 {
                     this._settings = this._globalSettings.GetNamespaceSettings(this.FullName);
                 }
-                else if (this is ClassOrInterfaceModel)
+                else if (this is Class)
                 {
                     this._settings = this._globalSettings.GetClassSettings(this.FullName);
                 }
-                else if (this is PropertyModel propModel)
+                else if (this is Property propModel)
                 {
                     this._settings = this._globalSettings.GetClassSettings(propModel.DeclaringType.FullName!);
                 }

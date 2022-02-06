@@ -1,49 +1,36 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using jasMIN.Net2TypeScript.TypeScriptModel;
 using jasMIN.Net2TypeScript.Utils;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-[DebuggerDisplay($"{nameof(PropertyModel)}: {{{nameof(PropName)}}}")]
-class PropertyModel : DotNetTypeModelBase
+#if DEBUG
+[System.Diagnostics.DebuggerDisplay($"{nameof(Property)}: {{{nameof(PropName)}}}, {{{nameof(TypeScriptProperty)}}}")]
+#endif
+class Property : DotNetTypeModelBase
 {
-    public PropertyModel(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, GlobalSettings globalSettings)
+    private readonly PropertyInfo _propInfo;
+
+    public Property(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, GlobalSettings globalSettings)
         : base(
               propertyInfo.PropertyType.IsDotNetNullableValueType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType,
               globalSettings)
     {
-        this.PropInfo = propertyInfo;
-        this.DeclaringType = propertyInfo.DeclaringType!;
-        this.TsPropInfo = new TypeScriptPropertyInfo(propertyInfo, nullabilityContext, this.Settings);
+        this._propInfo = propertyInfo;
+        this.TypeScriptProperty = new TypeScriptProperty(propertyInfo, nullabilityContext, this.Settings);
 
         if (!(propertyInfo.CanRead || propertyInfo.GetGetMethod()!.IsPublic))
         {
-            throw new InvalidOperationException($"Property {this.DeclaringType.FullName}.{this.PropInfo.Name} is not readable.");
+            throw new InvalidOperationException($"Property {this._propInfo.DeclaringType?.FullName}.{this._propInfo.Name} is not readable.");
         }
-
     }
 
-    PropertyInfo PropInfo { get; }
+    public string PropName => this._propInfo.Name;
 
-    public string PropName => this.PropInfo.Name;
+    public Type DeclaringType => this._propInfo.DeclaringType!;
 
-    public Type DeclaringType { get; private set; }
-
-    public TypeScriptPropertyInfo TsPropInfo { get; set; }
-
-    //protected string IndentationContext =>
-    //    string.Concat(
-    //        Enumerable.Repeat(
-    //            this.Settings.Indent,
-
-    //                (this.DeclaringType.Namespace ?? string.Empty).Split('.').Length -
-    //                this.Settings.DotNetRootNamespace.Split('.').Length +
-    //                this.ExtraIndents
-
-    //        )
-    //    );
+    public TypeScriptProperty TypeScriptProperty { get; }
 
     public override StreamWriter WriteTs(StreamWriter sw, int indentCount)
     {
@@ -56,12 +43,12 @@ class PropertyModel : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** Enum{1}: {2} */{3}",
                     indent,
-                    this.PropInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
+                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
                     this.FullName,
                     Environment.NewLine
                 );
             }
-            else if (this.PropInfo.PropertyType.IsDotNetNullableValueType())
+            else if (this._propInfo.PropertyType.IsDotNetNullableValueType())
             {
                 sw.WriteLine($"{indent}/** Nullable */");
             }
@@ -71,7 +58,7 @@ class PropertyModel : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** Guid{1} */{2}",
                     indent,
-                    this.PropInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
+                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
                     Environment.NewLine
                 );
             }
@@ -81,13 +68,13 @@ class PropertyModel : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** TimeSpan{1} */{2}",
                     indent,
-                    this.PropInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
+                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
                     Environment.NewLine
                 );
             }
 
             sw.WriteLine(
-                $"{indent}{this.TsPropInfo};");
+                $"{indent}{this.TypeScriptProperty};");
         }
 
         return sw;

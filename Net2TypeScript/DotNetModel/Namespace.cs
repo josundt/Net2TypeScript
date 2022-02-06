@@ -1,18 +1,23 @@
 using jasMIN.Net2TypeScript.SettingsModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-[DebuggerDisplay($"{nameof(NamespaceModel)}: {{{nameof(FullName)}}}, {nameof(ChildNamespaces)}: {{{nameof(ChildNamespaces)}.Count}}, {nameof(Entities)}: {{{nameof(Entities)}.Count}}")]
-class NamespaceModel : DotNetModelBase
+#if DEBUG
+[System.Diagnostics.DebuggerDisplay($"{nameof(Namespace)}: {{{nameof(FullName)}}}, {nameof(ChildNamespaces)}: {{{nameof(ChildNamespaces)}.Count}}, {nameof(Entities)}: {{{nameof(Entities)}.Count}}")]
+#endif
+class Namespace : DotNetModelBase
 {
-    public NamespaceModel(string name, NullabilityInfoContext nullabilityContext, GlobalSettings settings, IEnumerable<Type>? rootAndDescendantNsTypes = null)
+    private readonly bool _isRoot;
+    private readonly IEnumerable<Namespace> _childNamespaces;
+    private readonly IEnumerable<DotNetTypeModelBase> _entities;
+
+    public Namespace(string name, NullabilityInfoContext nullabilityContext, GlobalSettings settings, IEnumerable<Type>? rootAndDescendantNsTypes = null)
         : base(settings)
     {
         this.FullName = name;
-        this.IsRoot = rootAndDescendantNsTypes is null;
+        this._isRoot = rootAndDescendantNsTypes is null;
 
         if (rootAndDescendantNsTypes is null)
         {
@@ -31,9 +36,9 @@ class NamespaceModel : DotNetModelBase
             entities.AddRange(this.GetNamespaceEnums(rootAndDescendantNsTypes));
         }
 
-        this.Entities = entities;
+        this._entities = entities;
 
-        this.ChildNamespaces = rootAndDescendantNsTypes
+        this._childNamespaces = rootAndDescendantNsTypes
             .Select(c => c.Namespace)
             .Distinct()
             .Where(ns => ns?.StartsWith($"{this.FullName}.", StringComparison.Ordinal) ?? false)
@@ -47,45 +52,36 @@ class NamespaceModel : DotNetModelBase
             )
             .Distinct()
             .OrderBy(ns => ns)
-            .Select(ns => new NamespaceModel(ns, nullabilityContext, this._globalSettings, rootAndDescendantNsTypes))
-            .ToList();
-
-        if (this.IsRoot)
-        {
-            RemoveEmptyNamespaces(this);
-        }
+            .Select(ns => new Namespace(ns, nullabilityContext, this._globalSettings, rootAndDescendantNsTypes))
+            .Where(ns => !ns.IsEmpty());
     }
-
-    public IList<NamespaceModel> ChildNamespaces { get; set; }
-
-    public IReadOnlyCollection<DotNetTypeModelBase> Entities { get; set; }
 
     public override StreamWriter WriteTs(StreamWriter sw, int indentCount)
     {
 
         var indent = this.Indent(indentCount);
 
-        var childIndentCount = this.IsRoot ? indentCount : indentCount + 1;
+        var childIndentCount = this._isRoot ? indentCount : indentCount + 1;
 
 
         if (!this.IsEmpty())
         {
-            if (!this.IsRoot)
+            if (!this._isRoot)
             {
                 sw.WriteLine($"{Environment.NewLine}{indent}export namespace {this.FullName.Split('.').Last()} {{");
             }
 
-            foreach (var ns in this.ChildNamespaces)
+            foreach (var ns in this._childNamespaces)
             {
                 ns.WriteTs(sw, childIndentCount);
             }
 
-            foreach (var type in this.Entities)
+            foreach (var type in this._entities)
             {
                 type.WriteTs(sw, childIndentCount);
             }
 
-            if (!this.IsRoot)
+            if (!this._isRoot)
             {
                 sw.WriteLine($"{indent}}}");
             }
@@ -94,8 +90,6 @@ class NamespaceModel : DotNetModelBase
 
         return sw;
     }
-
-    private bool IsRoot { get; }
 
     private bool IncludeClasses() =>
         this.Settings.ClassNamespaceFilter?.Any(
@@ -112,7 +106,7 @@ class NamespaceModel : DotNetModelBase
         ) ?? false;
 
     private bool IsEmpty() =>
-        this.Entities.Count == 0 && this.ChildNamespaces.All(ns => ns.IsEmpty());
+        !this._entities.Any() && this._childNamespaces.All(ns => ns.IsEmpty());
 
     private static IEnumerable<Type> GetTypes(IEnumerable<Assembly> assemblies)
     {
@@ -157,59 +151,31 @@ class NamespaceModel : DotNetModelBase
             );
     }
 
-    private IEnumerable<ClassOrInterfaceModel> GetNamespaceClassesAndInterfaces(IEnumerable<Type> namespaceDescendantTypes, NullabilityInfoContext nullabilityContext)
+    private IEnumerable<Class> GetNamespaceClassesAndInterfaces(IEnumerable<Type> namespaceDescendantTypes, NullabilityInfoContext nullabilityContext)
     {
         return namespaceDescendantTypes
             .Where(t => t.Namespace == this.FullName && (t.IsClass || t.IsInterface))
             .OrderBy(t => t.Name)
-            .Select(t => new ClassOrInterfaceModel(t, nullabilityContext, this._globalSettings));
+            .Select(t => new Class(t, nullabilityContext, this._globalSettings));
     }
 
-    private IEnumerable<EnumModel> GetNamespaceEnums(IEnumerable<Type> namespaceDescendantTypes)
+    private IEnumerable<Enum> GetNamespaceEnums(IEnumerable<Type> namespaceDescendantTypes)
     {
         return namespaceDescendantTypes
             .Where(t => t.Namespace == this.FullName && t.IsEnum)
             .OrderBy(t => t.Name)
-            .Select(t => new EnumModel(t, this._globalSettings));
+            .Select(t => new Enum(t, this._globalSettings));
     }
 
-    private static bool RemoveEmptyNamespaces(NamespaceModel namespaceModel)
-    {
-        var allChildrenAreEmpty = true;
-        for (var i = namespaceModel.ChildNamespaces.Count - 1; i >= 0; i--)
-        {
-            var childNs = namespaceModel.ChildNamespaces[i];
+#region Debug-Only Helper Properties
+#if DEBUG
 
-            var childIsEmpty = RemoveEmptyNamespaces(childNs);
-            if (childIsEmpty)
-            {
-                namespaceModel.ChildNamespaces.RemoveAt(i);
-            }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
+    public IReadOnlyCollection<Namespace> ChildNamespaces => this._childNamespaces.ToList();
 
-            allChildrenAreEmpty = allChildrenAreEmpty && childIsEmpty;
-        }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
+    public IReadOnlyCollection<DotNetTypeModelBase> Entities => this._entities.ToList();
 
-        return allChildrenAreEmpty && !namespaceModel.Entities.Any();
-    }
-
-    private static bool HasAnyEntities(NamespaceModel namespaceModel)
-    {
-        if (namespaceModel.Entities.Count > 0)
-        {
-            return true;
-        }
-        else
-        {
-            var result = false;
-            foreach (var ns in namespaceModel.ChildNamespaces)
-            {
-                result = HasAnyEntities(ns);
-                if (result)
-                {
-                    break;
-                }
-            }
-            return result;
-        }
-    }
+#endif
+#endregion
 }
