@@ -41,14 +41,14 @@ class Class : DotNetTypeModelBase
                 indent,
                 this._type.IsClass ? "class" : "interface",
                 this.FullName,
-                Environment.NewLine
+                sw.NewLine
             );
 
             sw.WriteFormat("{0}export interface {1}{2} {{{3}",
                 indent,
                 this.TsTypeName,
                 this.Settings.UseBreeze == true ? " extends breeze.Entity" : string.Empty,
-                Environment.NewLine
+                sw.NewLine
             );
 
             // TODO: Filter non-public props
@@ -84,14 +84,14 @@ class Class : DotNetTypeModelBase
         sw.WriteFormat(
             "{0}/** Extra/overridden property */{1}",
             indentationContext + settings.Indent,
-            Environment.NewLine
+            sw.NewLine
         );
         sw.WriteFormat(
             "{0}{1}: {2};{3}",
             indentationContext + settings.Indent,
             tsPropName,
             tsTypeName,
-            Environment.NewLine
+            sw.NewLine
         );
     }
 

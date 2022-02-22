@@ -38,7 +38,7 @@ internal class Generator
         {
             "@typescript-eslint/array-type"
         };
-        sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */{Environment.NewLine}");
+        sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */{sw.NewLine}");
     }
 
     private static void WriteTypesReferences(StreamWriter sw, GlobalSettings globalSettings)
@@ -58,7 +58,7 @@ internal class Generator
             sw.WriteFormat(
                 "/// <reference path=\"{0}\"/>{1}",
                 globalSettings.TypingsPaths.Knockout,
-                Environment.NewLine
+                sw.NewLine
             );
         }
 
@@ -70,7 +70,7 @@ internal class Generator
             sw.WriteFormat(
                 "/// <reference path=\"{0}\"/>{1}",
                 globalSettings.TypingsPaths.Breeze,
-                Environment.NewLine
+                sw.NewLine
             );
         }
 
@@ -89,7 +89,7 @@ internal class Generator
                     "{2}{0}export namespace {1} {{{2}",
                     string.Concat(Enumerable.Repeat(globalSettings.Indent, i)),
                     nsPart,
-                    Environment.NewLine
+                    sw.NewLine
                 );
                 i++;
             }
@@ -104,12 +104,12 @@ internal class Generator
         if (!string.IsNullOrEmpty(globalSettings.TsRootNamespace))
         {
 
-            for (; indentCount >= 0; --indentCount)
+            for (var i = indentCount - 1; i >= 0; i--)
             {
-                sw.WriteFormat(
+                 sw.WriteFormat(
                     "{0}}}{1}",
-                    string.Concat(Enumerable.Repeat(globalSettings.Indent, indentCount)),
-                    Environment.NewLine
+                    string.Concat(Enumerable.Repeat(globalSettings.Indent, i)),
+                    sw.NewLine
                 );
             }
         }

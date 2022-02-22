@@ -45,7 +45,7 @@ class Property : DotNetTypeModelBase
                     indent,
                     this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
                     this.FullName,
-                    Environment.NewLine
+                    sw.NewLine
                 );
             }
             else if (this._propInfo.PropertyType.IsDotNetNullableValueType())
@@ -59,7 +59,7 @@ class Property : DotNetTypeModelBase
                     "{0}/** Guid{1} */{2}",
                     indent,
                     this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
-                    Environment.NewLine
+                    sw.NewLine
                 );
             }
 
@@ -69,7 +69,7 @@ class Property : DotNetTypeModelBase
                     "{0}/** TimeSpan{1} */{2}",
                     indent,
                     this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
-                    Environment.NewLine
+                    sw.NewLine
                 );
             }
 

@@ -60,13 +60,13 @@ class Enum : DotNetTypeModelBase
         sw.WriteFormat("{2}{0}/** .NET enum: {1} */{2}",
             indent,
             this.FullName,
-            Environment.NewLine
+            sw.NewLine
         );
 
         sw.WriteFormat("{0}export enum {1} {{{2}",
             indent,
             this.TsTypeName,
-            Environment.NewLine
+            sw.NewLine
         );
 
         var i = 0;
