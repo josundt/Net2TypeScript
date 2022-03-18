@@ -41,14 +41,13 @@ class Property : DotNetTypeModelBase
             if (this._type.IsEnum)
             {
                 sw.WriteFormat(
-                    "{0}/** Enum{1}: {2} */{3}",
+                    "{0}/** Enum{1} */{2}",
                     indent,
-                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
-                    this.FullName,
+                    this.TypeScriptProperty.PropertyType.IsNullable ? " (NULLABLE)" : string.Empty,
                     sw.NewLine
                 );
             }
-            else if (this._propInfo.PropertyType.IsDotNetNullableValueType())
+            else if (this.TypeScriptProperty.PropertyType.IsNullable)
             {
                 sw.WriteLine($"{indent}/** Nullable */");
             }

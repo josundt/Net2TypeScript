@@ -20,6 +20,17 @@ static class TypeExtensions
         return type.IsValueType && Nullable.GetUnderlyingType(type) != null;
     }
 
+    public static bool DerivesFromClass(this Type type, Type baseType)
+    {
+        var curr = type;
+        while (curr != null && curr != baseType)
+        {
+            curr = curr.BaseType;
+        }
+        return curr == baseType;
+    }
+
+
     public static bool ImplementsInterface(this Type type, Type interfaceType)
     {
         return type.GetInterfaces().Any(i =>
@@ -164,7 +175,7 @@ static class SettingsExtensions
 {
     public static string ToTsFullName(this Settings settings, string dotNetFullName)
     {
-        var namespaceSegment = dotNetFullName.Remove(0, settings.DotNetRootNamespace.Length + 1);
+        var namespaceSegment = dotNetFullName.Remove(0, Math.Min(dotNetFullName.Length, settings.DotNetRootNamespace.Length + 1));
         return string.IsNullOrWhiteSpace(settings.TsRootNamespace) ? namespaceSegment : $"{settings.TsRootNamespace}.{namespaceSegment}";
     }
 }

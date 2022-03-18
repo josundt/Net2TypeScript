@@ -81,14 +81,14 @@ internal static class SettingsBuilder
             path = settingsMap["settings"];
             settingsMap.Remove("settings");
         }
-        var cwd = AppContext.BaseDirectory;
+        var cwd = Directory.GetCurrentDirectory(); // AppContext.BaseDirectory -> Executable directory;
         if (path == null)
         {
             path = Path.Combine(cwd, "settings.json");
         }
         else if (!Path.IsPathRooted(path)) // If filename only
         {
-            path = Path.Combine(cwd, path);
+            path = Path.GetFullPath(Path.Combine(cwd, path));
         }
         return path;
     }

@@ -50,6 +50,9 @@ public class TypeScriptProperty
         string? declarerTsNamespace = null;
         propertyInfo.DeclaringType?.TryGetTypeScriptNamespaceName(settings, out declarerTsNamespace);
 
+        var hasRequiredAnnotation =
+            Attribute.GetCustomAttributes(propertyInfo).Any(a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
+
         this.PropertyType = TypeScriptType.FromDotNetType(
             propertyInfo.PropertyType,
             declarerTsNamespace,
@@ -58,7 +61,7 @@ public class TypeScriptProperty
             isKnockoutObservable,
             propertyInfo.DeclaringType?.IsTypeScriptArrayType() ?? false,
             propertyInfo.DeclaringType?.IsTypeScriptRecordType() ?? false,
-            Attribute.IsDefined(propertyInfo, typeof(RequiredAttribute))
+            hasRequiredAnnotation
         );
         this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
         this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && (propertyInfo.GetSetMethod()?.IsPublic ?? false));

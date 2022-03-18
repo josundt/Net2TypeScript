@@ -10,17 +10,24 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>jasMIN.Net2TypeScript</RootNamespace>
-    <PublishSingleFile>true</PublishSingleFile>
+    <VersionPrefix>6.0.6</VersionPrefix>
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+
+
+    <!--<PublishSingleFile>true</PublishSingleFile>-->
+
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>net2typescript</ToolCommandName>
+    <!--<PackageOutputPath>./nupkg</PackageOutputPath>-->
+
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DebugType>None</DebugType>
   </PropertyGroup>
-
-  <!--<ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.1" />
-  </ItemGroup>-->
 
   <ItemGroup>
     <None Update="settings.sample.json">

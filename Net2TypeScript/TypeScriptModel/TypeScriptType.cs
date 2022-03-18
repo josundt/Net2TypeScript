@@ -44,7 +44,7 @@ public class TypeScriptType : ITypeScriptType
 
         if (dotnetType.IsDotNetNullableValueType())
         {
-            tsType.IsNullable = true;
+            tsType.IsNullable = !isRequiredProperty;
             propertyType = dotnetType.GetGenericArguments()[0];
         }
         else if (
