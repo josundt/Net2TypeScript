@@ -90,14 +90,14 @@ class Namespace : DotNetModelBase
             f => f.EndsWith("*", StringComparison.Ordinal)
                 ? this.FullName.StartsWith(f[..f.LastIndexOf("*", StringComparison.Ordinal)], StringComparison.Ordinal)
                 : this.FullName == f
-        ) ?? false;
+        ) ?? true;
 
     private bool IncludeEnums() =>
         this.Settings.EnumNamespaceFilter?.Any(
             f => f.EndsWith("*", StringComparison.Ordinal)
                 ? this.FullName.StartsWith(f[..f.LastIndexOf("*", StringComparison.Ordinal)], StringComparison.Ordinal)
                 : this.FullName == f
-        ) ?? false;
+        ) ?? true;
 
     private bool IsEmpty() =>
         !this._entities.Any() && this._childNamespaces.All(ns => ns.IsEmpty());

@@ -30,7 +30,6 @@
   "excludeClass": false,
   "excludeInterface": true,
   "nullableReferenceTypes": false,
-
   "namespaceOverrides": {
     "Foo.Identity.Login.Models.Api*": {
       "nullableReferenceTypes": true

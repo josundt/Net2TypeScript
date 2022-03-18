@@ -17,8 +17,8 @@ public class Settings : GeneratorSettings
     public string TsRootNamespace { get; set; }
     public bool TsFlattenNamespaces { get; set; }
     public string EnumType { get; set; }
-    public List<string> ClassNamespaceFilter { get; set; }
-    public List<string> EnumNamespaceFilter { get; set; }
+    public List<string>? ClassNamespaceFilter { get; set; }
+    public List<string>? EnumNamespaceFilter { get; set; }
     public string Indent { get; set; }
     public bool CamelCase { get; set; }
     public TypingsPaths? TypingsPaths { get; set; }

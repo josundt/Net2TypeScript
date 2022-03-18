@@ -151,8 +151,7 @@
       },
       "required": [
         "assemblyPaths",
-        "declarationsOutputPath",
-        "modelModuleOutputPath",
+        "outputPath",
         "dotNetRootNamespace"
       ]
     }

@@ -109,7 +109,7 @@ class Class : DotNetTypeModelBase
         // Get properties for this type and all base types
         while (baseType != null)
         {
-            foreach (PropertyInfo propertyInfo in type.GetProperties().Where(prop => prop.CanRead && (prop.GetGetMethod()?.IsPublic ?? false)))
+            foreach (PropertyInfo propertyInfo in baseType.GetProperties().Where(prop => prop.CanRead && (prop.GetGetMethod()?.IsPublic ?? false)))
             {
                 var isDefinedAsExtraProp =
                     classSettings.ExtraProperties.Any(ep => ep.Key == (classSettings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name));

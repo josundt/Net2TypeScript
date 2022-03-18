@@ -2,7 +2,7 @@
   "profiles": {
     "NetCore2TypeScript": {
       "commandName": "Project",
-      "commandLineArgs": "--settings \"C:\\_Git\\Adra.Platform\\Utilities\\Net2TypeScript\\settings.json\""
+      "commandLineArgs": "--settings \"C:\\_Git\\Adra.Matcher\\Tools\\Net2TypeScript\\settings.json\""
     }
   }
 }
