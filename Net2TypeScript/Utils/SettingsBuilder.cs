@@ -10,11 +10,12 @@ internal static class SettingsBuilder
     {
         var settingsMap = ArgsToDictionary(commandLineArgs);
         var settingsFilePath = ExtractSettingsFilePath(settingsMap);
+        var buildConfiguration = ExtractBuildConfiguration(settingsMap);
         var globalSettings = GetGlobalSettingsFromJson(settingsFilePath);
 
         MergeCmdArgsWithSettings(settingsMap, globalSettings);
 
-        NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath)!);
+        NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath)!, buildConfiguration);
 
         return globalSettings;
     }
@@ -30,12 +31,19 @@ internal static class SettingsBuilder
 
         for (int i = 0; i < args.Length; i += 2)
         {
-            if (!args[i].StartsWith("--", StringComparison.Ordinal))
+            if (args[i].StartsWith("--", StringComparison.Ordinal))
+            {
+                dict.Add(args[i][2..], args[i + 1]);
+            }
+            else if (args[i].StartsWith("-", StringComparison.Ordinal))
+            {
+                dict.Add(args[i][1..], args[i + 1]);
+            }
+            else
             {
                 throw new ArgumentException($"Unknown command line argument: '{args[i]}'");
             }
 
-            dict.Add(args[i][2..], args[i + 1]);
         }
 
         return dict;
@@ -76,9 +84,14 @@ internal static class SettingsBuilder
     private static string ExtractSettingsFilePath(Dictionary<string, string> settingsMap)
     {
         string? path = null;
+        if (settingsMap.ContainsKey("s"))
+        {
+            path = settingsMap["s"];
+            settingsMap.Remove("s");
+        }
         if (settingsMap.ContainsKey("settings"))
         {
-            path = settingsMap["settings"];
+            path ??= settingsMap["settings"];
             settingsMap.Remove("settings");
         }
         var cwd = Directory.GetCurrentDirectory(); // AppContext.BaseDirectory -> Executable directory;
@@ -93,6 +106,22 @@ internal static class SettingsBuilder
         return path;
     }
 
+    private static string ExtractBuildConfiguration(Dictionary<string, string> settingsMap)
+    {
+        string? result = null;
+        if (settingsMap.ContainsKey("c"))
+        {
+            result= settingsMap["c"];
+            settingsMap.Remove("c");
+        }
+        if (settingsMap.ContainsKey("configuration"))
+        {
+            result ??= settingsMap["configuration"];
+            settingsMap.Remove("configuration");
+        }
+        return result ?? "Debug";
+    }
+
     private static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
     {
         if (!File.Exists(settingsPath)) { throw new FileNotFoundException($@"Settings file ""{settingsPath}"" not found."); }
@@ -104,7 +133,7 @@ internal static class SettingsBuilder
         return settings;
     }
 
-    private static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd)
+    private static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd, string buildConfiguration)
     {
         if (cwd is null)
         {
@@ -113,8 +142,8 @@ internal static class SettingsBuilder
         // TODO: Validate that settings object has the expected properties
 
 
-        settings.AssemblyPaths = settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd)).ToList();
-        settings.OutputPath = ResolvePath(settings.OutputPath, cwd);
+        settings.AssemblyPaths = settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration)).ToList();
+        settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration);
 
         ValidateGeneratorSettings(settings);
         settings.NamespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
@@ -147,9 +176,14 @@ internal static class SettingsBuilder
         }
     }
 
-    private static string ResolvePath(string path, string cwd)
+    private static string ResolvePath(string path, string cwd, string buildConfiguration = null)
     {
         path = path.Replace("/", "\\", StringComparison.Ordinal);
+
+        if (buildConfiguration != null)
+        {
+            path = path.Replace("$(buildconfiguration)", buildConfiguration, StringComparison.OrdinalIgnoreCase);
+        }
 
         if (!Path.IsPathRooted(path))
         {

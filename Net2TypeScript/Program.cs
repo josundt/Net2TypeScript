@@ -1,5 +1,4 @@
 using jasMIN.Net2TypeScript.Utils;
-using System.Diagnostics;
 
 namespace jasMIN.Net2TypeScript;
 
@@ -35,13 +34,6 @@ public static class Application
             Console.WriteLine(ex.StackTrace);
             //#endif
             result = -1;
-        }
-
-        if (Debugger.IsAttached)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
 
         return result;
