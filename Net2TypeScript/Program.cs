@@ -15,7 +15,13 @@ public static class Application
 
         int result = 0;
 
-        Console.WriteLine("Converting .NET entities to TypeScript interfaces.");
+        if (args.Length == 1 && (args[0] == "-h" || args[0] == "--help"))
+        {
+            WriteHelp();
+            return 0;
+        }
+
+        Console.WriteLine("Converting .NET entities to TypeScript interfaces...");
 
         try
         {
@@ -30,12 +36,44 @@ public static class Application
         catch (Exception ex)
         {
             Console.WriteLine("ERROR: " + ex.Message);
-            //#if DEBUG
+#if DEBUG
             Console.WriteLine(ex.StackTrace);
-            //#endif
+#endif
+
+            WriteHelp();
+
             result = -1;
         }
 
         return result;
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+    private static void WriteHelp()
+    {
+        Console.WriteLine();
+        Console.WriteLine(@"Net2TypeScript usage:");
+        Console.WriteLine();
+        Console.WriteLine(@"-s|--settings       Path to JSON settings file that uses the settings ""$schema"" (see schema URL below).");
+        Console.WriteLine(@"                    If argument is omitted, the settings file is expected to be found in the same");
+        Console.WriteLine(@"                    folder as the Net2TypeScript executable with the file name ""settings.json"".");
+        Console.WriteLine();
+        Console.WriteLine(@"-c|--configuration  The build configuration (Release/Debug etc).");
+        Console.WriteLine(@"                    Emitting this parameter, enables interpolation of $(BuildConfiguration) variables in");
+        Console.WriteLine(@"                    the JSON settings file's path properties.");
+        Console.WriteLine(@"                    This is particularily useful when you want to pick assembly files from different");
+        Console.WriteLine(@"                    folders dynamically for different build configurations.");
+        Console.WriteLine(@"                    Defaults to Debug when argument is omitted.");
+        Console.WriteLine();
+        Console.WriteLine(@"--*                 All global properties (of ""primitive"" value types) in the settings file schema can");
+        Console.WriteLine(@"                    beset or overriden using command line arguments as an alternative to using the");
+        Console.WriteLine(@"                    settings file.");
+        Console.WriteLine();
+        Console.WriteLine(@"-h|--help           Show this help information.");
+        Console.WriteLine();
+        Console.WriteLine(@" JSON schema for settings file:");
+        Console.WriteLine(@" https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/settings.schema.json");
+        Console.WriteLine();
+
     }
 }

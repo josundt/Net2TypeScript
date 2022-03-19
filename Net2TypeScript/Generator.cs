@@ -20,6 +20,8 @@ internal class Generator
 
         using var sw = new StreamWriter(openwriteStream());
 
+        WriteHeader(sw);
+
         WriteEslintDisables(sw);
 
         WriteTypesReferences(sw, this.GlobalSettings);
@@ -30,6 +32,14 @@ internal class Generator
 
         WriteTsRootNamespacesClose(sw, indent, this.GlobalSettings);
 
+    }
+
+    private static void WriteHeader(StreamWriter sw)
+    {
+        sw.WriteLine($"/* ====================================================== */");
+        sw.WriteLine($"/* |         Net2TypeScript Auto-Generated Code         | */");
+        sw.WriteLine($"/* ====================================================== */");
+        sw.WriteLine();
     }
 
     private static void WriteEslintDisables(StreamWriter sw)
