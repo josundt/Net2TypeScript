@@ -95,7 +95,6 @@
           "default": false,
           "description": "(Optional). If true, types in the TypeScript output file will be in a single namespace. PS! This requires having unique class/interface/enum type names."
         },
-
         "enumType": {
           "type": "string",
           "default": "string",
@@ -104,7 +103,16 @@
             "number",
             "stringIfNotFlagEnum"
           ],
-          "description": "(Optional). If specified, only enums in the listed namespaces will be included. To include enums from \"child\" namespaces, add a wildcard character after the namespace name. If not specified, all enums under dotNetRootNamespace will be included."
+          "description": "(Optional). Decides if the TypeScript generated code should use the .NET enums' string or number value ."
+        },
+        "enumFormat": {
+          "type": "string",
+          "default": "enum",
+          "enum": [
+            "enum",
+            "unionType"
+          ],
+          "description": "(Optional). Whether to create TypeScript enums or uninon types from .NET enums."
         },
         "classNamespaceFilter": {
           "type": [ "array", "null" ],

@@ -8,6 +8,7 @@ public class Settings : GeneratorSettings
         // Initializing default values
         this.Indent = "    ";
         this.EnumType = "string";
+        this.EnumFormat = "enum";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
         this.ExtraProperties = new Dictionary<string, string>();
     }
@@ -17,6 +18,7 @@ public class Settings : GeneratorSettings
     public string TsRootNamespace { get; set; }
     public bool TsFlattenNamespaces { get; set; }
     public string EnumType { get; set; }
+    public string EnumFormat { get; set; }
     public List<string>? ClassNamespaceFilter { get; set; }
     public List<string>? EnumNamespaceFilter { get; set; }
     public string Indent { get; set; }

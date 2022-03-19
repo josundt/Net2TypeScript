@@ -63,21 +63,55 @@ class Enum : DotNetTypeModelBase
             sw.NewLine
         );
 
-        sw.WriteFormat("{0}export enum {1} {{{2}",
-            indent,
-            this.TsTypeName,
-            sw.NewLine
-        );
-
         var i = 0;
-        foreach (var value in this.Values)
+        if (this.Settings.EnumFormat == "enum")
         {
-            var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
-            sw.WriteLine($@"{indent}{this.Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
-            i++;
-        }
+            sw.WriteFormat("{0}export enum {1} {{{2}",
+                indent,
+                this.TsTypeName,
+                sw.NewLine
+            );
 
-        sw.WriteLine($@"{indent}}}");
+            foreach (var value in this.Values)
+            {
+                var possiblyComma = i < this.Values.Count - 1 ? "," : string.Empty;
+                sw.WriteLine($@"{indent}{this.Settings.Indent}{value.Key} = {value.Value}{possiblyComma}");
+                i++;
+            }
+
+            sw.WriteLine($@"{indent}}}");
+        }
+        else if (this.Settings.EnumFormat == "unionType")
+        {
+            sw.WriteFormat("{0}export type {1} =",
+                indent,
+                this.TsTypeName
+            );
+
+            var maxPerLine = 8;
+            foreach (var kvp in this.Values)
+            {
+                if (i != 0 && i % maxPerLine == 0)
+                {
+                    sw.WriteFormat("{0}{1}",
+                        sw.NewLine,
+                        indent
+                    );
+                }
+                else
+                {
+                    sw.Write(" ");
+                }
+                var possiblyPipe = (i < this.Values.Count - 1) ?
+                    " |" : string.Empty;
+                sw.WriteFormat("{0}{1}",
+                    kvp.Value,
+                    possiblyPipe
+                );
+                i++;
+            }
+            sw.WriteLine(";");
+        }
 
         return sw;
 
