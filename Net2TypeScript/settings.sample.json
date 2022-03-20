@@ -1,39 +1,38 @@
 {
-  //"$schema": "./settings.schema.json",
   "$schema": "https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/settings.schema.json",
   "assemblyPaths": [
-    "../../src/Foo.Identity/Foo.Identity.Shared/bin/Debug/netstandard2.0/Foo.Identity.Shared.dll",
-    "../../src/Foo.Identity/Foo.Identity.Web.Models/bin/Debug/netstandard2.0/Foo.Identity.Web.Models.dll",
-    "../../src/Foo.Identity/Foo.Identity.Data.Models/bin/Debug/netstandard2.0/Foo.Identity.Data.Models.dll",
-    "../../src/Foo.Identity/Foo.Identity.Login/bin/Debug/netcoreapp3.1/Foo.Identity.Login.dll"
+    "./bin/$(BuildConfiguration)/net6.0/My.App.Models.dll",
+    "../My.App.ApiModels/bin/$(BuildConfiguration)/netstandard2.0/My.App.ApiModels.dll"
   ],
-  "outputPath": "../../src/Foo.Identity/Foo.Identity.Setup/ClientApp/src/core/models.ts",
-  "dotNetRootNamespace": "Foo.Identity",
+  "outputPath": "../My.App.Spa/src/models/models.ts",
+  "dotNetRootNamespace": "My.App",
   "tsRootNamespace": null,
-  "tsFlattenNamespaces": false,
+  "tsFlattenNamespaces": true,
   "classNamespaceFilter": [
-    "Foo.Identity.Shared.Enums*",
-    "Foo.Identity.Web.Models*",
-    "Foo.Identity.Data.Models.ApiExposed*",
-    "Foo.Identity.Login.Models.Api*",
-    "Foo.Identity.Web.Models.New*"
+    "My.App.Models*",
+    "My.App.ApiModels*"
   ],
   "enumNamespaceFilter": [
-    "Foo.Identity.Shared.Enums*",
-    "Foo.Identity.Web.Models*",
-    "Foo.Identity.Data.Models.ApiExposed*",
-    "Foo.Identity.Login.Models.Api*",
-    "Foo.Identity.Web.Models.New*"
+    "My.App.Models*",
+    "My.App.ApiModels*"
   ],
   "indent": "    ",
   "enumType": "stringIfNotFlagEnum",
+  "enumFormat": "enum",
   "camelCase": true,
   "excludeClass": false,
   "excludeInterface": true,
-  "nullableReferenceTypes": false,
+  "nullableReferenceTypes": true,
   "namespaceOverrides": {
-    "Foo.Identity.Login.Models.Api*": {
-      "nullableReferenceTypes": true
+    "My.App.ApiModels*": {
+      "nullableReferenceTypes": false
+    }
+  },
+  "classOverrides": {
+    "My.App.ApiModels.PersonLocation": {
+      "extraProperties": {
+        "location": "import(\"./geography-point.js\").IGeographyPoint"
+      }
     }
   }
 }

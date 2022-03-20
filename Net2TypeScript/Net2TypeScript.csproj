@@ -10,7 +10,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>jasMIN.Net2TypeScript</RootNamespace>
-    <VersionPrefix>6.0.10</VersionPrefix>
+    <VersionPrefix>6.0.11</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
 
@@ -22,7 +22,7 @@
     <ToolCommandName>net2typescript</ToolCommandName>
     <Authors>josundt</Authors>
     <Company>jasMIN</Company>
-    <Description>.NET tool to generate TypeScript models from POCOs in .NET assemblies</Description>
+    <Description>.NET tool to generate TypeScript interfaces/enums from .NET assembly classes/interfaces/enums</Description>
     <Copyright>jasMIN</Copyright>
     <PackageProjectUrl>https://github.com/josundt/Net2TypeScript</PackageProjectUrl>
     <PackageIcon>Net2TypeScript.png</PackageIcon>
