@@ -10,7 +10,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>jasMIN.Net2TypeScript</RootNamespace>
-    <VersionPrefix>6.0.9</VersionPrefix>
+    <VersionPrefix>6.0.10</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
 
@@ -20,6 +20,18 @@
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>net2typescript</ToolCommandName>
+    <Authors>josundt</Authors>
+    <Company>jasMIN</Company>
+    <Description>.NET tool to generate TypeScript models from POCOs in .NET assemblies</Description>
+    <Copyright>jasMIN</Copyright>
+    <PackageProjectUrl>https://github.com/josundt/Net2TypeScript</PackageProjectUrl>
+    <PackageIcon>Net2TypeScript.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/josundt/Net2TypeScript</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>TypeScript;generator</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseExpression>ISC</PackageLicenseExpression>
     <!--<PackageOutputPath>./nupkg</PackageOutputPath>-->
 
 
@@ -30,6 +42,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Net2TypeScript.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="settings.sample.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

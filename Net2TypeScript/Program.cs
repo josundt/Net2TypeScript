@@ -21,7 +21,7 @@ public static class Application
             return 0;
         }
 
-        Console.WriteLine("Converting .NET entities to TypeScript interfaces...");
+        Console.WriteLine("Generating TypeScript models from .NET models...");
 
         try
         {
