@@ -10,7 +10,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>jasMIN.Net2TypeScript</RootNamespace>
-    <VersionPrefix>6.0.11</VersionPrefix>
+    <VersionPrefix>6.0.12</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
 
