@@ -176,9 +176,10 @@ internal static class SettingsBuilder
         }
     }
 
-    private static string ResolvePath(string path, string cwd, string buildConfiguration = null)
+    private static string ResolvePath(string path, string cwd, string? buildConfiguration = null)
     {
-        path = path.Replace("/", "\\", StringComparison.Ordinal);
+        path = path.Replace("/", Environment.NewLine, StringComparison.Ordinal);
+        path = path.Replace("\\", Environment.NewLine, StringComparison.Ordinal);
 
         if (buildConfiguration != null)
         {
