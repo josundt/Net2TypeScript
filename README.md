@@ -4,7 +4,7 @@
 
 ## .NET tool command ##
 
-`dotnet tool run net2typescript`
+`dotnet net2typescript`
 
 ## Avaliable arguments ##
 
