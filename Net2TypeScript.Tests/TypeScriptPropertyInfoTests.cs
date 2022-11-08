@@ -1,9 +1,6 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using jasMIN.Net2TypeScript.TypeScriptModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace jasMIN.Net2TypeScript.Tests;
 
