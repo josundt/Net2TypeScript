@@ -3,14 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-abstract class DotNetTypeModelBase : DotNetModelBase
+internal abstract class DotNetTypeModelBase : DotNetModelBase
 {
     private static readonly Regex _genericTypeNameFixRegEx = new(@"`.*$", RegexOptions.Compiled);
 
     private readonly Lazy<string> _tsTypeNameLazy;
 
     protected DotNetTypeModelBase(Type type, GlobalSettings globalSettings)
-        : base(globalSettings)
+        : base(globalSettings, GetFullName(type))
     {
         this._type = type;
         this.FullName = GetFullName(this._type);
@@ -25,7 +25,7 @@ abstract class DotNetTypeModelBase : DotNetModelBase
 
     protected string TsTypeName => this._tsTypeNameLazy.Value;
 
-    public override abstract StreamWriter WriteTs(StreamWriter sw, int indentCount);
+    public abstract override StreamWriter WriteTs(StreamWriter sw, int indentCount);
 
     private static string GetFullName(Type type)
     {

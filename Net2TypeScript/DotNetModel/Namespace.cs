@@ -7,22 +7,18 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Namespace)}: {{{nameof(FullName)}}}, {nameof(ChildNamespaces)}: {{{nameof(ChildNamespaces)}.Count}}, {nameof(Entities)}: {{{nameof(Entities)}.Count}}")]
 #endif
-class Namespace : DotNetModelBase
+internal class Namespace : DotNetModelBase
 {
     private readonly bool _isRoot;
     private readonly IEnumerable<Namespace> _childNamespaces;
     private readonly IEnumerable<DotNetTypeModelBase> _entities;
 
     public Namespace(string name, NullabilityInfoContext nullabilityContext, GlobalSettings settings, IEnumerable<Type>? rootAndDescendantNsTypes = null)
-        : base(settings)
+        : base(settings, name)
     {
-        this.FullName = name;
         this._isRoot = rootAndDescendantNsTypes is null;
 
-        if (rootAndDescendantNsTypes is null)
-        {
-            rootAndDescendantNsTypes = LoadRootAndDescendantNsTypes(this.Settings.AssemblyPaths, name);
-        }
+        rootAndDescendantNsTypes ??= LoadRootAndDescendantNsTypes(this.Settings.AssemblyPaths, name);
 
         var entities = new List<DotNetTypeModelBase>();
 
@@ -126,11 +122,10 @@ class Namespace : DotNetModelBase
 
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "<Pending>")]
     private static IEnumerable<Type> LoadRootAndDescendantNsTypes(IEnumerable<string> assemblyPaths, string namespaceName)
     {
         var assemblies = assemblyPaths
-            .Select(ap => Assembly.LoadFrom(ap));
+            .Select(Assembly.LoadFrom);
 
         foreach (var a in assemblies)
         {

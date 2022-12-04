@@ -5,9 +5,9 @@ using System.Text;
 
 namespace jasMIN.Net2TypeScript.Utils;
 
-static class TypeExtensions
+internal static class TypeExtensions
 {
-    static void ThrowIfNullable(Type type)
+    internal static void ThrowIfNullable(Type type)
     {
         if (type.IsDotNetNullableValueType())
         {
@@ -143,20 +143,24 @@ static class TypeExtensions
 
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
     public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
     {
-        var result = true;
+        string? parsed;
         try
         {
-            outputString = settings.ToTsFullName(type.Namespace ?? string.Empty);
+            parsed = settings.ToTsFullName(type.Namespace ?? string.Empty);
+            if (string.IsNullOrEmpty(parsed))
+            {
+                parsed = null;
+            }
         }
         catch (Exception)
         {
-            result = false;
-            outputString = null!;
+            parsed = null!;
         }
-        return result;
+
+        outputString = parsed!;
+        return outputString != null;
     }
 
     private static bool IsDictionaryInterface(this Type type)
@@ -171,7 +175,7 @@ static class TypeExtensions
     }
 }
 
-static class SettingsExtensions
+internal static class SettingsExtensions
 {
     public static string ToTsFullName(this Settings settings, string dotNetFullName)
     {
@@ -180,7 +184,7 @@ static class SettingsExtensions
     }
 }
 
-static class StringExtensions
+internal static class StringExtensions
 {
     public static string ToCamelCase(this string str)
     {
@@ -209,8 +213,13 @@ static class StringExtensions
         for (index = 0; index < len; index++)
         {
             if (absDirs[index] == relDirs[index])
+            {
                 lastCommonRoot = index;
-            else break;
+            }
+            else
+            {
+                break;
+            }
         }
         // If we didn't find a common prefix then throw 
         if (lastCommonRoot == -1)
@@ -222,7 +231,10 @@ static class StringExtensions
         // Add on the .. 
         for (index = lastCommonRoot + 1; index < absDirs.Length; index++)
         {
-            if (absDirs[index].Length > 0) relativePath.Append("..\\");
+            if (absDirs[index].Length > 0)
+            {
+                relativePath.Append("..\\");
+            }
         }
         // Add on the folders 
         for (index = lastCommonRoot + 1; index < relDirs.Length - 1; index++)
@@ -241,7 +253,7 @@ static class StringExtensions
     }
 }
 
-static class StreamWriterExtensions
+internal static class StreamWriterExtensions
 {
     public static StreamWriter WriteFormat(this StreamWriter sw, string interpolationString, params object[] args)
     {

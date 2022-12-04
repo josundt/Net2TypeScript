@@ -851,11 +851,9 @@ public class TypeScriptTypeTests
         });
     }
 
-    class GenericClass<T>
+    internal class GenericClass<T>
     {
-#pragma warning disable S1144 // Unused private types or members should be removed
-        public T Item { get; set; }
-#pragma warning restore S1144 // Unused private types or members should be removed
+        public T? Item { get; set; }
     }
 
     [TestMethod]
@@ -882,16 +880,16 @@ public class TypeScriptTypeTests
 
 }
 
-class TsTypeAssertion
+internal class TsTypeAssertion
 {
     public bool IsNullable { get; set; }
     public bool IsGeneric { get; set; }
     public bool IsKnockoutObservable { get; set; }
-    public string TypeName { get; set; }
-    public string ToStringResult { get; set; }
+    public string? TypeName { get; set; }
+    public string? ToStringResult { get; set; }
 }
 
-static class ITypeScriptTypeExtensions
+internal static class ITypeScriptTypeExtensions
 {
     public static void AssertEquals(this ITypeScriptType tsType, TsTypeAssertion assertion)
     {

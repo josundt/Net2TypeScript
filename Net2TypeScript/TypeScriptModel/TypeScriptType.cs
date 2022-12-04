@@ -8,7 +8,7 @@ namespace jasMIN.Net2TypeScript.TypeScriptModel;
 
 public class TypeScriptType : ITypeScriptType
 {
-    public string TypeName { get; private set; }
+    public string? TypeName { get; private set; }
     public bool IsNullable { get; private set; }
     public bool IsGeneric => this.GenericTypeArguments.Count > 0;
     public bool IsKnockoutObservable { get; private set; }
@@ -189,7 +189,7 @@ public class TypeScriptType : ITypeScriptType
         );
     }
 
-    TypeScriptType ToKnockoutObservable()
+    internal TypeScriptType ToKnockoutObservable()
     {
         this.IsKnockoutObservable = false;
         return new TypeScriptType

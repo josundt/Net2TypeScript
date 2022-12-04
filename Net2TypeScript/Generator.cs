@@ -22,7 +22,7 @@ internal class Generator
 
         WriteHeader(sw);
 
-        WriteEslintDisables(sw);
+        WriteEslintCommentDirective(sw);
 
         WriteTypesReferences(sw, this.GlobalSettings);
 
@@ -31,6 +31,10 @@ internal class Generator
         ns.WriteTs(sw, indent);
 
         WriteTsRootNamespacesClose(sw, indent, this.GlobalSettings);
+
+        sw.WriteLine();
+
+        WriteEslintCommentDirective(sw, true);
 
     }
 
@@ -42,13 +46,14 @@ internal class Generator
         sw.WriteLine();
     }
 
-    private static void WriteEslintDisables(StreamWriter sw)
+    private static void WriteEslintCommentDirective(StreamWriter sw, bool enable = false)
     {
         var eslintDisables = new[]
         {
             "@typescript-eslint/array-type"
         };
-        sw.Write($"/* eslint-disable {string.Join(", ", eslintDisables)} */{sw.NewLine}");
+        var directive = enable ? "eslint-enable" : "eslint-disable";
+        sw.Write($"/* {directive} {string.Join(", ", eslintDisables)} */{sw.NewLine}");
     }
 
     private static void WriteTypesReferences(StreamWriter sw, GlobalSettings globalSettings)

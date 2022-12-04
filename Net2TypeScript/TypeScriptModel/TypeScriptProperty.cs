@@ -29,7 +29,7 @@ public class TypeScriptProperty
         }
 
         var isKnockoutObservable = false;
-        if (settings.KnockoutMapping != null && settings.KnockoutMapping != KnockoutMappingOptions.None)
+        if (settings.KnockoutMapping is not null and not KnockoutMappingOptions.None)
         {
             var propertyType = propertyInfo.PropertyType.IsDotNetNullableValueType() ? propertyInfo.PropertyType.GetGenericArguments()[0] : propertyInfo.PropertyType;
             if (propertyType.IsTypeScriptArrayType())

@@ -2,14 +2,15 @@ using jasMIN.Net2TypeScript.SettingsModel;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-abstract class DotNetModelBase
+internal abstract class DotNetModelBase
 {
     private Settings? _settings;
     protected GlobalSettings _globalSettings;
 
-    protected DotNetModelBase(GlobalSettings globalSettings)
+    protected DotNetModelBase(GlobalSettings globalSettings, string fullName)
     {
         this._globalSettings = globalSettings;
+        this.FullName = fullName;
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3060:\"is\" should not be used with \"this\"", Justification = "<Pending>")]

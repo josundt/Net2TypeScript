@@ -7,7 +7,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Enum)}: {{{nameof(Name)}}}, {nameof(Values)}: {{{nameof(Values)}.Count}}")]
 #endif
-class Enum : DotNetTypeModelBase
+internal class Enum : DotNetTypeModelBase
 {
     public Enum(Type type, GlobalSettings globalSettings)
         : base(type, globalSettings)
@@ -19,7 +19,7 @@ class Enum : DotNetTypeModelBase
 
     }
 
-    Dictionary<string, string> Values
+    public Dictionary<string, string> Values
     {
         get
         {

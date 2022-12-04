@@ -2,7 +2,7 @@ namespace jasMIN.Net2TypeScript.TypeScriptModel;
 
 public interface ITypeScriptType
 {
-    string TypeName { get; }
+    string? TypeName { get; }
     bool IsNullable { get; }
     bool IsGeneric { get; }
     bool IsKnockoutObservable { get; }

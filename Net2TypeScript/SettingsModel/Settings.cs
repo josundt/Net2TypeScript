@@ -1,6 +1,5 @@
 namespace jasMIN.Net2TypeScript.SettingsModel;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:Do not expose generic lists", Justification = "<Pending>")]
 public class Settings : GeneratorSettings
 {
     public Settings()
@@ -11,10 +10,11 @@ public class Settings : GeneratorSettings
         this.EnumFormat = "enum";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
         this.ExtraProperties = new Dictionary<string, string>();
+        this.AssemblyPaths = new List<string>();
     }
     public List<string> AssemblyPaths { get; set; }
-    public string OutputPath { get; set; }
-    public string DotNetRootNamespace { get; set; }
+    public string OutputPath { get; set; } = default!;
+    public string DotNetRootNamespace { get; set; } = default!;
     public string TsRootNamespace { get; set; }
     public bool TsFlattenNamespaces { get; set; }
     public string EnumType { get; set; }

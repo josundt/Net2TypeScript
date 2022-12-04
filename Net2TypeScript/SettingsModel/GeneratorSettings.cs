@@ -7,7 +7,7 @@ public class GeneratorSettings
         this.ExtraProperties = new Dictionary<string, string>();
     }
 
-    public string KnockoutMapping { get; set; }
+    public string? KnockoutMapping { get; set; }
     public bool? UseBreeze { get; set; }
     public bool? ExcludeClass { get; set; }
     public bool? ExcludeInterface { get; set; }
@@ -51,10 +51,7 @@ public class GeneratorSettings
 
             foreach (var kvp in genSetting.ExtraProperties)
             {
-                if (result.ExtraProperties.ContainsKey(kvp.Key))
-                {
-                    result.ExtraProperties.Remove(kvp.Key);
-                }
+                result.ExtraProperties.Remove(kvp.Key);
                 result.ExtraProperties.Add(kvp.Key, kvp.Value);
             }
         }

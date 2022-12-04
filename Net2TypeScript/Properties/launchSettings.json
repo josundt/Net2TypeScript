@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "NetCore2TypeScript": {
+    "Adra.Reference.Api": {
       "commandName": "Project",
       "commandLineArgs": "--s C:\\_Git\\Adra.Reference.App\\src\\Adra.Reference.Api\\net2typescript.json"
     }

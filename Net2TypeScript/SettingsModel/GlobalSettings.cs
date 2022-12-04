@@ -10,7 +10,7 @@ public class GlobalSettings : Settings
         this.ClassOverrides = new Dictionary<string, GeneratorSettings>();
     }
 
-    Settings GetEffectiveSettings(GeneratorSettings genSettings)
+    public Settings GetEffectiveSettings(GeneratorSettings genSettings)
     {
         var result = Merge(this.Clone(), genSettings);
 

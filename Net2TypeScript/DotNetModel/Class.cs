@@ -7,7 +7,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay(@$"{nameof(Class)}: {{{nameof(_type)}.Name}} ({{_classOrInterfaceName,nq}}), {nameof(Properties)}: {{{nameof(Properties)}.Count}}")]
 #endif
-class Class : DotNetTypeModelBase
+internal class Class : DotNetTypeModelBase
 {
     private readonly IEnumerable<Property> _properties;
 
@@ -159,6 +159,7 @@ class Class : DotNetTypeModelBase
         return result;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     private string _classOrInterfaceName => this._type.IsClass ? "class" : "interface";
 
 #region Debug-Only Helper Properties

@@ -8,7 +8,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Property)}: {{{nameof(PropName)}}}, {{{nameof(TypeScriptProperty)}}}")]
 #endif
-class Property : DotNetTypeModelBase
+internal class Property : DotNetTypeModelBase
 {
     private readonly PropertyInfo _propInfo;
 

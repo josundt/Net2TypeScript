@@ -4,8 +4,6 @@ namespace jasMIN.Net2TypeScript;
 
 public static class Application
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
     public static int Main(string[] args)
     {
         if (args is null)
@@ -48,7 +46,6 @@ public static class Application
         return result;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
     private static void WriteHelp()
     {
         Console.WriteLine();
