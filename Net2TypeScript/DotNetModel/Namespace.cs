@@ -7,7 +7,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Namespace)}: {{{nameof(FullName)}}}, {nameof(ChildNamespaces)}: {{{nameof(ChildNamespaces)}.Count}}, {nameof(Entities)}: {{{nameof(Entities)}.Count}}")]
 #endif
-internal class Namespace : DotNetModelBase
+internal sealed class Namespace : DotNetModelBase
 {
     private readonly bool _isRoot;
     private readonly IEnumerable<Namespace> _childNamespaces;

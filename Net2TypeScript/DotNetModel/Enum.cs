@@ -7,7 +7,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Enum)}: {{{nameof(Name)}}}, {nameof(Values)}: {{{nameof(Values)}.Count}}")]
 #endif
-internal class Enum : DotNetTypeModelBase
+internal sealed class Enum : DotNetTypeModelBase
 {
     public Enum(Type type, GlobalSettings globalSettings)
         : base(type, globalSettings)
@@ -26,13 +26,9 @@ internal class Enum : DotNetTypeModelBase
             var result = new Dictionary<string, string>();
             foreach (var rawValue in System.Enum.GetValues(this._type))
             {
-                var name = System.Enum.GetName(this._type, rawValue);
-
-                if (name == null)
-                {
-                    throw new InvalidOperationException($"Could not get enum name: {this._type.FullName ?? string.Empty}");
-                }
-
+                var name = System.Enum.GetName(this._type, rawValue) 
+                    ?? throw new InvalidOperationException($"Could not get enum name: {this._type.FullName ?? string.Empty}");
+                
                 var enumOutputSetting = this._globalSettings.EnumType;
 
                 bool useNumeric = enumOutputSetting != "string";
@@ -64,7 +60,7 @@ internal class Enum : DotNetTypeModelBase
         );
 
         var i = 0;
-        if (this.Settings.EnumFormat == "enum" || this.Settings.EnumFormat == "constEnum")
+        if (this.Settings.EnumFormat is "enum" or "constEnum")
         {
             sw.WriteFormat("{0}export{1}enum {2} {{{3}",
                 indent,

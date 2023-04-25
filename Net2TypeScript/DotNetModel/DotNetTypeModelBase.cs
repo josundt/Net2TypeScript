@@ -3,10 +3,8 @@ using System.Text.RegularExpressions;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-internal abstract class DotNetTypeModelBase : DotNetModelBase
+internal abstract partial class DotNetTypeModelBase : DotNetModelBase
 {
-    private static readonly Regex _genericTypeNameFixRegEx = new(@"`.*$", RegexOptions.Compiled);
-
     private readonly Lazy<string> _tsTypeNameLazy;
 
     protected DotNetTypeModelBase(Type type, GlobalSettings globalSettings)
@@ -33,7 +31,7 @@ internal abstract class DotNetTypeModelBase : DotNetModelBase
         {
             var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
 
-            var baseFullName = _genericTypeNameFixRegEx.Replace(type.FullName!, string.Empty);
+            var baseFullName = GenericTypeNameFixRegEx().Replace(type.FullName!, string.Empty);
             return $"{baseFullName}<{string.Join(", ", genericArgNames)}>";
 
         }
@@ -49,7 +47,7 @@ internal abstract class DotNetTypeModelBase : DotNetModelBase
         {
             var genericArgNames = type.GetGenericArguments().Select(a => a.Name);
 
-            var baseName = _genericTypeNameFixRegEx.Replace(type.Name, string.Empty);
+            var baseName = GenericTypeNameFixRegEx().Replace(type.Name, string.Empty);
             return $"{baseName}<{string.Join(", ", genericArgNames)}>";
         }
         else
@@ -57,4 +55,7 @@ internal abstract class DotNetTypeModelBase : DotNetModelBase
             return type.Name;
         }
     }
+
+    [GeneratedRegex("`.*$", RegexOptions.Compiled)]
+    private static partial Regex GenericTypeNameFixRegEx();
 }

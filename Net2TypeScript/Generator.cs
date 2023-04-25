@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace jasMIN.Net2TypeScript;
 
-internal class Generator
+internal sealed class Generator
 {
     private GlobalSettings GlobalSettings { get; }
 
@@ -66,7 +66,7 @@ internal class Generator
         allGeneratorSettings.AddRange(globalSettings.ClassOverrides.Values);
 
         if (
-            allGeneratorSettings.Any(gs => gs.KnockoutMapping != KnockoutMappingOptions.None && gs.KnockoutMapping != null) &&
+            allGeneratorSettings.Any(gs => gs.KnockoutMapping is not KnockoutMappingOptions.None and not null) &&
             globalSettings.TypingsPaths?.Knockout != null
         )
         {

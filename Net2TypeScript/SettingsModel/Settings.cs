@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace jasMIN.Net2TypeScript.SettingsModel;
 
 public class Settings : GeneratorSettings
@@ -10,17 +12,17 @@ public class Settings : GeneratorSettings
         this.EnumFormat = "constEnum";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
         this.ExtraProperties = new Dictionary<string, string>();
-        this.AssemblyPaths = new List<string>();
+        this.AssemblyPaths = new Collection<string>();
     }
-    public List<string> AssemblyPaths { get; set; }
+    public Collection<string> AssemblyPaths { get; set; }
     public string OutputPath { get; set; } = default!;
     public string DotNetRootNamespace { get; set; } = default!;
     public string TsRootNamespace { get; set; }
     public bool TsFlattenNamespaces { get; set; }
     public string EnumType { get; set; }
     public string EnumFormat { get; set; }
-    public List<string>? ClassNamespaceFilter { get; set; }
-    public List<string>? EnumNamespaceFilter { get; set; }
+    public Collection<string>? ClassNamespaceFilter { get; set; }
+    public Collection<string>? EnumNamespaceFilter { get; set; }
     public string Indent { get; set; }
     public bool CamelCase { get; set; }
     public TypingsPaths? TypingsPaths { get; set; }
@@ -35,7 +37,7 @@ public class Settings : GeneratorSettings
             clone.ExtraProperties.Add(kvp.Key, kvp.Value);
         }
 
-        clone.AssemblyPaths = new List<string>();
+        clone.AssemblyPaths = new Collection<string>();
         foreach (var s in this.AssemblyPaths)
         {
             clone.AssemblyPaths.Add(s);
@@ -43,7 +45,7 @@ public class Settings : GeneratorSettings
 
         if (this.ClassNamespaceFilter != null)
         {
-            clone.ClassNamespaceFilter = new List<string>();
+            clone.ClassNamespaceFilter = new Collection<string>();
             foreach (var s in this.ClassNamespaceFilter)
             {
                 clone.ClassNamespaceFilter.Add(s);
@@ -52,7 +54,7 @@ public class Settings : GeneratorSettings
 
         if (this.EnumNamespaceFilter != null)
         {
-            clone.EnumNamespaceFilter = new List<string>();
+            clone.EnumNamespaceFilter = new Collection<string>();
             foreach (var s in this.EnumNamespaceFilter)
             {
                 clone.EnumNamespaceFilter.Add(s);

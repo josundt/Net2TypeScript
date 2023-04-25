@@ -7,7 +7,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay(@$"{nameof(Class)}: {{{nameof(_type)}.Name}} ({{_classOrInterfaceName,nq}}), {nameof(Properties)}: {{{nameof(Properties)}.Count}}")]
 #endif
-internal class Class : DotNetTypeModelBase
+internal sealed class Class : DotNetTypeModelBase
 {
     private readonly IEnumerable<Property> _properties;
 

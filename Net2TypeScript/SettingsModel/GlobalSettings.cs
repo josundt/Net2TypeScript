@@ -36,7 +36,7 @@ public class GlobalSettings : Settings
     {
         var nsSettings = this.GetNamespaceSettings(className);
 
-        var classSettings = this.ClassOverrides.ContainsKey(className) ? this.ClassOverrides[className] : null;
+        this.ClassOverrides.TryGetValue(className, out GeneratorSettings? classSettings);
 
         var effectiveGenSettings = classSettings == null ? nsSettings.Clone() : Merge(nsSettings.Clone(), classSettings);
 

@@ -146,6 +146,7 @@ internal static class TypeExtensions
     public static bool TryGetTypeScriptNamespaceName(this Type type, Settings settings, out string outputString)
     {
         string? parsed;
+#pragma warning disable CA1031 // Do not catch general exception types
         try
         {
             parsed = settings.ToTsFullName(type.Namespace ?? string.Empty);
@@ -158,6 +159,7 @@ internal static class TypeExtensions
         {
             parsed = null!;
         }
+#pragma warning restore CA1031 // Do not catch general exception types
 
         outputString = parsed!;
         return outputString != null;
@@ -195,6 +197,7 @@ internal static class StringExtensions
         return str;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0270:Use coalesce expression", Justification = "<Pending>")]
     public static string GetRelativePathTo(this string absPath, string relTo, bool backSlash = false)
     {
         var parsed = Path.GetDirectoryName(absPath);

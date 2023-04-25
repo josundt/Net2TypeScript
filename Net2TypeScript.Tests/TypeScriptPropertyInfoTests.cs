@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace jasMIN.Net2TypeScript.Tests;
 
 [TestClass]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
 public class TypeScriptTypeTests
 {
     [TestMethod]
@@ -851,7 +852,9 @@ public class TypeScriptTypeTests
         });
     }
 
-    internal class GenericClass<T>
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "<Pending>")]
+    internal sealed class GenericClass<T>
     {
         public T? Item { get; set; }
     }
@@ -880,7 +883,7 @@ public class TypeScriptTypeTests
 
 }
 
-internal class TsTypeAssertion
+internal sealed class TsTypeAssertion
 {
     public bool IsNullable { get; set; }
     public bool IsGeneric { get; set; }

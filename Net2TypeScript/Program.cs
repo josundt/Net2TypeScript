@@ -21,6 +21,7 @@ public static class Application
 
         Console.WriteLine("Generating TypeScript models from .NET models...");
 
+#pragma warning disable CA1031 // Do not catch general exception types
         try
         {
             var globalSettings = SettingsBuilder.BuildGlobalSettings(args);
@@ -42,6 +43,7 @@ public static class Application
 
             result = -1;
         }
+#pragma warning restore CA1031 // Do not catch general exception types
 
         return result;
     }
@@ -50,7 +52,7 @@ public static class Application
     {
         Console.WriteLine();
         Console.WriteLine(@"Net2TypeScript usage:");
-        Console.WriteLine();                                                                                                     //                                                                                                    
+        Console.WriteLine();
         Console.WriteLine(@"-s|--settings       Path to JSON settings file that uses the settings ""$schema"" (see");
         Console.WriteLine(@"                    schema URL below). If argument is omitted, the settings file is expected");
         Console.WriteLine(@"                    to be found in the same folder as the Net2TypeScript executable with the");
