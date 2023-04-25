@@ -107,13 +107,13 @@
         },
         "enumFormat": {
           "type": "string",
-          "default": "enum",
+          "default": "constEnum",
           "enum": [
-            "enum",
             "constEnum",
+            "enum",
             "unionType"
           ],
-          "description": "(Optional). Whether to create TypeScript enums or uninon types from .NET enums."
+          "description": "(Optional). Whether to create TypeScript const enums, enums or uninon types from .NET enums."
         },
         "classNamespaceFilter": {
           "type": [ "array", "null" ],
