@@ -64,10 +64,11 @@ internal class Enum : DotNetTypeModelBase
         );
 
         var i = 0;
-        if (this.Settings.EnumFormat == "enum")
+        if (this.Settings.EnumFormat == "enum" || this.Settings.EnumFormat == "constEnum")
         {
-            sw.WriteFormat("{0}export enum {1} {{{2}",
+            sw.WriteFormat("{0}export{1}enum {2} {{{3}",
                 indent,
+                this.Settings.EnumFormat == "constEnum" ? " const " : " ",
                 this.TsTypeName,
                 sw.NewLine
             );

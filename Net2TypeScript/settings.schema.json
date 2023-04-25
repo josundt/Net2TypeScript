@@ -110,6 +110,7 @@
           "default": "enum",
           "enum": [
             "enum",
+            "constEnum",
             "unionType"
           ],
           "description": "(Optional). Whether to create TypeScript enums or uninon types from .NET enums."
