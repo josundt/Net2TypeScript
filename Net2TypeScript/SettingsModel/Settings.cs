@@ -9,7 +9,7 @@ public class Settings : GeneratorSettings
         // Initializing default values
         this.Indent = "    ";
         this.EnumType = "string";
-        this.EnumFormat = "constEnum";
+        this.EnumFormat = "enum";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
         this.ExtraProperties = new Dictionary<string, string>();
         this.AssemblyPaths = new Collection<string>();

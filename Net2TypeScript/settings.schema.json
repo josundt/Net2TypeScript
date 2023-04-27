@@ -107,10 +107,10 @@
         },
         "enumFormat": {
           "type": "string",
-          "default": "constEnum",
+          "default": "enum",
           "enum": [
-            "constEnum",
             "enum",
+            "constEnum",
             "unionType"
           ],
           "description": "(Optional). Whether to create TypeScript const enums, enums or uninon types from .NET enums."
