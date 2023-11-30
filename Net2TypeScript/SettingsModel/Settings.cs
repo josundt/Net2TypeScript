@@ -11,8 +11,8 @@ public class Settings : GeneratorSettings
         this.EnumType = "string";
         this.EnumFormat = "enum";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
-        this.ExtraProperties = new Dictionary<string, string>();
-        this.AssemblyPaths = new Collection<string>();
+        this.ExtraProperties = [];
+        this.AssemblyPaths = [];
     }
     public Collection<string> AssemblyPaths { get; set; }
     public string OutputPath { get; set; } = default!;
@@ -31,34 +31,22 @@ public class Settings : GeneratorSettings
     {
         var clone = (Settings)this.MemberwiseClone();
 
-        clone.ExtraProperties = new Dictionary<string, string>();
+        clone.ExtraProperties = [];
         foreach (var kvp in this.ExtraProperties)
         {
             clone.ExtraProperties.Add(kvp.Key, kvp.Value);
         }
 
-        clone.AssemblyPaths = new Collection<string>();
-        foreach (var s in this.AssemblyPaths)
-        {
-            clone.AssemblyPaths.Add(s);
-        }
+        clone.AssemblyPaths = [.. this.AssemblyPaths];
 
         if (this.ClassNamespaceFilter != null)
         {
-            clone.ClassNamespaceFilter = new Collection<string>();
-            foreach (var s in this.ClassNamespaceFilter)
-            {
-                clone.ClassNamespaceFilter.Add(s);
-            }
+            clone.ClassNamespaceFilter = [.. this.ClassNamespaceFilter];
         }
 
         if (this.EnumNamespaceFilter != null)
         {
-            clone.EnumNamespaceFilter = new Collection<string>();
-            foreach (var s in this.EnumNamespaceFilter)
-            {
-                clone.EnumNamespaceFilter.Add(s);
-            }
+            clone.EnumNamespaceFilter = [.. this.EnumNamespaceFilter];
         }
 
         clone.TypingsPaths = this.TypingsPaths == null ? null : new TypingsPaths

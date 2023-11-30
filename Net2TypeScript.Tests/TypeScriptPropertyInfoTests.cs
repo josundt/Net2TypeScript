@@ -867,7 +867,7 @@ public class TypeScriptTypeTests
         };
 
         Type type = typeof(GenericClass<>).GetProperty("Item")!.PropertyType;
-        var genericParamName = typeof(GenericClass<>).GetGenericArguments().First().Name;
+        var genericParamName = typeof(GenericClass<>).GetGenericArguments()[0].Name;
         var tsType = TypeScriptType.FromDotNetType(type, null, null, settings);
 
         tsType.AssertEquals(new TsTypeAssertion

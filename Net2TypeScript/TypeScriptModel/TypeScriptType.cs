@@ -25,15 +25,8 @@ public class TypeScriptType : ITypeScriptType
         bool isRequiredProperty = false
     )
     {
-        if (dotnetType is null)
-        {
-            throw new ArgumentNullException(nameof(dotnetType));
-        }
-
-        if (settings is null)
-        {
-            throw new ArgumentNullException(nameof(settings));
-        }
+        ArgumentNullException.ThrowIfNull(dotnetType);
+        ArgumentNullException.ThrowIfNull(settings);
 
         var tsType = new TypeScriptType()
         {

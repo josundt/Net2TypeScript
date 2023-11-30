@@ -3,13 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>Net2TypeScript.ico</ApplicationIcon>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>jasMIN.Net2TypeScript</RootNamespace>
-    <VersionPrefix>7.0.4</VersionPrefix>
+    <VersionPrefix>8.0.0</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
 

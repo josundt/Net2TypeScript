@@ -4,7 +4,7 @@ public class GeneratorSettings
 {
     public GeneratorSettings()
     {
-        this.ExtraProperties = new Dictionary<string, string>();
+        this.ExtraProperties = [];
     }
 
     public string? KnockoutMapping { get; set; }
@@ -22,7 +22,7 @@ public class GeneratorSettings
     public GeneratorSettings Clone()
     {
         var clone = (GeneratorSettings)this.MemberwiseClone();
-        clone.ExtraProperties = new Dictionary<string, string>();
+        clone.ExtraProperties = [];
         foreach (var kvp in this.ExtraProperties)
         {
             clone.ExtraProperties.Add(kvp.Key, kvp.Value);

@@ -95,7 +95,7 @@ internal sealed class Class : DotNetTypeModelBase
         );
     }
 
-    private static IEnumerable<Property> GetProperties(
+    private static List<Property> GetProperties(
         Type type,
         NullabilityInfoContext nullabilityContext,
         Settings classSettings,
@@ -162,13 +162,13 @@ internal sealed class Class : DotNetTypeModelBase
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
     private string _classOrInterfaceName => this._type.IsClass ? "class" : "interface";
 
-#region Debug-Only Helper Properties
+    #region Debug-Only Helper Properties
 #if DEBUG
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
     private IReadOnlyCollection<Property> Properties => this._properties.ToList();
 
 #endif
-#endregion
+    #endregion
 
 }

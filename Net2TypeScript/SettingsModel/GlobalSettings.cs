@@ -6,8 +6,8 @@ public class GlobalSettings : Settings
     public Dictionary<string, GeneratorSettings> ClassOverrides { get; set; }
     public GlobalSettings()
     {
-        this.NamespaceOverrides = new Dictionary<string, GeneratorSettings>();
-        this.ClassOverrides = new Dictionary<string, GeneratorSettings>();
+        this.NamespaceOverrides = [];
+        this.ClassOverrides = [];
     }
 
     public Settings GetEffectiveSettings(GeneratorSettings genSettings)
@@ -20,8 +20,8 @@ public class GlobalSettings : Settings
     public Settings GetNamespaceSettings(string namespaceName)
     {
         var applicableNsSettings = this.NamespaceOverrides
-            .Where(kvp => kvp.Key.EndsWith("*", StringComparison.Ordinal)
-                ? namespaceName.StartsWith(kvp.Key[..kvp.Key.LastIndexOf("*", StringComparison.Ordinal)], StringComparison.Ordinal)
+            .Where(kvp => kvp.Key.EndsWith('*')
+                ? namespaceName.StartsWith(kvp.Key[..kvp.Key.LastIndexOf('*')], StringComparison.Ordinal)
                 : namespaceName == kvp.Key
             )
             .OrderBy(kvp => kvp.Key)

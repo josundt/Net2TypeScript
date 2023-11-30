@@ -13,20 +13,9 @@ public class TypeScriptProperty
 {
     public TypeScriptProperty(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, Settings settings)
     {
-        if (propertyInfo is null)
-        {
-            throw new ArgumentNullException(nameof(propertyInfo));
-        }
-
-        if (nullabilityContext is null)
-        {
-            throw new ArgumentNullException(nameof(nullabilityContext));
-        }
-
-        if (settings is null)
-        {
-            throw new ArgumentNullException(nameof(settings));
-        }
+        ArgumentNullException.ThrowIfNull(propertyInfo);
+        ArgumentNullException.ThrowIfNull(nullabilityContext);
+        ArgumentNullException.ThrowIfNull(settings);
 
         var isKnockoutObservable = false;
         if (settings.KnockoutMapping is not null and not KnockoutMappingOptions.None)
@@ -51,7 +40,7 @@ public class TypeScriptProperty
         propertyInfo.DeclaringType?.TryGetTypeScriptNamespaceName(settings, out declarerTsNamespace);
 
         var hasRequiredAnnotation =
-            Attribute.GetCustomAttributes(propertyInfo).Any(a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
+            Array.Exists(Attribute.GetCustomAttributes(propertyInfo), a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
 
         this.PropertyType = TypeScriptType.FromDotNetType(
             propertyInfo.PropertyType,

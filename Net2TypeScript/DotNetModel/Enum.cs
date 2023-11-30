@@ -26,9 +26,9 @@ internal sealed class Enum : DotNetTypeModelBase
             var result = new Dictionary<string, string>();
             foreach (var rawValue in System.Enum.GetValues(this._type))
             {
-                var name = System.Enum.GetName(this._type, rawValue) 
+                var name = System.Enum.GetName(this._type, rawValue)
                     ?? throw new InvalidOperationException($"Could not get enum name: {this._type.FullName ?? string.Empty}");
-                
+
                 var enumOutputSetting = this._globalSettings.EnumType;
 
                 bool useNumeric = enumOutputSetting != "string";
@@ -48,6 +48,7 @@ internal sealed class Enum : DotNetTypeModelBase
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Bug", "S2583:Conditionally executed code should be reachable", Justification = "<Pending>")]
     public override StreamWriter WriteTs(StreamWriter sw, int indentCount)
     {
 

@@ -36,7 +36,7 @@ internal static class SettingsBuilder
             {
                 dict.Add(args[i][2..], args[i + 1]);
             }
-            else if (args[i].StartsWith("-", StringComparison.Ordinal))
+            else if (args[i].StartsWith('-'))
             {
                 dict.Add(args[i][1..], args[i + 1]);
             }
@@ -85,17 +85,17 @@ internal static class SettingsBuilder
     private static string ExtractSettingsFilePath(Dictionary<string, string> settingsMap)
     {
         string? path = null;
-        if (settingsMap.ContainsKey("s"))
+        if (settingsMap.TryGetValue("s", out string? sValue))
         {
-            path = settingsMap["s"];
+            path = sValue;
             settingsMap.Remove("s");
         }
-        if (settingsMap.ContainsKey("settings"))
+        if (settingsMap.TryGetValue("settings", out string? settingsValue))
         {
-            path ??= settingsMap["settings"];
+            path ??= settingsValue;
             settingsMap.Remove("settings");
         }
-        var cwd = Directory.GetCurrentDirectory(); // AppContext.BaseDirectory -> Executable directory;
+        var cwd = Directory.GetCurrentDirectory();
         if (path == null)
         {
             path = Path.Combine(cwd, "settings.json");
@@ -110,14 +110,14 @@ internal static class SettingsBuilder
     private static string ExtractBuildConfiguration(Dictionary<string, string> settingsMap)
     {
         string? result = null;
-        if (settingsMap.ContainsKey("c"))
+        if (settingsMap.TryGetValue("c", out string? cValue))
         {
-            result= settingsMap["c"];
+            result = cValue;
             settingsMap.Remove("c");
         }
-        if (settingsMap.ContainsKey("configuration"))
+        if (settingsMap.TryGetValue("configuration", out string? configurationValue))
         {
-            result ??= settingsMap["configuration"];
+            result ??= configurationValue;
             settingsMap.Remove("configuration");
         }
         return result ?? "Debug";
@@ -136,12 +136,9 @@ internal static class SettingsBuilder
 
     private static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd, string buildConfiguration)
     {
-        if (cwd is null)
-        {
-            throw new ArgumentNullException(nameof(cwd));
-        }
-        // TODO: Validate that settings object has the expected properties
+        ArgumentNullException.ThrowIfNull(cwd);
 
+        // TODO: Validate that settings object has the expected properties
 
         settings.AssemblyPaths = new Collection<string>(settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration)).ToList());
         settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration);
@@ -165,12 +162,11 @@ internal static class SettingsBuilder
 
     private static void ValidateGeneratorSettings(GeneratorSettings genSettings)
     {
-        if (!new[] {
-                    null,
-                    KnockoutMappingOptions.None,
-                    KnockoutMappingOptions.All,
-                    KnockoutMappingOptions.ValueTypes
-                }.Any(s => s == genSettings.KnockoutMapping)
+        if (
+            genSettings.KnockoutMapping is not null and
+            not KnockoutMappingOptions.None and
+            not KnockoutMappingOptions.All and
+            not KnockoutMappingOptions.ValueTypes
         )
         {
             throw new InvalidOperationException($"Invalid knockoutMappingOptions value: {genSettings.KnockoutMapping}");

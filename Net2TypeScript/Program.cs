@@ -1,4 +1,5 @@
 using jasMIN.Net2TypeScript.Utils;
+using System.Diagnostics;
 
 namespace jasMIN.Net2TypeScript;
 
@@ -6,10 +7,7 @@ public static class Application
 {
     public static int Main(string[] args)
     {
-        if (args is null)
-        {
-            throw new ArgumentNullException(nameof(args));
-        }
+        ArgumentNullException.ThrowIfNull(args);
 
         int result = 0;
 
@@ -19,7 +17,10 @@ public static class Application
             return 0;
         }
 
-        Console.WriteLine("Generating TypeScript models from .NET models...");
+        Console.Write("net2typescript: Generating TypeScript models from .NET models...");
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
 #pragma warning disable CA1031 // Do not catch general exception types
         try
@@ -31,10 +32,17 @@ public static class Application
             generator.GenerateTypeScript(
                 () => File.Create(globalSettings.OutputPath)
             );
+
+            var duration = stopwatch.Elapsed;
+
+            Console.WriteLine($"done in {Math.Floor(duration.TotalSeconds)}.{duration.Milliseconds} seconds!");
+            Console.WriteLine($"net2typescript: Output file: {globalSettings.OutputPath}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("ERROR: " + ex.Message);
+            Console.WriteLine();
+
+            Console.WriteLine("net2typescript: ERROR: " + ex.Message);
 #if DEBUG
             Console.WriteLine(ex.StackTrace);
 #endif
@@ -42,6 +50,10 @@ public static class Application
             WriteHelp();
 
             result = -1;
+        }
+        finally
+        {
+            stopwatch.Stop();
         }
 #pragma warning restore CA1031 // Do not catch general exception types
 
@@ -51,7 +63,7 @@ public static class Application
     private static void WriteHelp()
     {
         Console.WriteLine();
-        Console.WriteLine(@"Net2TypeScript usage:");
+        Console.WriteLine(@"net2typescript usage:");
         Console.WriteLine();
         Console.WriteLine(@"-s|--settings       Path to JSON settings file that uses the settings ""$schema"" (see");
         Console.WriteLine(@"                    schema URL below). If argument is omitted, the settings file is expected");

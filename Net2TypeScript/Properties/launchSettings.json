@@ -2,7 +2,7 @@
   "profiles": {
     "Adra.Reference.Api": {
       "commandName": "Project",
-      "commandLineArgs": "-c Debug -s C:\\_Git\\Adra.Reference.App\\src\\Adra.Reference.Api\\net2typescript.json"
+      "commandLineArgs": "-c Debug -s D:\\_Git\\Adra.Reference.App\\src\\Adra.Reference.Api\\net2typescript.json"
     }
   }
 }

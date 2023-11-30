@@ -60,7 +60,7 @@ internal sealed class Namespace : DotNetModelBase
 
         if (!this._isRoot && !this.Settings.TsFlattenNamespaces)
         {
-            sw.WriteLine($"{Environment.NewLine}{indent}export namespace {this.FullName.Split('.').Last()} {{");
+            sw.WriteLine($"{Environment.NewLine}{indent}export namespace {this.FullName.Split('.')[^1]} {{");
         }
 
         foreach (var ns in this._childNamespaces)
@@ -83,24 +83,24 @@ internal sealed class Namespace : DotNetModelBase
 
     private bool IncludeClasses() =>
         this.Settings.ClassNamespaceFilter?.Any(
-            f => f.EndsWith("*", StringComparison.Ordinal)
-                ? this.FullName.StartsWith(f[..f.LastIndexOf("*", StringComparison.Ordinal)], StringComparison.Ordinal)
+            f => f.EndsWith('*')
+                ? this.FullName.StartsWith(f[..f.LastIndexOf('*')], StringComparison.Ordinal)
                 : this.FullName == f
         ) ?? true;
 
     private bool IncludeEnums() =>
         this.Settings.EnumNamespaceFilter?.Any(
-            f => f.EndsWith("*", StringComparison.Ordinal)
-                ? this.FullName.StartsWith(f[..f.LastIndexOf("*", StringComparison.Ordinal)], StringComparison.Ordinal)
+            f => f.EndsWith('*')
+                ? this.FullName.StartsWith(f[..f.LastIndexOf('*')], StringComparison.Ordinal)
                 : this.FullName == f
         ) ?? true;
 
     private bool IsEmpty() =>
         !this._entities.Any() && this._childNamespaces.All(ns => ns.IsEmpty());
 
-    private static IEnumerable<Type> GetTypes(IEnumerable<Assembly> assemblies)
+    private static List<Type> GetTypes(IEnumerable<Assembly> assemblies)
     {
-        List<Type> types = new();
+        List<Type> types = [];
 
         foreach (var a in assemblies)
         {
@@ -156,7 +156,7 @@ internal sealed class Namespace : DotNetModelBase
             .Select(t => new Enum(t, this._globalSettings));
     }
 
-#region Debug-Only Helper Properties
+    #region Debug-Only Helper Properties
 #if DEBUG
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
@@ -166,5 +166,5 @@ internal sealed class Namespace : DotNetModelBase
     public IReadOnlyCollection<DotNetTypeModelBase> Entities => this._entities.ToList();
 
 #endif
-#endregion
+    #endregion
 }

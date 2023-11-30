@@ -5,14 +5,9 @@ using System.Reflection;
 
 namespace jasMIN.Net2TypeScript;
 
-internal sealed class Generator
+internal sealed class Generator(GlobalSettings globalSettings)
 {
-    private GlobalSettings GlobalSettings { get; }
-
-    public Generator(GlobalSettings globalSettings)
-    {
-        this.GlobalSettings = globalSettings;
-    }
+    private GlobalSettings GlobalSettings { get; } = globalSettings;
 
     public void GenerateTypeScript(Func<Stream> openwriteStream)
     {
@@ -58,15 +53,15 @@ internal sealed class Generator
 
     private static void WriteTypesReferences(StreamWriter sw, GlobalSettings globalSettings)
     {
-        List<GeneratorSettings> allGeneratorSettings = new()
-        {
-            globalSettings
-        };
-        allGeneratorSettings.AddRange(globalSettings.NamespaceOverrides.Values);
-        allGeneratorSettings.AddRange(globalSettings.ClassOverrides.Values);
+        List<GeneratorSettings> allGeneratorSettings =
+        [
+            globalSettings,
+            .. globalSettings.NamespaceOverrides.Values,
+            .. globalSettings.ClassOverrides.Values,
+        ];
 
         if (
-            allGeneratorSettings.Any(gs => gs.KnockoutMapping is not KnockoutMappingOptions.None and not null) &&
+            allGeneratorSettings.Exists(gs => gs.KnockoutMapping is not KnockoutMappingOptions.None and not null) &&
             globalSettings.TypingsPaths?.Knockout != null
         )
         {
@@ -78,7 +73,7 @@ internal sealed class Generator
         }
 
         if (
-            allGeneratorSettings.Any(gs => gs.UseBreeze == true) &&
+            allGeneratorSettings.Exists(gs => gs.UseBreeze == true) &&
             globalSettings.TypingsPaths?.Breeze != null
         )
         {
@@ -121,11 +116,11 @@ internal sealed class Generator
 
             for (var i = indentCount - 1; i >= 0; i--)
             {
-                 sw.WriteFormat(
-                    "{0}}}{1}",
-                    string.Concat(Enumerable.Repeat(globalSettings.Indent, i)),
-                    sw.NewLine
-                );
+                sw.WriteFormat(
+                   "{0}}}{1}",
+                   string.Concat(Enumerable.Repeat(globalSettings.Indent, i)),
+                   sw.NewLine
+               );
             }
         }
     }

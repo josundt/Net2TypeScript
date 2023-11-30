@@ -33,24 +33,25 @@ internal static class TypeExtensions
 
     public static bool ImplementsInterface(this Type type, Type interfaceType)
     {
-        return type.GetInterfaces().Any(i =>
-            interfaceType.IsGenericType
+        return Array.Exists(
+            type.GetInterfaces(),
+            i => interfaceType.IsGenericType
                 ? i.IsGenericType && i.GetGenericTypeDefinition() == interfaceType
-                : i == type);
+                : i == type
+        );
     }
 
     public static bool IsTypeScriptNumberType(this Type type)
     {
         ThrowIfNullable(type);
 
-        return new[] {
-                typeof(short),
-                typeof(int),
-                typeof(long),
-                typeof(decimal),
-                typeof(float),
-                typeof(double)
-            }.Any(t => t == type);
+        return
+            type == typeof(short) ||
+            type == typeof(int) ||
+            type == typeof(long) ||
+            type == typeof(decimal) ||
+            type == typeof(float) ||
+            type == typeof(double);
     }
 
     public static bool IsTypeScriptArrayType(this Type type)
@@ -62,17 +63,16 @@ internal static class TypeExtensions
     public static bool IsTypeScriptRecordType(this Type type)
     {
         ThrowIfNullable(type);
-        return type.IsDictionaryInterface() || type.GetInterfaces().Any(i => i.IsDictionaryInterface());
+        return
+            type.IsDictionaryInterface() ||
+            Array.Exists(type.GetInterfaces(), i => i.IsDictionaryInterface());
     }
 
     public static bool IsTypeScriptDateType(this Type type)
     {
         ThrowIfNullable(type);
 
-        return new[] {
-                typeof(DateTime),
-                typeof(DateTimeOffset)
-            }.Any(t => t == type);
+        return type == typeof(DateTime) || type == typeof(DateTimeOffset);
     }
 
     public static bool IsTypeScriptBoolType(this Type type)
@@ -86,13 +86,12 @@ internal static class TypeExtensions
     {
         ThrowIfNullable(type);
 
-        return new[] {
-                typeof(string),
-                typeof(Guid),
-                typeof(byte),
-                typeof(byte[]),
-                typeof(TimeSpan)
-            }.Any(t => t == type);
+        return
+            type == typeof(string) ||
+            type == typeof(Guid) ||
+            type == typeof(byte) ||
+            type == typeof(byte[]) ||
+            type == typeof(TimeSpan);
     }
 
     public static bool IsTypeScriptInterfaceType(this Type type)
@@ -197,7 +196,6 @@ internal static class StringExtensions
         return str;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0270:Use coalesce expression", Justification = "<Pending>")]
     public static string GetRelativePathTo(this string absPath, string relTo, bool backSlash = false)
     {
         var parsed = Path.GetDirectoryName(absPath);
