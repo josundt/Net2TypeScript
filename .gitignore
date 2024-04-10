@@ -32,3 +32,4 @@ _ReSharper*/
 /Source/packages/*
 
 /.vs
+/src/.vs
