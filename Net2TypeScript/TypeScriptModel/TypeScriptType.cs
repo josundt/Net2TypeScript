@@ -22,7 +22,7 @@ public class TypeScriptType : ITypeScriptType
         bool isKnockoutObservable = false,
         bool isArrayItem = false,
         bool isDictionaryValue = false,
-        bool isRequiredProperty = false
+        bool isNonNullableProperty = false
     )
     {
         ArgumentNullException.ThrowIfNull(dotnetType);
@@ -37,7 +37,7 @@ public class TypeScriptType : ITypeScriptType
 
         if (dotnetType.IsDotNetNullableValueType())
         {
-            tsType.IsNullable = !isRequiredProperty;
+            tsType.IsNullable = !isNonNullableProperty;
             propertyType = dotnetType.GetGenericArguments()[0];
         }
         else if (
@@ -56,7 +56,7 @@ public class TypeScriptType : ITypeScriptType
         else
         {
             tsType.IsNullable =
-                !isRequiredProperty
+                !isNonNullableProperty
                 && propertyType.IsTypeScriptNullableType(settings, isArrayItem, isDictionaryValue);
         }
 

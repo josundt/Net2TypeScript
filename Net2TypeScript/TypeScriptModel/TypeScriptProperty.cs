@@ -1,6 +1,5 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using jasMIN.Net2TypeScript.Utils;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Reflection;
 
@@ -39,8 +38,8 @@ public class TypeScriptProperty
         string? declarerTsNamespace = null;
         propertyInfo.DeclaringType?.TryGetTypeScriptNamespaceName(settings, out declarerTsNamespace);
 
-        var hasRequiredAnnotation =
-            Array.Exists(Attribute.GetCustomAttributes(propertyInfo), a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
+        //var hasRequiredAnnotation =
+        //    Array.Exists(Attribute.GetCustomAttributes(propertyInfo), a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
 
         this.PropertyType = TypeScriptType.FromDotNetType(
             propertyInfo.PropertyType,
@@ -49,8 +48,8 @@ public class TypeScriptProperty
             settings,
             isKnockoutObservable,
             propertyInfo.DeclaringType?.IsTypeScriptArrayType() ?? false,
-            propertyInfo.DeclaringType?.IsTypeScriptRecordType() ?? false,
-            hasRequiredAnnotation
+            propertyInfo.DeclaringType?.IsTypeScriptRecordType() ?? false
+            //, hasRequiredAnnotation
         );
         this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
         this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && (propertyInfo.GetSetMethod()?.IsPublic ?? false));
