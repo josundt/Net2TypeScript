@@ -2,18 +2,13 @@ using jasMIN.Net2TypeScript.SettingsModel;
 
 namespace jasMIN.Net2TypeScript.DotNetModel;
 
-internal abstract class DotNetModelBase
+internal abstract class DotNetModelBase(GlobalSettings globalSettings, string fullName)
 {
     private Settings? _settings;
-    protected GlobalSettings _globalSettings;
-
-    protected DotNetModelBase(GlobalSettings globalSettings, string fullName)
-    {
-        this._globalSettings = globalSettings;
-        this.FullName = fullName;
-    }
+    protected GlobalSettings _globalSettings = globalSettings;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3060:\"is\" should not be used with \"this\"", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "<Pending>")]
     protected virtual Settings Settings
     {
         get
@@ -28,20 +23,18 @@ internal abstract class DotNetModelBase
                 {
                     this._settings = this._globalSettings.GetClassSettings(this.FullName);
                 }
-                else if (this is Property propModel)
-                {
-                    this._settings = this._globalSettings.GetClassSettings(propModel.DeclaringType.FullName!);
-                }
                 else
                 {
-                    this._settings = this._globalSettings;
+                    this._settings = this is Property propModel
+                        ? this._globalSettings.GetClassSettings(propModel.DeclaringType.FullName!)
+                        : this._globalSettings;
                 }
             }
             return this._settings;
         }
     }
 
-    protected string FullName { get; set; }
+    protected string FullName { get; set; } = fullName;
 
     protected string Indent(int count)
     {

@@ -10,6 +10,7 @@ namespace jasMIN.Net2TypeScript.TypeScriptModel;
 #endif
 public class TypeScriptProperty
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "<Pending>")]
     public TypeScriptProperty(PropertyInfo propertyInfo, NullabilityInfoContext nullabilityContext, Settings settings)
     {
         ArgumentNullException.ThrowIfNull(propertyInfo);
@@ -29,7 +30,7 @@ public class TypeScriptProperty
                 isKnockoutObservable =
                     settings.KnockoutMapping == KnockoutMappingOptions.All
                     ||
-                    settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !propertyInfo.PropertyType.IsTypeScriptInterfaceType();
+                    (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !propertyInfo.PropertyType.IsTypeScriptInterfaceType());
             }
         }
 
@@ -39,7 +40,7 @@ public class TypeScriptProperty
         propertyInfo.DeclaringType?.TryGetTypeScriptNamespaceName(settings, out declarerTsNamespace);
 
         //var hasRequiredAnnotation =
-        //    Array.Exists(Attribute.GetCustomAttributes(propertyInfo), a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)));
+        //    Array.Exists(Attribute.GetCustomAttributes(propertyInfo), a => a.GetType().DerivesFromClass(typeof(RequiredAttribute)))
 
         this.PropertyType = TypeScriptType.FromDotNetType(
             propertyInfo.PropertyType,
@@ -49,7 +50,7 @@ public class TypeScriptProperty
             isKnockoutObservable,
             propertyInfo.DeclaringType?.IsTypeScriptArrayType() ?? false,
             propertyInfo.DeclaringType?.IsTypeScriptRecordType() ?? false
-            //, hasRequiredAnnotation
+        //, hasRequiredAnnotation
         );
         this.PropertyName = settings.CamelCase ? propertyInfo.Name.ToCamelCase() : propertyInfo.Name;
         this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && (propertyInfo.GetSetMethod()?.IsPublic ?? false));

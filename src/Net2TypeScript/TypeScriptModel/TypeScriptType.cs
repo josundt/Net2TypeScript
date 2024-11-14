@@ -12,8 +12,9 @@ public class TypeScriptType : ITypeScriptType
     public bool IsNullable { get; private set; }
     public bool IsGeneric => this.GenericTypeArguments.Count > 0;
     public bool IsKnockoutObservable { get; private set; }
-    public IList<ITypeScriptType> GenericTypeArguments { get; set; } = new List<ITypeScriptType>();
+    public IList<ITypeScriptType> GenericTypeArguments { get; set; } = [];
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "<Pending>")]
     public static ITypeScriptType FromDotNetType(
         Type dotnetType,
         string? declarerNamespace,
@@ -190,7 +191,7 @@ public class TypeScriptType : ITypeScriptType
             IsNullable = false,
             IsKnockoutObservable = true,
             TypeName = "KnockoutObservable",
-            GenericTypeArguments = new List<ITypeScriptType> { this }
+            GenericTypeArguments = [this]
         };
     }
 }

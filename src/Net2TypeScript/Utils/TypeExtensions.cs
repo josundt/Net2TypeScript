@@ -119,13 +119,9 @@ internal static class TypeExtensions
             {
                 result = settings.NonNullableArrayEntityItems != true;
             }
-            else if (isDictionaryValue)
-            {
-                result = settings.NonNullableDictionaryEntityValues != true;
-            }
             else
             {
-                result = settings.NonNullableEntities != true;
+                result = isDictionaryValue ? settings.NonNullableDictionaryEntityValues != true : settings.NonNullableEntities != true;
             }
         }
         else if (type.IsTypeScriptStringType() && type != typeof(Guid) && type != typeof(TimeSpan))
@@ -138,7 +134,7 @@ internal static class TypeExtensions
 
     public static bool IsTypeScriptObservableType(this Type type, Settings settings)
     {
-        return settings.KnockoutMapping == KnockoutMappingOptions.All || settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType();
+        return settings.KnockoutMapping == KnockoutMappingOptions.All || (settings.KnockoutMapping == KnockoutMappingOptions.ValueTypes && !type.IsTypeScriptInterfaceType());
 
     }
 
@@ -196,13 +192,11 @@ internal static class StringExtensions
         return str;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1481:Unused local variables should be removed", Justification = "<Pending>")]
     public static string GetRelativePathTo(this string absPath, string relTo, bool backSlash = false)
     {
-        var parsed = Path.GetDirectoryName(absPath);
-        if (parsed == null)
-        {
-            throw new ArgumentException("Not a valid directory path", nameof(absPath));
-        }
+        var parsed = Path.GetDirectoryName(absPath) ?? throw new ArgumentException("Not a valid directory path", nameof(absPath));
 
         string[] absDirs = absPath.Split('\\');
         string[] relDirs = relTo.Split('\\');

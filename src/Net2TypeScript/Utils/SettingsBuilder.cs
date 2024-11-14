@@ -138,7 +138,7 @@ internal static class SettingsBuilder
     {
         ArgumentNullException.ThrowIfNull(cwd);
 
-        // TODO: Validate that settings object has the expected properties
+        // TO DO: Validate that settings object has the expected properties
 
         settings.AssemblyPaths = new Collection<string>(settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration)).ToList());
         settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration);

@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace jasMIN.Net2TypeScript;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
 public static class Application
 {
     public static int Main(string[] args)

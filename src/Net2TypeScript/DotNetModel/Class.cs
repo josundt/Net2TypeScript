@@ -29,8 +29,8 @@ internal sealed class Class : DotNetTypeModelBase
         var indent = this.Indent(indentCount);
 
         var skip =
-            this._type.IsClass && this.Settings.ExcludeClass == true ||
-            this._type.IsInterface && this.Settings.ExcludeInterface == true ||
+            (this._type.IsClass && this.Settings.ExcludeClass == true) ||
+            (this._type.IsInterface && this.Settings.ExcludeInterface == true) ||
             !this._properties.Any();
 
 
@@ -51,7 +51,7 @@ internal sealed class Class : DotNetTypeModelBase
                 sw.NewLine
             );
 
-            // TODO: Filter non-public props
+            // TO DO: Filter non-public props
             // RENDER PROPERTYINFOS
             foreach (var prop in this._properties)
             {
@@ -151,15 +151,18 @@ internal sealed class Class : DotNetTypeModelBase
                 result = null;
             }
             else if (result == classOrInterface)
+#pragma warning disable S1871 // Two branches in a conditional structure should not have exactly the same implementation
             {
                 result = null;
             }
+#pragma warning restore S1871 // Two branches in a conditional structure should not have exactly the same implementation
         }
 
         return result;
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private member", Justification = "<Pending>")]
     private string _classOrInterfaceName => this._type.IsClass ? "class" : "interface";
 
     #region Debug-Only Helper Properties
