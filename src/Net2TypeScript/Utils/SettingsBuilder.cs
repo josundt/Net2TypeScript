@@ -12,18 +12,19 @@ internal static class SettingsBuilder
         var settingsMap = ArgsToDictionary(commandLineArgs);
         var settingsFilePath = ExtractSettingsFilePath(settingsMap);
         var buildConfiguration = ExtractBuildConfiguration(settingsMap);
+        var targetFramework = ExtractTargetFramework(settingsMap);
         var globalSettings = GetGlobalSettingsFromJson(settingsFilePath);
 
         MergeCmdArgsWithSettings(settingsMap, globalSettings);
 
-        NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath)!, buildConfiguration);
+        NormalizeAndValidateSettings(globalSettings, Path.GetDirectoryName(settingsFilePath)!, buildConfiguration, targetFramework);
 
         return globalSettings;
     }
 
     private static Dictionary<string, string> ArgsToDictionary(string[] args)
     {
-        var dict = new Dictionary<string, string>();
+        var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         if (args.Length % 2 != 0)
         {
@@ -123,6 +124,22 @@ internal static class SettingsBuilder
         return result ?? "Debug";
     }
 
+    private static string? ExtractTargetFramework(Dictionary<string, string> settingsMap)
+    {
+        string? result = null;
+        if (settingsMap.TryGetValue("t", out string? cValue))
+        {
+            result = cValue;
+            settingsMap.Remove("t");
+        }
+        if (settingsMap.TryGetValue("targetframework", out string? configurationValue))
+        {
+            result ??= configurationValue;
+            settingsMap.Remove("targetframework");
+        }
+        return result;
+    }
+
     private static GlobalSettings GetGlobalSettingsFromJson(string settingsPath)
     {
         if (!File.Exists(settingsPath)) { throw new FileNotFoundException($@"Settings file ""{settingsPath}"" not found."); }
@@ -134,14 +151,14 @@ internal static class SettingsBuilder
         return settings;
     }
 
-    private static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd, string buildConfiguration)
+    private static void NormalizeAndValidateSettings(GlobalSettings settings, string cwd, string buildConfiguration, string? targetFramework)
     {
         ArgumentNullException.ThrowIfNull(cwd);
 
         // TO DO: Validate that settings object has the expected properties
 
-        settings.AssemblyPaths = new Collection<string>(settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration)).ToList());
-        settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration);
+        settings.AssemblyPaths = new Collection<string>(settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration, targetFramework)).ToList());
+        settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration, targetFramework);
 
         ValidateGeneratorSettings(settings);
         settings.NamespaceOverrides.ToList().ForEach(kvp => ValidateGeneratorSettings(kvp.Value));
@@ -173,14 +190,19 @@ internal static class SettingsBuilder
         }
     }
 
-    private static string ResolvePath(string path, string cwd, string? buildConfiguration = null)
+    private static string ResolvePath(string path, string cwd, string? buildConfiguration, string? targetFramework)
     {
         path = path.Replace("/", Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
         path = path.Replace("\\", Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
 
         if (buildConfiguration != null)
         {
-            path = path.Replace("$(buildconfiguration)", buildConfiguration, StringComparison.OrdinalIgnoreCase);
+            path = path.Replace("$(BuildConfiguration)", buildConfiguration, StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (targetFramework != null)
+        {
+            path = path.Replace("$(TargetFramework)", targetFramework, StringComparison.OrdinalIgnoreCase);
         }
 
         if (!Path.IsPathRooted(path))

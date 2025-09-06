@@ -4,31 +4,44 @@
 
 ## .NET tool command ##
 
-`dotnet net2typescript`
+```bash
+Description:
+  .NET tool to create TypeScript types/models from .NET models
 
-## Avaliable arguments ##
-
+Usage:
+  net2typescript [options]
 ```
--s|--settings       Path to JSON settings file that uses the settings "$schema" (see
-                    schema URL below). If argument is omitted, the settings file is expected
-                    to be found in the same folder as the Net2TypeScript executable with the
-                    file name "settings.json".
 
--c|--configuration  The build configuration (Release/Debug etc).
-                    Emitting this parameter, enables interpolation of $(BuildConfiguration)
-                    variables in the JSON settings file's path properties.
-                    This is particularily useful when you want to pick assembly files from
-                    different folders dynamically for different build configurations.
-                    Defaults to Debug when argument is omitted.
+## Avaliable options ##
 
---*                 All global properties (of "primitive" value types) in the settings file
-                    schema can be set or overriden using command line arguments as an
-                    alternative to using the settings file.
+```bash
+Options:
+  -s|--settings         Path to JSON settings file that uses the settings "$schema" (see
+                        schema URL below). If argument is omitted, the settings file is expected
+                        to be found in the same folder as the Net2TypeScript executable with the
+                        file name "settings.json".
 
--h|--help           Show this help information.
+  -c|--configuration    The build configuration (e.g. 'Release'/'Debug').
+                        Emitting this parameter, enables interpolation of $(BuildConfiguration)
+                        variables in the JSON settings file's path properties.
+                        This is particularily useful when you want to pick assembly files from
+                        different folders dynamically for different build configurations.
+                        Defaults to 'Debug' when argument is omitted.
+
+  -t|--targetframework  The target framework (e.g. 'net9.0').
+                        Emitting this parameter, enables interpolation of $(TargetFramework)
+                        variables in the JSON settings file's path properties.
+                        This is particularily useful when you want to pick assembly files from
+                        different folders dynamically for different target frameworks.
+
+  --*                   All global properties (of "primitive" value types) in the settings file
+                        schema can be set or overriden using command line arguments as an
+                        alternative to using the settings file.
+
+  -h|--help             Show this help information.
 
 JSON schema for settings file:
-https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/settings.schema.json
+https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/settings.schema.json```
 ```
 
 ## Sample settings file ##

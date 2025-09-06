@@ -1,8 +1,16 @@
 {
   "profiles": {
-    "Adra.Reference.Api": {
+    "Debug Reference App": {
       "commandName": "Project",
-      "commandLineArgs": "-c Debug -s D:\\_Git\\Adra.Reference.App\\src\\Adra.Reference.Api\\net2typescript.json"
+      "commandLineArgs": "-c Debug -t net9.0 -s D:\\_Git\\Adra.Reference.App\\src\\Adra.Reference.ApiModels\\net2typescript.json"
+    },
+    "Debug Help": {
+      "commandName": "Project",
+      "commandLineArgs": "-h"
+    },
+    "Debug Version": {
+      "commandName": "Project",
+      "commandLineArgs": "-v"
     }
   }
 }

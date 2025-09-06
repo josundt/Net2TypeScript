@@ -1,5 +1,6 @@
 using jasMIN.Net2TypeScript.Utils;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace jasMIN.Net2TypeScript;
 
@@ -12,10 +13,20 @@ public static class Application
 
         int result = 0;
 
-        if (args.Length == 1 && (args[0] == "-h" || args[0] == "--help"))
+        if (args.Length == 1)
         {
-            WriteHelp();
-            return 0;
+            var arg = args[0];
+            if (arg == "-h" || arg == "--help")
+            {
+                WriteHelp();
+                return 0;
+            }
+            else if (arg == "-v" || arg == "--version")
+            {
+                var ver = Assembly.GetExecutingAssembly().GetName().Version!;
+                Console.WriteLine($"v{ver.Major}.{ver.Minor}.{ver.Revision}");
+                return 0;
+            }
         }
 
         Console.Write("net2typescript: Generating TypeScript models from .NET models...");
@@ -64,25 +75,36 @@ public static class Application
     private static void WriteHelp()
     {
         Console.WriteLine();
-        Console.WriteLine(@"net2typescript usage:");
+        Console.WriteLine(@"Description:");
+        Console.WriteLine(@"  .NET tool to create TypeScript types/models from .NET models");
         Console.WriteLine();
-        Console.WriteLine(@"-s|--settings       Path to JSON settings file that uses the settings ""$schema"" (see");
-        Console.WriteLine(@"                    schema URL below). If argument is omitted, the settings file is expected");
-        Console.WriteLine(@"                    to be found in the same folder as the Net2TypeScript executable with the");
-        Console.WriteLine(@"                    file name ""settings.json"".");
+        Console.WriteLine(@"Usage:");
+        Console.WriteLine(@"  net2typescript [options]");
         Console.WriteLine();
-        Console.WriteLine(@"-c|--configuration  The build configuration (Release/Debug etc).");
-        Console.WriteLine(@"                    Emitting this parameter, enables interpolation of $(BuildConfiguration)");
-        Console.WriteLine(@"                    variables in the JSON settings file's path properties.");
-        Console.WriteLine(@"                    This is particularily useful when you want to pick assembly files from");
-        Console.WriteLine(@"                    different folders dynamically for different build configurations.");
-        Console.WriteLine(@"                    Defaults to Debug when argument is omitted.");
+        Console.WriteLine(@"Options:");
+        Console.WriteLine(@"  -s|--settings         Path to JSON settings file that uses the settings ""$schema"" (see");
+        Console.WriteLine(@"                        schema URL below). If argument is omitted, the settings file is expected");
+        Console.WriteLine(@"                        to be found in the same folder as the Net2TypeScript executable with the");
+        Console.WriteLine(@"                        file name ""settings.json"".");
         Console.WriteLine();
-        Console.WriteLine(@"--*                 All global properties (of ""primitive"" value types) in the settings file");
-        Console.WriteLine(@"                    schema can be set or overriden using command line arguments as an ");
-        Console.WriteLine(@"                    alternative to using the settings file.");
+        Console.WriteLine(@"  -c|--configuration    The build configuration (e.g. 'Release'/'Debug').");
+        Console.WriteLine(@"                        Emitting this parameter, enables interpolation of $(BuildConfiguration)");
+        Console.WriteLine(@"                        variables in the JSON settings file's path properties.");
+        Console.WriteLine(@"                        This is particularily useful when you want to pick assembly files from");
+        Console.WriteLine(@"                        different folders dynamically for different build configurations.");
+        Console.WriteLine(@"                        Defaults to 'Debug' when argument is omitted.");
         Console.WriteLine();
-        Console.WriteLine(@"-h|--help           Show this help information.");
+        Console.WriteLine(@"  -t|--targetframework  The target framework (e.g. 'net9.0').");
+        Console.WriteLine(@"                        Emitting this parameter, enables interpolation of $(TargetFramework)");
+        Console.WriteLine(@"                        variables in the JSON settings file's path properties.");
+        Console.WriteLine(@"                        This is particularily useful when you want to pick assembly files from");
+        Console.WriteLine(@"                        different folders dynamically for different target frameworks.");
+        Console.WriteLine();
+        Console.WriteLine(@"  --*                   All global properties (of ""primitive"" value types) in the settings file");
+        Console.WriteLine(@"                        schema can be set or overriden using command line arguments as an ");
+        Console.WriteLine(@"                        alternative to using the settings file.");
+        Console.WriteLine();
+        Console.WriteLine(@"  -h|--help             Show this help information.");
         Console.WriteLine();
         Console.WriteLine(@"JSON schema for settings file:");
         Console.WriteLine(@"https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/settings.schema.json");
