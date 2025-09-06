@@ -176,7 +176,7 @@ internal static class SettingsExtensions
 {
     public static string ToTsFullName(this Settings settings, string dotNetFullName)
     {
-        var namespaceSegment = dotNetFullName.Remove(0, Math.Min(dotNetFullName.Length, settings.DotNetRootNamespace.Length + 1));
+        var namespaceSegment = dotNetFullName[Math.Min(dotNetFullName.Length, settings.DotNetRootNamespace.Length + 1)..];
         return string.IsNullOrWhiteSpace(settings.TsRootNamespace) ? namespaceSegment : $"{settings.TsRootNamespace}.{namespaceSegment}";
     }
 }

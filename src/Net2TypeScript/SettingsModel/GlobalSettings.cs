@@ -27,7 +27,7 @@ public class GlobalSettings : Settings
             .OrderBy(kvp => kvp.Key)
             .Select(kvp => kvp.Value);
 
-        var effectiveGenSettings = Merge(this.Clone(), applicableNsSettings.ToArray());
+        var effectiveGenSettings = Merge(this.Clone(), [.. applicableNsSettings]);
 
         return this.GetEffectiveSettings(effectiveGenSettings);
     }

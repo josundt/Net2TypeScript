@@ -16,12 +16,12 @@ public static class Application
         if (args.Length == 1)
         {
             var arg = args[0];
-            if (arg == "-h" || arg == "--help")
+            if (arg is "-h" or "--help")
             {
                 WriteHelp();
                 return 0;
             }
-            else if (arg == "-v" || arg == "--version")
+            else if (arg is "-v" or "--version")
             {
                 var ver = Assembly.GetExecutingAssembly().GetName().Version!;
                 Console.WriteLine($"v{ver.Major}.{ver.Minor}.{ver.Revision}");

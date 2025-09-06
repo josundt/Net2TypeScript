@@ -160,10 +160,10 @@ internal sealed class Namespace : DotNetModelBase
 #if DEBUG
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
-    public IReadOnlyCollection<Namespace> ChildNamespaces => this._childNamespaces.ToList();
+    public IReadOnlyCollection<Namespace> ChildNamespaces => [.. this._childNamespaces];
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
-    public IReadOnlyCollection<DotNetTypeModelBase> Entities => this._entities.ToList();
+    public IReadOnlyCollection<DotNetTypeModelBase> Entities => [.. this._entities];
 
 #endif
     #endregion

@@ -157,7 +157,7 @@ internal static class SettingsBuilder
 
         // TO DO: Validate that settings object has the expected properties
 
-        settings.AssemblyPaths = new Collection<string>(settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration, targetFramework)).ToList());
+        settings.AssemblyPaths = new Collection<string>([.. settings.AssemblyPaths.Select(ap => ResolvePath(ap, cwd, buildConfiguration, targetFramework))]);
         settings.OutputPath = ResolvePath(settings.OutputPath, cwd, buildConfiguration, targetFramework);
 
         ValidateGeneratorSettings(settings);

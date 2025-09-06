@@ -61,12 +61,9 @@ internal sealed class Class : DotNetTypeModelBase
 
             if (this.Settings.ExtraProperties != null)
             {
-                foreach (KeyValuePair<string, string> prop in this.Settings.ExtraProperties)
+                foreach (var kvp in this.Settings.ExtraProperties.Where(k => !string.IsNullOrEmpty(k.Value)))
                 {
-                    if (!string.IsNullOrEmpty(prop.Value))
-                    {
-                        WriteExtensionProperty(sw, prop, indent, this.Settings);
-                    }
+                    WriteExtensionProperty(sw, kvp, indent, this.Settings);
                 }
             }
 
@@ -169,7 +166,7 @@ internal sealed class Class : DotNetTypeModelBase
 #if DEBUG
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2365:Properties should not make collection or array copies", Justification = "<Pending>")]
-    private IReadOnlyCollection<Property> Properties => this._properties.ToList();
+    private IReadOnlyCollection<Property> Properties => [.. this._properties];
 
 #endif
     #endregion
