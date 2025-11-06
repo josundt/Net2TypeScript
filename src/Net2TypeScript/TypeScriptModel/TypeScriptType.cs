@@ -34,7 +34,7 @@ public class TypeScriptType : ITypeScriptType
         var tsType = new TypeScriptType()
         {
             IsKnockoutObservable = isKnockoutObservable,
-            _includeNullableUnion = settings.NullableProps == "nullable" || settings.NullableProps == "nullableOptional"
+            _includeNullableUnion = settings.NullableProps is "nullable" or "nullableOptional"
         };
 
         Type propertyType = dotnetType;

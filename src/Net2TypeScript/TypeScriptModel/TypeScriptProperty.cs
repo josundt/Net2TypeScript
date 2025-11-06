@@ -68,7 +68,7 @@ public class TypeScriptProperty
 
     public override string ToString()
     {
-        var nullableIsOptional = this._settings.NullableProps == "optional" || this._settings.NullableProps == "nullableOptional";
+        var nullableIsOptional = this._settings.NullableProps is "optional" or "nullableOptional";
 
         return string.Format(
             CultureInfo.InvariantCulture,

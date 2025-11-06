@@ -71,7 +71,7 @@ internal static class SettingsBuilder
                     }
                     else
                     {
-                        propInfo.SetValue(settings, false);
+                        propInfo.SetValue(settings, boolValue);
                     }
                 }
                 else if (propInfo.PropertyType == typeof(string))
