@@ -43,7 +43,7 @@ internal sealed class Property : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** Enum{1} */{2}",
                     indent,
-                    this.TypeScriptProperty.PropertyType.IsNullable ? " (NULLABLE)" : string.Empty,
+                    this.TypeScriptProperty.PropertyType.IsNullable ? " (Nullable)" : string.Empty,
                     sw.NewLine
                 );
             }
@@ -57,7 +57,7 @@ internal sealed class Property : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** Guid{1} */{2}",
                     indent,
-                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
+                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (Nullable)" : string.Empty,
                     sw.NewLine
                 );
             }
@@ -67,7 +67,7 @@ internal sealed class Property : DotNetTypeModelBase
                 sw.WriteFormat(
                     "{0}/** TimeSpan{1} */{2}",
                     indent,
-                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (NULLABLE)" : string.Empty,
+                    this._propInfo.PropertyType.IsDotNetNullableValueType() ? " (Nullable)" : string.Empty,
                     sw.NewLine
                 );
             }

@@ -17,6 +17,8 @@ public class TypeScriptProperty
         ArgumentNullException.ThrowIfNull(nullabilityContext);
         ArgumentNullException.ThrowIfNull(settings);
 
+        this._settings = settings;
+
         var isKnockoutObservable = false;
         if (settings.KnockoutMapping is not null and not KnockoutMappingOptions.None)
         {
@@ -56,6 +58,8 @@ public class TypeScriptProperty
         this.ReadOnly = !(propertyInfo.CanWrite && propertyInfo.GetSetMethod() != null && (propertyInfo.GetSetMethod()?.IsPublic ?? false));
     }
 
+    private readonly Settings _settings;
+
     public ITypeScriptType PropertyType { get; private set; }
 
     public string PropertyName { get; private set; }
@@ -64,11 +68,14 @@ public class TypeScriptProperty
 
     public override string ToString()
     {
+        var nullableIsOptional = this._settings.NullableProps == "optional" || this._settings.NullableProps == "nullableOptional";
+
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0}{1}: {2}",
+            "{0}{1}{2}: {3}",
             this.ReadOnly ? "readonly " : string.Empty,
             this.PropertyName,
+            this.PropertyType.IsNullable && nullableIsOptional ? "?" : string.Empty,
             this.PropertyType
         );
     }

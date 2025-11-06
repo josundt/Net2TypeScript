@@ -10,6 +10,7 @@ public class Settings : GeneratorSettings
         this.Indent = "    ";
         this.EnumType = "string";
         this.EnumFormat = "enum";
+        this.NullableProps = "nullable";
         this.TsRootNamespace = this.DotNetRootNamespace ?? string.Empty;
         this.ExtraProperties = [];
         this.AssemblyPaths = [];
@@ -25,6 +26,7 @@ public class Settings : GeneratorSettings
     public Collection<string>? EnumNamespaceFilter { get; set; }
     public string Indent { get; set; }
     public bool CamelCase { get; set; }
+    public string NullableProps { get; set; }
     public TypingsPaths? TypingsPaths { get; set; }
 
     public new Settings Clone()

@@ -14,6 +14,8 @@ public class TypeScriptType : ITypeScriptType
     public bool IsKnockoutObservable { get; private set; }
     public IList<ITypeScriptType> GenericTypeArguments { get; set; } = [];
 
+    private bool _includeNullableUnion;
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "<Pending>")]
     public static ITypeScriptType FromDotNetType(
         Type dotnetType,
@@ -31,7 +33,8 @@ public class TypeScriptType : ITypeScriptType
 
         var tsType = new TypeScriptType()
         {
-            IsKnockoutObservable = isKnockoutObservable
+            IsKnockoutObservable = isKnockoutObservable,
+            _includeNullableUnion = settings.NullableProps == "nullable" || settings.NullableProps == "nullableOptional"
         };
 
         Type propertyType = dotnetType;
@@ -179,7 +182,7 @@ public class TypeScriptType : ITypeScriptType
             this.GenericTypeArguments.Count > 0 ? "<" : string.Empty,
             string.Join(", ", this.GenericTypeArguments.Select(tsti => tsti.ToString())),
             this.GenericTypeArguments.Count > 0 ? ">" : string.Empty,
-            this.IsNullable ? " | null" : ""
+            this.IsNullable && this._includeNullableUnion ? " | null" : ""
         );
     }
 

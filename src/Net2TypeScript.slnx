@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="global.json" />
+  </Folder>
+  <Project Path="Net2TypeScript.Tests/Net2TypeScript.Tests.csproj" />
+  <Project Path="Net2TypeScript/Net2TypeScript.csproj" />
+</Solution>

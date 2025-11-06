@@ -66,11 +66,12 @@ https://raw.githubusercontent.com/josundt/Net2TypeScript/master/Net2TypeScript/s
   ],
   "indent": "    ",
   "enumType": "stringIfNotFlagEnum",
-  "enumFormat": "enum",
+  "enumFormat": "unionType",
   "camelCase": true,
   "excludeClass": false,
   "excludeInterface": true,
   "nullableReferenceTypes": true,
+  "nullableProps": "optional",
   "namespaceOverrides": {
     "My.App.ApiModels*": {
       "nullableReferenceTypes": false

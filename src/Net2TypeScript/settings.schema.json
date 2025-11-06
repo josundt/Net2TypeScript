@@ -142,6 +142,12 @@
           "default": false,
           "description": "(Optional). Whether or not to convert all property names to camelCase in the generated output."
         },
+        "nullableProps": {
+          "type": "string",
+          "enum": ["nullable", "optional", "nullableOptional"],
+          "default": "nullable",
+          "description": "(Optional). Whether nullable .NET properties should be have nullable union type or be an optional property (omittable) - or allow both."
+        },
         "typingsPaths": {
           "type": [ "object", "null" ],
           "default": null,
