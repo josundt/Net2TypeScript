@@ -13,7 +13,7 @@
     <VersionPrefix>10.0.0</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
-    <PackageVersion>$(VersionPrefix)-rc.2</PackageVersion>
+    <PackageVersion>$(VersionPrefix)</PackageVersion>
 
 
     <!--<PublishSingleFile>true</PublishSingleFile>-->
