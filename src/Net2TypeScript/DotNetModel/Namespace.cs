@@ -1,4 +1,5 @@
 using jasMIN.Net2TypeScript.SettingsModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
@@ -7,6 +8,7 @@ namespace jasMIN.Net2TypeScript.DotNetModel;
 #if DEBUG
 [System.Diagnostics.DebuggerDisplay($"{nameof(Namespace)}: {{{nameof(FullName)}}}, {nameof(ChildNamespaces)}: {{{nameof(ChildNamespaces)}.Count}}, {nameof(Entities)}: {{{nameof(Entities)}.Count}}")]
 #endif
+[SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity", Justification = "Overload is not available in all supported target frameworks")]
 internal sealed class Namespace : DotNetModelBase
 {
     private readonly bool _isRoot;

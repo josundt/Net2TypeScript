@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace jasMIN.Net2TypeScript.SettingsModel;
 
+[SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity", Justification = "Overload is not available in all supported target frameworks")]
 public class GlobalSettings : Settings
 {
     public Dictionary<string, GeneratorSettings> NamespaceOverrides { get; set; }

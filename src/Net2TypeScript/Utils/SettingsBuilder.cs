@@ -1,10 +1,12 @@
 using jasMIN.Net2TypeScript.SettingsModel;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 
 namespace jasMIN.Net2TypeScript.Utils;
 
+[SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity", Justification = "Overload is not available in all supported target frameworks")]
 internal static class SettingsBuilder
 {
     public static GlobalSettings BuildGlobalSettings(string[] commandLineArgs)
